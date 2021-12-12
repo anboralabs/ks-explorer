@@ -1,0 +1,19 @@
+<idea-plugin>
+    <id>co.anbora.labs.kse</id>
+    <name>Keystore Explorer</name>
+    <vendor email="anboralabs@gmail.com" url="https://labs.anbora.co">Anbora-labs</vendor>
+
+    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType name="JKS" implementationClass="co.anbora.labs.kse.lang.JKSFileType"
+                  fieldName="INSTANCE" language="JKS" extensions="jks"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.JKSPreviewEditorProvider"/>
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+</idea-plugin>
