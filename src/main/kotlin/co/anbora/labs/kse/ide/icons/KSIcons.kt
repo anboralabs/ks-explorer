@@ -3,7 +3,7 @@ package co.anbora.labs.kse.ide.icons
 import com.intellij.openapi.util.IconLoader
 import javax.swing.Icon
 
-object JKSIcons {
+object KSIcons {
 
     val FILE = getIcon("icon_file.svg")
 

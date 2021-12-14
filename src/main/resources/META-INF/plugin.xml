@@ -8,9 +8,14 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <fileType name="JKS" implementationClass="co.anbora.labs.kse.lang.JKSFileType"
-                  fieldName="INSTANCE" language="JKS" extensions="jks"/>
-        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.JKSPreviewEditorProvider"/>
+        <applicationService
+                serviceImplementation="co.anbora.labs.kse.ide.settings.KSEditorSettings"/>
+
+        <fileType name="KS" implementationClass="co.anbora.labs.kse.lang.JKSFileType"
+                  fieldName="INSTANCE" language="KS" extensions="ks;jks"/>
+
+        <editorOptionsProvider instance="co.anbora.labs.kse.ide.settings.KSEditorSettingsProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.KSEditorProvider"/>
     </extensions>
 
     <actions>
