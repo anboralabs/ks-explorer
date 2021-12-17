@@ -1,5 +1,6 @@
 package co.anbora.labs.kse.ide.gui
 
+import co.anbora.labs.kse.ide.editor.KSViewerState
 import co.anbora.labs.kse.lang.KSLanguage.EDITOR_NAME
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorLocation
@@ -19,6 +20,7 @@ abstract class TableEditor(
 ): FileEditor, FileEditorLocation {
 
     private val userDataHolder: UserDataHolder = UserDataHolderBase()
+    private var viewerState: KSViewerState = KSViewerState()
 
     override fun getName(): String = EDITOR_NAME
 
@@ -44,7 +46,10 @@ abstract class TableEditor(
 
     override fun getFile(): VirtualFile = this.fileArg
 
-    override fun getState(level: FileEditorStateLevel): FileEditorState {
-        return super.getState(level)
+    override fun getState(level: FileEditorStateLevel): FileEditorState = viewerState
+
+    override fun setState(state: FileEditorState) {
+        val newState = state as? KSViewerState
+        this.viewerState = newState ?: KSViewerState()
     }
 }
