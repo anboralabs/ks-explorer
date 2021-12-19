@@ -15,11 +15,9 @@ import javax.swing.table.DefaultTableModel;
 public class KeyStoreTableSwing extends TableEditor {
 
     private JPanel panelMain;
+    private JPasswordField passwordField1;
+    private JButton OKButton;
     private JTable tblEditor;
-    private JScrollPane tableScrollPanel;
-    private JPanel passwordPanel;
-    private JTextField textField1;
-    private JButton button1;
 
     public KeyStoreTableSwing(@NotNull Project projectArg, @NotNull VirtualFile fileArg) {
         super(projectArg, fileArg);
