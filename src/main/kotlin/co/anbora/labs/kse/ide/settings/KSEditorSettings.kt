@@ -10,67 +10,77 @@ import com.intellij.openapi.components.Storage
     name = "KSEditorSettings",
     storages = [Storage(KS_STATE_STORAGE_FILE)]
 )
-class KSEditorSettings: PersistentStateComponent<OptionSet> {
+class KSEditorSettings: PersistentStateComponent<SettingOptionSet> {
 
-    private var currentOptions = OptionSet()
+    private var currentOptions = SettingOptionSet()
 
-    override fun getState(): OptionSet = currentOptions
+    override fun getState(): SettingOptionSet = currentOptions
 
-    override fun loadState(state: OptionSet) {
+    override fun loadState(state: SettingOptionSet) {
        this.currentOptions = state
     }
 
+    var entryName: Boolean
+        get() = state.entryName.active
+        set(value) { state.entryName.active = value }
+
     var keySize: Boolean
-        get() = state.keySize
-        set(value) { state.keySize = value }
+        get() = state.keySize.active
+        set(value) { state.keySize.active = value }
 
     var certificateExpiry: Boolean
-        get() = state.certificateExpiry
-        set(value) { state.certificateExpiry = value }
+        get() = state.certificateExpiry.active
+        set(value) { state.certificateExpiry.active = value }
 
     var subjectKeyIdentifier: Boolean
-        get() = state.subjectKeyIdentifier
-        set(value) { state.subjectKeyIdentifier = value }
+        get() = state.subjectKeyIdentifier.active
+        set(value) { state.subjectKeyIdentifier.active = value }
 
     var issuerDistinguishedName: Boolean
-        get() = state.issuerDistinguishedName
-        set(value) { state.issuerDistinguishedName = value }
+        get() = state.issuerDistinguishedName.active
+        set(value) { state.issuerDistinguishedName.active = value }
 
     var issuerCommonName: Boolean
-        get() = state.issuerCommonName
-        set(value) { state.issuerCommonName = value }
+        get() = state.issuerCommonName.active
+        set(value) { state.issuerCommonName.active = value }
 
     var issuerOrganizationName: Boolean
-        get() = state.issuerOrganizationName
-        set(value) { state.issuerOrganizationName = value }
+        get() = state.issuerOrganizationName.active
+        set(value) { state.issuerOrganizationName.active = value }
 
     var algorithm: Boolean
-        get() = state.algorithm
-        set(value) { state.algorithm = value }
+        get() = state.algorithm.active
+        set(value) { state.algorithm.active = value }
 
     var curve: Boolean
-        get() = state.curve
-        set(value) { state.curve = value }
+        get() = state.curve.active
+        set(value) { state.curve.active = value }
 
     var lastModified: Boolean
-        get() = state.lastModified
-        set(value) { state.lastModified = value }
+        get() = state.lastModified.active
+        set(value) { state.lastModified.active = value }
 
     var authorityKeyIdentifier: Boolean
-        get() = state.authorityKeyIdentifier
-        set(value) { state.authorityKeyIdentifier = value }
+        get() = state.authorityKeyIdentifier.active
+        set(value) { state.authorityKeyIdentifier.active = value }
 
     var subjectDistinguishedName: Boolean
-        get() = state.subjectDistinguishedName
-        set(value) { state.subjectDistinguishedName = value }
+        get() = state.subjectDistinguishedName.active
+        set(value) { state.subjectDistinguishedName.active = value }
 
     var subjectCommonName: Boolean
-        get() = state.subjectCommonName
-        set(value) { state.subjectCommonName = value }
+        get() = state.subjectCommonName.active
+        set(value) { state.subjectCommonName.active = value }
 
     var subjectOrganizationName: Boolean
-        get() = state.subjectOrganizationName
-        set(value) { state.subjectOrganizationName = value }
+        get() = state.subjectOrganizationName.active
+        set(value) { state.subjectOrganizationName.active = value }
+
+    fun resetColumns() = state.resetOptions()
+
+    fun sortColumns(order: () -> Int) = state.setIndexColumns(order)
+
+    fun nofColumns(): Int = state.getActiveOptions()
 
     companion object {
         @JvmStatic

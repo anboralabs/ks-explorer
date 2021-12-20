@@ -57,7 +57,8 @@ public class KSEditorSettingsProvider implements EditorOptionsProvider {
     @Override
     public boolean isModified() {
         KSEditorSettings editorSettings = KSEditorSettings.getInstance();
-        return isModified(keySizeCheckBox, editorSettings.getKeySize())
+        return  isModified(entryNameCheckBox, editorSettings.getEntryName())
+                || isModified(keySizeCheckBox, editorSettings.getKeySize())
                 || isModified(certificateExpiryCheckBox, editorSettings.getCertificateExpiry())
                 || isModified(subjectKeyIdentifierCheckBox, editorSettings.getSubjectKeyIdentifier())
                 || isModified(issuerDistinguishedNameDNCheckBox, editorSettings.getIssuerDistinguishedName())
@@ -75,6 +76,7 @@ public class KSEditorSettingsProvider implements EditorOptionsProvider {
     @Override
     public void reset() {
         KSEditorSettings editorSettings = KSEditorSettings.getInstance();
+        entryNameCheckBox.setSelected(editorSettings.getEntryName());
         keySizeCheckBox.setSelected(editorSettings.getKeySize());
         certificateExpiryCheckBox.setSelected(editorSettings.getCertificateExpiry());
         subjectKeyIdentifierCheckBox.setSelected(editorSettings.getSubjectKeyIdentifier());
@@ -93,6 +95,7 @@ public class KSEditorSettingsProvider implements EditorOptionsProvider {
     @Override
     public void apply() throws ConfigurationException {
         KSEditorSettings editorSettings = KSEditorSettings.getInstance();
+        editorSettings.setEntryName(entryNameCheckBox.isSelected());
         editorSettings.setKeySize(keySizeCheckBox.isSelected());
         editorSettings.setCertificateExpiry(certificateExpiryCheckBox.isSelected());
         editorSettings.setSubjectKeyIdentifier(subjectKeyIdentifierCheckBox.isSelected());
