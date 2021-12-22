@@ -1,5 +1,8 @@
 package org.kse.gui
 
+import co.anbora.labs.kse.lang.settings.Settings.ENTRY_TYPE
+import co.anbora.labs.kse.lang.settings.Settings.EXPIRY_STATUS
+import co.anbora.labs.kse.lang.settings.Settings.LOCK_STATUS
 import java.awt.Component
 import java.util.*
 import javax.swing.ImageIcon
@@ -7,10 +10,6 @@ import javax.swing.JLabel
 import javax.swing.JTable
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableCellRenderer
-
-private const val ENTRY_TYPE = 0
-private const val LOCK_STATUS = 1
-private const val EXPIRY_STATUS = 2
 
 class KeyStoreTableHeadRend(
     private val delegate: TableCellRenderer

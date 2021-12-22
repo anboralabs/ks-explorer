@@ -1,6 +1,7 @@
 package org.kse.gui
 
 import co.anbora.labs.kse.ide.settings.KSEditorSettings
+import org.kse.gui.TableColumnMapper.mapOptionToColumn
 
 class KeyStoreTableColumns(
     private val editor: KSEditorSettings = KSEditorSettings.getInstance()
@@ -17,6 +18,9 @@ class KeyStoreTableColumns(
             ++col
         }
     }
+
+    fun getColumns(): List<TableColumn> = editor.activeColumns()
+        .map { mapOptionToColumn(it) }
 
     fun getNofColumns(): Int = editor.nofColumns()
 

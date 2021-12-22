@@ -82,6 +82,8 @@ class KSEditorSettings: PersistentStateComponent<SettingOptionSet> {
 
     fun nofColumns(): Int = state.getActiveOptions()
 
+    fun activeColumns(): List<Option> = state.getColumnSettings()
+
     companion object {
         @JvmStatic
         fun getInstance(): KSEditorSettings {
