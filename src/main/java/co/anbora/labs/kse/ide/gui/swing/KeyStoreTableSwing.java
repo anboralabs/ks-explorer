@@ -3,7 +3,6 @@ package co.anbora.labs.kse.ide.gui.swing;
 import co.anbora.labs.kse.ide.gui.TableEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.table.JBTable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kse.gui.*;
@@ -31,11 +30,12 @@ public class KeyStoreTableSwing extends TableEditor {
 
     public KeyStoreTableSwing(@NotNull Project projectArg, @NotNull VirtualFile fileArg) {
         super(projectArg, fileArg);
+        createUIComponents();
     }
 
     private void createUIComponents() {
         KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns);
-        tblEditor = new JBTable(ksModel);
+        tblEditor.setModel(ksModel);
 
         RowSorter<KeyStoreTableModel> sorter = new TableRowSorter<>(ksModel);
         tblEditor.setRowSorter(sorter);

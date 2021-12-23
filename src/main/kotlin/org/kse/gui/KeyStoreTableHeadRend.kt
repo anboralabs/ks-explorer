@@ -8,6 +8,7 @@ import java.util.*
 import javax.swing.ImageIcon
 import javax.swing.JLabel
 import javax.swing.JTable
+import javax.swing.border.EmptyBorder
 import javax.swing.table.DefaultTableCellRenderer
 import javax.swing.table.TableCellRenderer
 
@@ -60,6 +61,7 @@ class KeyStoreTableHeadRend(
         header.text = value as String?
         header.horizontalAlignment = LEFT
         header.icon = null
+        header.border = EmptyBorder(0,5,0,0)
 
         when (column) {
             keyStoreTableColumns.colEntryName() -> {
