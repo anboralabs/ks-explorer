@@ -9,4 +9,6 @@ object Settings {
     const val LOCK_STATUS = 1
     const val EXPIRY_STATUS = 2
 
+    const val EXPIRY_WAR_N_DAYS = 0
+
 }

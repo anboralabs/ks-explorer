@@ -2,6 +2,7 @@ package org.kse.gui
 
 import co.anbora.labs.kse.ide.settings.KSEditorSettings
 import org.kse.gui.TableColumnMapper.mapOptionToColumn
+import org.kse.gui.column.TableColumn
 
 class KeyStoreTableColumns(
     private val editor: KSEditorSettings = KSEditorSettings.getInstance()

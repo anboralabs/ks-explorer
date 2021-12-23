@@ -5,13 +5,24 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.Password;
+import org.kse.crypto.keystore.KeyStoreLoadException;
+import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.*;
+import org.kse.utilities.history.KeyStoreHistory;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
 import java.util.ResourceBundle;
 
 public class KeyStoreTableSwing extends TableEditor {
@@ -22,7 +33,7 @@ public class KeyStoreTableSwing extends TableEditor {
     private int autoResizeMode = JTable.AUTO_RESIZE_ALL_COLUMNS;
 
     private JPanel panelMain;
-    private JPasswordField passwordField1;
+    private JPasswordField passwordField;
     private JButton OKButton;
     private JTable tblEditor;
 
@@ -31,6 +42,31 @@ public class KeyStoreTableSwing extends TableEditor {
     public KeyStoreTableSwing(@NotNull Project projectArg, @NotNull VirtualFile fileArg) {
         super(projectArg, fileArg);
         createUIComponents();
+        OKButton.addActionListener(e -> {
+            try {
+                File keyStoreFile = getFile().toNioPath().toFile();
+                Password password = new Password(passwordField.getPassword());
+                KeyStore keyStore = loadKeyStore(keyStoreFile, password);
+                addKeyStore(keyStore, keyStoreFile, password);
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
+        });
+    }
+
+    private KeyStore loadKeyStore(File keyStoreFile, Password password) {
+        // try to load keystore
+        try {
+            return KeyStoreUtil.load(keyStoreFile, password);
+        } catch (CryptoException | FileNotFoundException klex) {
+            // show icon error
+            return null;
+        }
+    }
+
+    public void addKeyStore(KeyStore keyStore, File keyStoreFile, Password password) throws GeneralSecurityException, CryptoException {
+        KeyStoreHistory history = new KeyStoreHistory(keyStore, keyStoreFile, password);
+        ((KeyStoreTableModel) tblEditor.getModel()).load(history);
     }
 
     private void createUIComponents() {
