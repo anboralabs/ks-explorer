@@ -5,7 +5,7 @@ import javax.swing.Icon
 
 object KSIcons {
 
-    val FILE = getIcon("icon_file.svg")
+    val FILE = getIcon("kse.svg")
 
     private fun getIcon(path: String): Icon {
         return IconLoader.findIcon("/icons/$path") as Icon

@@ -1,6 +1,7 @@
 package org.kse.gui
 
 import co.anbora.labs.kse.ide.settings.Option
+import co.anbora.labs.kse.ide.settings.OptionType
 import org.kse.gui.column.*
 import java.util.*
 
@@ -14,24 +15,25 @@ object TableColumnMapper {
             true -> title.length
             else -> option.colWidth
         }
-        return when (option) {
-            is Option.CertType -> mapToCertType(option, title, width)
-            is Option.LockStatus -> mapToLockStatus(option, title, width)
-            is Option.CertStatus -> mapToCertStatus(option, title, width)
-            is Option.EntryName -> mapToEntryName(option, title, width)
-            is Option.KeySize -> mapToKeySize(option, title, width)
-            is Option.CertificateExpiry -> mapToCertificateExpiry(option, title, width)
-            is Option.SubjectKeyIdentifier -> mapToSubjectKeyIdentifier(option, title, width)
-            is Option.IssuerDistinguishedName -> mapToIssuerDistinguishedName(option, title, width)
-            is Option.IssuerCommonName -> mapToIssuerCommonName(option, title, width)
-            is Option.IssuerOrganizationName -> mapToIssuerOrganizationName(option, title, width)
-            is Option.Algorithm -> mapToAlgorithm(option, title, width)
-            is Option.Curve -> mapToCurve(option, title, width)
-            is Option.LastModified -> mapToLastModified(option, title, width)
-            is Option.AuthorityKeyIdentifier -> mapToAuthorityKeyIdentifier(option, title, width)
-            is Option.SubjectDistinguishedName -> mapToSubjectDistinguishedName(option, title, width)
-            is Option.SubjectCommonName -> mapToSubjectCommonName(option, title, width)
-            is Option.SubjectOrganizationName -> mapToSubjectOrganizationName(option, title, width)
+        return when (option.optionType) {
+            OptionType.CERT_TYPE -> mapToCertType(option, title, width)
+            OptionType.LOCK_STATUS -> mapToLockStatus(option, title, width)
+            OptionType.CERT_STATUS -> mapToCertStatus(option, title, width)
+            OptionType.ENTRY_NAME -> mapToEntryName(option, title, width)
+            OptionType.KEY_SIZE -> mapToKeySize(option, title, width)
+            OptionType.CERTIFICATE_EXPIRY -> mapToCertificateExpiry(option, title, width)
+            OptionType.SKI -> mapToSubjectKeyIdentifier(option, title, width)
+            OptionType.ISSUER_DN -> mapToIssuerDistinguishedName(option, title, width)
+            OptionType.ISSUER_CN -> mapToIssuerCommonName(option, title, width)
+            OptionType.ISSUER_O -> mapToIssuerOrganizationName(option, title, width)
+            OptionType.ALGORITHM -> mapToAlgorithm(option, title, width)
+            OptionType.CURVE -> mapToCurve(option, title, width)
+            OptionType.LAST_MODIFIED -> mapToLastModified(option, title, width)
+            OptionType.AKI -> mapToAuthorityKeyIdentifier(option, title, width)
+            OptionType.SUBJECT_DN -> mapToSubjectDistinguishedName(option, title, width)
+            OptionType.SUBJECT_CN -> mapToSubjectCommonName(option, title, width)
+            OptionType.SUBJECT_O -> mapToSubjectOrganizationName(option, title, width)
+            else -> throw IllegalArgumentException()
         }
     }
 

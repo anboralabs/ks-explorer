@@ -9,6 +9,9 @@ data class Option(
     @OptionTag(
         converter = TypeClassConverter::class
     ) val typeClass: TypeClass? = null,
+    @OptionTag(
+        converter = OptionTypeConverter::class
+    ) val optionType: OptionType? = null,
     val colWidth: Int = INIT_COLUMN,
     var active: Boolean = false,
     var index: Int = INIT_COLUMN
