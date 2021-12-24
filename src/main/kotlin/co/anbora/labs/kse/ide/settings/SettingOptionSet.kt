@@ -129,14 +129,16 @@ data class SettingOptionSet(
 
     private val defaultOptions = listOf(type, lockStatus, certStatus)
 
-    private val options = listOf(
-        entryName, algorithm, keySize, curve, certificateExpiry,
-        lastModified, authorityKeyIdentifier,
-        subjectKeyIdentifier,
-        issuerDistinguishedName, subjectDistinguishedName,
-        issuerCommonName, subjectCommonName,
-        issuerOrganizationName, subjectOrganizationName
-    )
+    private val options: List<Option> by lazy {
+        listOf(
+            entryName, algorithm, keySize, curve, certificateExpiry,
+            lastModified, authorityKeyIdentifier,
+            subjectKeyIdentifier,
+            issuerDistinguishedName, subjectDistinguishedName,
+            issuerCommonName, subjectCommonName,
+            issuerOrganizationName, subjectOrganizationName
+        )
+    }
 
     fun getColumnSettings(): List<Option> = defaultOptions + options.filter { it.active }
 
@@ -144,6 +146,16 @@ data class SettingOptionSet(
         options.forEach {
             if (it.active) {
                 it.index = order()
+            }
+        }
+    }
+
+    fun merge(configuredOptions: SettingOptionSet) {
+        val mapOptions = (defaultOptions + options).associateBy { it.optionType }.toMutableMap()
+        configuredOptions.getColumnSettings().forEach {
+            mapOptions.computeIfPresent(it.optionType) { _, oldValue ->
+                oldValue.active = it.active
+                oldValue
             }
         }
     }

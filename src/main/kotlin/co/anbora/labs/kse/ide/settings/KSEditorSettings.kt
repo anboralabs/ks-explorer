@@ -12,12 +12,14 @@ import com.intellij.openapi.components.Storage
 )
 class KSEditorSettings: PersistentStateComponent<SettingOptionSet> {
 
-    private var currentOptions = SettingOptionSet()
+    private val currentOptions: SettingOptionSet by lazy {
+        SettingOptionSet()
+    }
 
     override fun getState(): SettingOptionSet = currentOptions
 
     override fun loadState(state: SettingOptionSet) {
-       this.currentOptions = state
+        this.currentOptions.merge(state)
     }
 
     var entryName: Boolean
