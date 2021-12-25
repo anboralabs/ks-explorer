@@ -21,13 +21,24 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version = '2021.2.3'
+    version = 'LATEST-EAP-SNAPSHOT'
 }
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+publishPlugin {
+    token = System.getenv("PUBLISH_TOKEN")
+}
+
 patchPluginXml {
-    changeNotes = """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
+    changeNotes = file("src/main/html/change-notes.html").getText().toString()
+    pluginDescription = file("src/main/html/description.html").getText().toString()
+    sinceBuild = '203'
 }
+
 test {
     useJUnitPlatform()
 }
