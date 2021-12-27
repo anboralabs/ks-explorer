@@ -28,6 +28,7 @@ class OpenAction(
             val openedKeyStore: KeyStore = loadKeyStore(keyStoreFile, password)
                 ?: throw CryptoException(MessageFormat.format(res.getString("OpenAction.PasswordIncorrectKeyStore.Cause")))
             store.addKeyStore(openedKeyStore, keyStoreFile, password)
+            statusBar.setDefaultStatusBarText()
         }
     }
 

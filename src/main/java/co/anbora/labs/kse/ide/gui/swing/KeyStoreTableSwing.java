@@ -36,6 +36,7 @@ public class KeyStoreTableSwing extends TableEditor
     private JButton OKButton;
     private JTable tblEditor;
     private JLabel jlStatusBar;
+    private JPanel unlockPanel;
 
     private KeyStoreHistory activeHistory;
     private final ColumnRender tableCustomRenderer;
@@ -57,6 +58,7 @@ public class KeyStoreTableSwing extends TableEditor
         KeyStoreHistory history = new KeyStoreHistory(keyStore, keyStoreFile, password);
         setActiveHistory(history);
         ((KeyStoreTableModel) tblEditor.getModel()).load(history);
+        unlockPanel.setVisible(false);
     }
 
     private void setActiveHistory(KeyStoreHistory history) {
