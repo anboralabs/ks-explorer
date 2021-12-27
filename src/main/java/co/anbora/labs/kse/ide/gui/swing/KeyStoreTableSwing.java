@@ -1,35 +1,31 @@
 package co.anbora.labs.kse.ide.gui.swing;
 
 import co.anbora.labs.kse.ide.gui.TableEditor;
+import co.anbora.labs.kse.ide.gui.render.ColumnRender;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
-import org.kse.crypto.keystore.KeyStoreType;
-import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.AddKeyStore;
+import org.kse.gui.HistoryKeyStore;
 import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KeyStoreTableModel;
-import co.anbora.labs.kse.ide.gui.render.ColumnRender;
-import org.kse.gui.error.DError;
+import org.kse.gui.actions.OpenAction;
 import org.kse.gui.statusbar.StatusBar;
+import org.kse.gui.statusbar.StatusBarImpl;
 import org.kse.utilities.history.KeyStoreHistory;
-import org.kse.utilities.history.KeyStoreState;
 
 import javax.swing.*;
 import javax.swing.table.TableRowSorter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 public class KeyStoreTableSwing extends TableEditor
-        implements StatusBar, AddKeyStore {
+        implements AddKeyStore, HistoryKeyStore {
 
     private final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
 
@@ -42,35 +38,18 @@ public class KeyStoreTableSwing extends TableEditor
     private JLabel jlStatusBar;
 
     private KeyStoreHistory activeHistory;
-    private ColumnRender tableCustomRenderer;
+    private final ColumnRender tableCustomRenderer;
     private final KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
+    private final StatusBar statusBar;
 
     public KeyStoreTableSwing(@NotNull Project projectArg, @NotNull VirtualFile fileArg) {
         super(projectArg, fileArg);
         tableCustomRenderer = new ColumnRender(keyStoreTableColumns, res);
-        createUIComponents();
-        OKButton.addActionListener(e -> {
-            try {
-                File keyStoreFile = getFile().toNioPath().toFile();
-                Password password = new Password(passwordField.getPassword());
-                KeyStore keyStore = loadKeyStore(keyStoreFile, password);
-                addKeyStore(keyStore, keyStoreFile, password);
-            } catch (Exception ex) {
-                DError.displayError(projectArg, ex);
-            }
-            setDefaultStatusBarText();
-        });
-        setDefaultStatusBarText();
-    }
+        statusBar = new StatusBarImpl(projectArg, jlStatusBar, this);
 
-    private KeyStore loadKeyStore(File keyStoreFile, Password password) {
-        // try to load keystore
-        try {
-            return KeyStoreUtil.load(keyStoreFile, password);
-        } catch (CryptoException | FileNotFoundException klex) {
-            // show icon error
-            return null;
-        }
+        createUIComponents();
+        OKButton.addActionListener(new OpenAction(projectArg, statusBar, this, this, passwordField));
+        statusBar.setDefaultStatusBarText();
     }
 
     @Override
@@ -89,6 +68,7 @@ public class KeyStoreTableSwing extends TableEditor
      *
      * @return The KeyStore history or null if no KeyStore is active
      */
+    @Override
     public KeyStoreHistory getActiveKeyStoreHistory() {
         return this.activeHistory;
     }
@@ -98,6 +78,7 @@ public class KeyStoreTableSwing extends TableEditor
      *
      * @return Selected aliases (may be an empty array, but never null)
      */
+    @Override
     public String[] getSelectedEntryAliases() {
         JTable jtKeyStore = getActiveKeyStoreTable();
         int[] rows = jtKeyStore.getSelectedRows();
@@ -139,42 +120,5 @@ public class KeyStoreTableSwing extends TableEditor
     @Override
     public @Nullable JComponent getPreferredFocusedComponent() {
         return this.tblEditor;
-    }
-
-    @Override
-    public void setStatusBarText(String status) {
-        jlStatusBar.setText(status);
-    }
-
-    @Override
-    public void setDefaultStatusBarText() {
-        KeyStoreHistory history = getActiveKeyStoreHistory();
-
-        if (history == null) {
-            setStatusBarText(res.getString("KseFrame.noKeyStore.statusbar"));
-        } else {
-            setStatusBarText(getKeyStoreStatusText(history));
-        }
-    }
-
-    private String getKeyStoreStatusText(KeyStoreHistory history) {
-        // Status Text: 'KeyStore Type, Size, Path'
-        KeyStoreState currentState = history.getCurrentState();
-
-        KeyStore ksLoaded = currentState.getKeyStore();
-
-        int size;
-        try {
-            size = ksLoaded.size();
-        } catch (KeyStoreException ex) {
-            //DError.displayError(frame, ex);
-            return "";
-        }
-
-        KeyStoreType keyStoreType = currentState.getType();
-        String[] aliases = getSelectedEntryAliases();
-
-        return MessageFormat.format(res.getString("KseFrame.entries.statusbar"),
-                keyStoreType.friendly(), size, aliases.length, history.getPath());
     }
 }

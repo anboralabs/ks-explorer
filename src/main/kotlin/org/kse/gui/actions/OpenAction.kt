@@ -10,6 +10,7 @@ import org.kse.gui.statusbar.StatusBar
 import java.io.File
 import java.io.FileNotFoundException
 import java.security.KeyStore
+import java.text.MessageFormat
 import javax.swing.JPasswordField
 
 class OpenAction(
@@ -24,7 +25,8 @@ class OpenAction(
         if (file != null) {
             val keyStoreFile: File = file.toNioPath().toFile()
             val password = Password(passwordField.password)
-            val openedKeyStore: KeyStore? = loadKeyStore(keyStoreFile, password)
+            val openedKeyStore: KeyStore = loadKeyStore(keyStoreFile, password)
+                ?: throw CryptoException(MessageFormat.format(res.getString("OpenAction.PasswordIncorrectKeyStore.Cause")))
             store.addKeyStore(openedKeyStore, keyStoreFile, password)
         }
     }
