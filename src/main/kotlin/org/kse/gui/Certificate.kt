@@ -27,7 +27,7 @@ import javax.crypto.SecretKey
 object Certificate {
 
     init {
-        Security.addProvider(BouncyCastleProvider())
+        //Security.addProvider(BouncyCastleProvider())
     }
 
     @Throws(KeyStoreException::class, CryptoException::class)

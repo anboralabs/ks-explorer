@@ -19,6 +19,8 @@
  */
 package org.kse.gui;
 
+import org.kse.utilities.os.OperatingSystem;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -28,7 +30,22 @@ import java.awt.*;
  */
 public class LnfUtil {
 
+	// VAqua LnF class as constant to avoid compile dependency
+	private static final String VAQUA_LAF_CLASS = "org.violetlib.aqua.AquaLookAndFeel";
+
 	private LnfUtil() {
+	}
+
+	/**
+	 * Is a Mac l&amp;f (Aqua) currently being used?
+	 *
+	 * @return True if it is
+	 */
+	public static boolean usingMacLnf() {
+		String lnfClass = UIManager.getLookAndFeel().getClass().getName();
+
+		return OperatingSystem.isMacOs()
+				&& (UIManager.getSystemLookAndFeelClassName().equals(lnfClass) || lnfClass.equals(VAQUA_LAF_CLASS));
 	}
 
 	/**

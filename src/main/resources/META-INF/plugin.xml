@@ -12,7 +12,7 @@
                 serviceImplementation="co.anbora.labs.kse.ide.settings.KSEditorSettings"/>
 
         <fileType name="KS" implementationClass="co.anbora.labs.kse.lang.JKSFileType"
-                  fieldName="INSTANCE" language="KS" extensions="ks;jks"/>
+                  fieldName="INSTANCE" language="KS" extensions="ks;jks;p12;pfx;pem"/>
 
         <editorOptionsProvider instance="co.anbora.labs.kse.ide.settings.KSEditorSettingsProvider"/>
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.KSEditorProvider"/>
