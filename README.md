@@ -37,11 +37,11 @@ git clone https://github.com/anboralabs/ks-explorer
 
 - Install from plugin store
 
-  ![Market Place](/images/todo_marketplace.png)
+  ![Market Place](/images/marketplace.png)
 
 - Plugin url
 
-  [Plugin Download](https://plugins.jetbrains.com/plugin/17983-todo-exporter)
+  [Plugin Download](https://plugins.jetbrains.com/plugin/18286-ks-explorer)
 
 ## Credits
 
