@@ -4,10 +4,10 @@ import com.intellij.openapi.project.Project
 import org.kse.gui.actions.behavior.ActionBehavior
 import org.kse.gui.statusbar.StatusBar
 
-class OpenAction(
+class PressEnterAction(
     private val project: Project,
     private val statusBar: StatusBar,
     private val openAction: ActionBehavior
-): KeyStoreExplorerAction(project, statusBar) {
+): KeyStoreExplorerKeyAction(project, statusBar) {
     override fun doAction() = openAction.doAction()
 }

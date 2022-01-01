@@ -13,6 +13,9 @@ import org.kse.gui.HistoryKeyStore;
 import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KeyStoreTableModel;
 import org.kse.gui.actions.OpenAction;
+import org.kse.gui.actions.PressEnterAction;
+import org.kse.gui.actions.behavior.ActionBehavior;
+import org.kse.gui.actions.behavior.OpenKeyStoreImpl;
 import org.kse.gui.statusbar.StatusBar;
 import org.kse.gui.statusbar.StatusBarImpl;
 import org.kse.utilities.history.KeyStoreHistory;
@@ -47,9 +50,11 @@ public class KeyStoreTableSwing extends TableEditor
         super(projectArg, fileArg);
         tableCustomRenderer = new ColumnRender(keyStoreTableColumns, res);
         statusBar = new StatusBarImpl(projectArg, jlStatusBar, this);
+        ActionBehavior actionBehavior = new OpenKeyStoreImpl(projectArg, statusBar, this, this, passwordField);
 
         createUIComponents();
-        OKButton.addActionListener(new OpenAction(projectArg, statusBar, this, this, passwordField));
+        OKButton.addActionListener(new OpenAction(projectArg, statusBar, actionBehavior));
+        passwordField.addKeyListener(new PressEnterAction(projectArg, statusBar, actionBehavior));
         statusBar.setDefaultStatusBarText();
     }
 
