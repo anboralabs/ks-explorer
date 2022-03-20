@@ -68,7 +68,7 @@ public class KeyIdentifierGenerator {
 		try {
 			DERBitString publicKeyBitString = encodePublicKeyAsBitString(publicKey);
 			return DigestUtil.getMessageDigest(publicKeyBitString.getBytes(), DigestType.SHA1);
-		} catch (IOException ex) {
+		} catch (IOException | NoSuchMethodError ex) {
 			throw new CryptoException(res.getString("NoGenerateKeyIdentifier.exception.message"), ex);
 		}
 	}
@@ -96,12 +96,12 @@ public class KeyIdentifierGenerator {
 			subHash[0] |= 0x40;
 
 			return subHash;
-		} catch (IOException ex) {
+		} catch (IOException | NoSuchMethodError ex) {
 			throw new CryptoException(res.getString("NoGenerateKeyIdentifier.exception.message"), ex);
 		}
 	}
 
-	private DERBitString encodePublicKeyAsBitString(PublicKey publicKey) throws IOException {
+	private DERBitString encodePublicKeyAsBitString(PublicKey publicKey) throws IOException, NoSuchMethodError {
 		byte[] encodedPublicKey;
 
 		if (publicKey instanceof RSAPublicKey) {
