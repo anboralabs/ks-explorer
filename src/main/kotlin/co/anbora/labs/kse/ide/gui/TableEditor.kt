@@ -11,7 +11,6 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.annotations.NotNull
 import java.beans.PropertyChangeListener
 
 abstract class TableEditor(

@@ -8,6 +8,6 @@ object KSIcons {
     val FILE = getIcon("kse.svg")
 
     private fun getIcon(path: String): Icon {
-        return IconLoader.findIcon("/icons/$path") as Icon
+        return IconLoader.findIcon("/icons/$path", KSIcons.javaClass.classLoader) as Icon
     }
 }

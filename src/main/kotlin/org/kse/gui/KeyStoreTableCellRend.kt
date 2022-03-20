@@ -110,7 +110,7 @@ class KeyStoreTableCellRend: DefaultTableCellRenderer() {
             cell.toolTipText = res.getString("KeyStoreTableCellRend.NoCertExpiry.tooltip")
             cell.horizontalAlignment = CENTER
         } else {
-            var icon: ImageIcon? = null
+            var icon: ImageIcon?
             if (value == 2) {
                 // Expired
                 icon = ImageIcon(

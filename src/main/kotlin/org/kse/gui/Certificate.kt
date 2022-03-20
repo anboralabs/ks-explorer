@@ -32,8 +32,7 @@ object Certificate {
 
     @Throws(KeyStoreException::class, CryptoException::class)
     private fun getCertificate(alias: String, keyStore: KeyStore): X509Certificate? {
-        var x509Cert: X509Certificate? = null
-        x509Cert = if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+        var x509Cert: X509Certificate? = if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
             X509CertUtil.convertCertificate(keyStore.getCertificate(alias))
         } else {
             val chain = keyStore.getCertificateChain(alias) ?: return null
@@ -175,8 +174,7 @@ object Certificate {
             } else {
                 // Key entry - get key info if entry is unlocked
                 if (currentState.getEntryPassword(alias) != null) {
-                    var keyPassword: CharArray? = null
-                    keyPassword = currentState.getEntryPassword(alias).toCharArray()
+                    var keyPassword: CharArray? = currentState.getEntryPassword(alias).toCharArray()
                     val key = keyStore.getKey(alias, keyPassword)
                     when (key) {
                         is SecretKey -> {
