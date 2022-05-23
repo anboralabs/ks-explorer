@@ -65,7 +65,7 @@ class KeyStoreTableHeadRend(
 
         val columnOption = keyStoreTableColumns.getColumns()[column]
         columnOption?.let {
-            header.toolTipText = res.getString(it.tooltip)
+            header.toolTipText = it.tooltip
         }
     }
 }
