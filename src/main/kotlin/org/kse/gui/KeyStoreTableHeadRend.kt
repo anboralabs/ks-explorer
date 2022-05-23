@@ -63,49 +63,9 @@ class KeyStoreTableHeadRend(
         header.icon = null
         header.border = EmptyBorder(0,5,0,0)
 
-        when (column) {
-            keyStoreTableColumns.colEntryName() -> {
-                header.toolTipText = res.getString("KeyStoreTableHeadRend.NameColumn.tooltip")
-            }
-            keyStoreTableColumns.colAlgorithm() -> {
-                header.toolTipText = res.getString("KeyStoreTableHeadRend.AlgorithmColumn.tooltip")
-            }
-            keyStoreTableColumns.colKeySize() -> {
-                header.toolTipText = res.getString("KeyStoreTableHeadRend.KeySizeColumn.tooltip")
-            }
-            keyStoreTableColumns.colCertificateExpiry() -> {
-                header.toolTipText = res.getString("KeyStoreTableHeadRend.CertExpiryColumn.tooltip")
-            }
-            keyStoreTableColumns.colLastModified() -> {
-                header.toolTipText = res.getString("KeyStoreTableHeadRend.LastModifiedColumn.tooltip")
-            }
-            keyStoreTableColumns.colAKI() -> {
-                header.toolTipText = res.getString("KeyStoreTableHeadRend.AKIColumn.tooltip")
-            }
-            keyStoreTableColumns.colSKI() -> {
-                header.toolTipText = res.getString("KeyStoreTableHeadRend.SKIColumn.tooltip")
-            }
-            keyStoreTableColumns.colIssuerDN() -> {
-                header.toolTipText = res.getString("KeyStoreTableHeadRend.IssuerDNColumn.tooltip")
-            }
-            keyStoreTableColumns.colSubjectDN() -> {
-                header.toolTipText = res.getString("KeyStoreTableHeadRend.SubjectDNColumn.tooltip")
-            }
-            keyStoreTableColumns.colIssuerCN() -> {
-                header.toolTipText = res.getString("KeyStoreTableHeadRend.IssuerCNColumn.tooltip")
-            }
-            keyStoreTableColumns.colSubjectCN() -> {
-                header.toolTipText = res.getString("KeyStoreTableHeadRend.SubjectCNColumn.tooltip")
-            }
-            keyStoreTableColumns.colIssuerO() -> {
-                header.toolTipText = res.getString("KeyStoreTableHeadRend.IssuerOColumn.tooltip")
-            }
-            keyStoreTableColumns.colSubjectO() -> {
-                header.toolTipText = res.getString("KeyStoreTableHeadRend.SubjectOColumn.tooltip")
-            }
-            keyStoreTableColumns.colCurve() -> {
-                header.toolTipText = res.getString("KeyStoreTableHeadRend.CurveColumn.tooltip")
-            }
+        val columnOption = keyStoreTableColumns.getColumns()[column]
+        columnOption?.let {
+            header.toolTipText = it.tooltip
         }
     }
 }

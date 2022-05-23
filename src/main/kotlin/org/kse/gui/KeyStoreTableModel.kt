@@ -3,6 +3,7 @@ package org.kse.gui
 import org.kse.crypto.CryptoException
 import org.kse.crypto.keystore.KeyStoreType
 import org.kse.crypto.keystore.KeyStoreUtil
+import org.kse.gui.column.InvalidColumn
 import org.kse.utilities.history.KeyStoreHistory
 import java.security.GeneralSecurityException
 import java.util.*
@@ -17,7 +18,7 @@ class KeyStoreTableModel(
     private val columns = keyStoreTableColumns.getColumns()
 
     private lateinit var history: KeyStoreHistory
-    private val data: MutableMap<Pair<Int, Int>, Any?> = HashMap()
+    private val data: MutableMap<Pair<Int, Int>, Any?> = mutableMapOf()
 
     @Throws(GeneralSecurityException::class, CryptoException::class)
     fun load(history: KeyStoreHistory) {
@@ -43,7 +44,7 @@ class KeyStoreTableModel(
 
         sortedAliases.entries.withIndex().forEach {
             val alias: String = it.value.key
-            columns.forEachIndexed { column, tableColumn ->
+            columns.forEach { (column, tableColumn) ->
                 tableColumn.accept(
                     it.index,
                     column,
@@ -57,9 +58,9 @@ class KeyStoreTableModel(
         fireTableDataChanged()
     }
 
-    override fun getColumnName(columnIndex: Int): String = columns[columnIndex].title
+    override fun getColumnName(columnIndex: Int): String = columns.getOrDefault(columnIndex, InvalidColumn()).title
 
-    override fun getColumnClass(columnIndex: Int): Class<*> = columns[columnIndex].type
+    override fun getColumnClass(columnIndex: Int): Class<*> = columns.getOrDefault(columnIndex, InvalidColumn()).type
 
     override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean = false
 
