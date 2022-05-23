@@ -20,8 +20,7 @@ class KeyStoreTableColumns(
         }
     }
 
-    fun getColumns(): List<TableColumn> = editor.activeColumns()
-        .map { mapOptionToColumn(it) }
+    fun getColumns(): Map<Int, TableColumn> = editor.activeColumns().associate { it.index to mapOptionToColumn(it) }
 
     fun getNofColumns(): Int = editor.nofColumns()
 
