@@ -1,4 +1,4 @@
-package co.anbora.labs.kse.lang.core
+package co.anbora.labs.kse.fileTypes.core
 
 object StorageHelper {
 

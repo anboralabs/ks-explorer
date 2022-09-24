@@ -1,4 +1,4 @@
-package co.anbora.labs.kse.lang
+package co.anbora.labs.kse.fileTypes
 
 import com.intellij.lang.Language
 

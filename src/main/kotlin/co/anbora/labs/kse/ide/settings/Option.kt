@@ -1,6 +1,6 @@
 package co.anbora.labs.kse.ide.settings
 
-import co.anbora.labs.kse.lang.settings.Settings.INIT_COLUMN
+import co.anbora.labs.kse.fileTypes.settings.Settings.INIT_COLUMN
 import com.intellij.util.xmlb.annotations.OptionTag
 
 data class Option(

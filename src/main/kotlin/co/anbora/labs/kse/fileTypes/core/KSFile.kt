@@ -1,6 +1,6 @@
-package co.anbora.labs.kse.lang.core
+package co.anbora.labs.kse.fileTypes.core
 
-import co.anbora.labs.kse.lang.KSLanguage
+import co.anbora.labs.kse.fileTypes.KSLanguage
 import com.intellij.diff.editor.DiffVirtualFile
 import com.intellij.lang.LanguageUtil
 import com.intellij.openapi.project.Project

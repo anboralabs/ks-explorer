@@ -1,7 +1,7 @@
-package co.anbora.labs.kse.lang
+package co.anbora.labs.kse.fileTypes
 
 import co.anbora.labs.kse.ide.icons.KSIcons
-import co.anbora.labs.kse.lang.KSLanguage.LANGUAGE_NAME
+import co.anbora.labs.kse.fileTypes.KSLanguage.LANGUAGE_NAME
 import com.intellij.openapi.fileTypes.LanguageFileType
 import javax.swing.Icon
 

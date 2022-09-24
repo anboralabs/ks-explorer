@@ -1,6 +1,6 @@
 package co.anbora.labs.kse.ide.settings
 
-import co.anbora.labs.kse.lang.core.StorageHelper.KS_STATE_STORAGE_FILE
+import co.anbora.labs.kse.fileTypes.core.StorageHelper.KS_STATE_STORAGE_FILE
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State

@@ -1,8 +1,8 @@
 package co.anbora.labs.kse.ide.editor
 
 import co.anbora.labs.kse.ide.gui.swing.KeyStoreTableSwing
-import co.anbora.labs.kse.lang.core.KSFile.acceptKSFile
-import co.anbora.labs.kse.lang.KSLanguage.EDITOR_TYPE_ID
+import co.anbora.labs.kse.fileTypes.core.KSFile.acceptKSFile
+import co.anbora.labs.kse.fileTypes.KSLanguage.EDITOR_TYPE_ID
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorPolicy

@@ -11,7 +11,7 @@
         <applicationService
                 serviceImplementation="co.anbora.labs.kse.ide.settings.KSEditorSettings"/>
 
-        <fileType name="KS" implementationClass="co.anbora.labs.kse.lang.KeystoreFileType"
+        <fileType name="KS" implementationClass="co.anbora.labs.kse.fileTypes.KeystoreFileType"
                   fieldName="INSTANCE" language="KS" extensions="jks;jceks;bks;p12;uber;bcfks;pfx"/>
 
         <editorOptionsProvider instance="co.anbora.labs.kse.ide.settings.KSEditorSettingsProvider"/>

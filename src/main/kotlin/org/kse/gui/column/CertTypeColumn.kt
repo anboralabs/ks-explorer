@@ -1,9 +1,7 @@
 package org.kse.gui.column
 
-import co.anbora.labs.kse.lang.settings.Settings
-import org.kse.crypto.keystore.KeyStoreUtil
+import co.anbora.labs.kse.fileTypes.settings.Settings
 import org.kse.gui.Certificate.getEntryType
-import org.kse.gui.ColumnValues
 import org.kse.utilities.history.KeyStoreHistory
 
 class CertTypeColumn(

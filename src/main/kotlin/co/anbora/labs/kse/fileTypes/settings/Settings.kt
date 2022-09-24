@@ -1,4 +1,4 @@
-package co.anbora.labs.kse.lang.settings
+package co.anbora.labs.kse.fileTypes.settings
 
 object Settings {
 

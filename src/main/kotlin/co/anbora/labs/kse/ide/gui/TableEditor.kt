@@ -1,7 +1,7 @@
 package co.anbora.labs.kse.ide.gui
 
 import co.anbora.labs.kse.ide.editor.KSViewerState
-import co.anbora.labs.kse.lang.KSLanguage.EDITOR_NAME
+import co.anbora.labs.kse.fileTypes.KSLanguage.EDITOR_NAME
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorLocation
 import com.intellij.openapi.fileEditor.FileEditorState

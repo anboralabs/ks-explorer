@@ -1,10 +1,10 @@
 package co.anbora.labs.kse.ide.settings
 
-import co.anbora.labs.kse.lang.settings.Settings.ENTRY_TYPE
-import co.anbora.labs.kse.lang.settings.Settings.EXPIRY_STATUS
-import co.anbora.labs.kse.lang.settings.Settings.ICON_SIZE
-import co.anbora.labs.kse.lang.settings.Settings.INIT_COLUMN
-import co.anbora.labs.kse.lang.settings.Settings.LOCK_STATUS
+import co.anbora.labs.kse.fileTypes.settings.Settings.ENTRY_TYPE
+import co.anbora.labs.kse.fileTypes.settings.Settings.EXPIRY_STATUS
+import co.anbora.labs.kse.fileTypes.settings.Settings.ICON_SIZE
+import co.anbora.labs.kse.fileTypes.settings.Settings.INIT_COLUMN
+import co.anbora.labs.kse.fileTypes.settings.Settings.LOCK_STATUS
 
 data class SettingOptionSet(
     var type: Option = Option(

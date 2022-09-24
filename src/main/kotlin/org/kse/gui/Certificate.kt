@@ -1,6 +1,6 @@
 package org.kse.gui
 
-import co.anbora.labs.kse.lang.settings.Settings.EXPIRY_WAR_N_DAYS
+import co.anbora.labs.kse.fileTypes.settings.Settings.EXPIRY_WAR_N_DAYS
 import org.bouncycastle.asn1.DEROctetString
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier
 import org.bouncycastle.asn1.x509.Extension
