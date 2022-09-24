@@ -5,7 +5,7 @@ import co.anbora.labs.kse.lang.KSLanguage.LANGUAGE_NAME
 import com.intellij.openapi.fileTypes.LanguageFileType
 import javax.swing.Icon
 
-object JKSFileType: LanguageFileType(KSLanguage) {
+object KeystoreFileType: LanguageFileType(KSLanguage) {
 
     private const val EXTENSION = "jks"
 
