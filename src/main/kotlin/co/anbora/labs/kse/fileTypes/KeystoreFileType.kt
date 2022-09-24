@@ -1,19 +1,24 @@
 package co.anbora.labs.kse.fileTypes
 
 import co.anbora.labs.kse.ide.icons.KSIcons
-import co.anbora.labs.kse.fileTypes.KSLanguage.LANGUAGE_NAME
-import com.intellij.openapi.fileTypes.LanguageFileType
+import com.intellij.openapi.fileTypes.UserBinaryFileType
 import javax.swing.Icon
 
-object KeystoreFileType: LanguageFileType(KSLanguage) {
+object KeystoreFileType: UserBinaryFileType() {
 
-    private const val EXTENSION = "jks"
+    const val FILETYPE_NAME = "KS"
 
-    override fun getName(): String = LANGUAGE_NAME
+    const val EDITOR_NAME = "keystore"
+
+    const val EDITOR_TYPE_ID = "co.anbora.labs.kse.editor"
+
+    const val EDITOR_SETTINGS_ID = "co.anbora.labs.kse.editor.settings"
+
+    override fun getName(): String = FILETYPE_NAME
 
     override fun getDescription(): String = "Java Keystore explorer"
 
-    override fun getDefaultExtension(): String = EXTENSION
+    override fun getDisplayName(): String = "KS explorer"
 
     override fun getIcon(): Icon = KSIcons.FILE
 

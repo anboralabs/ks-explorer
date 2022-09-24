@@ -9,7 +9,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static co.anbora.labs.kse.fileTypes.KSLanguage.EDITOR_SETTINGS_ID;
+import static co.anbora.labs.kse.fileTypes.KeystoreFileType.EDITOR_SETTINGS_ID;
+
 
 public class KSEditorSettingsProvider implements EditorOptionsProvider {
 
