@@ -6,7 +6,7 @@ import javax.swing.Icon
 
 object KeystoreFileType: UserBinaryFileType() {
 
-    const val FILETYPE_NAME = "KS"
+    private const val FILETYPE_NAME = "KS"
 
     const val EDITOR_NAME = "keystore"
 

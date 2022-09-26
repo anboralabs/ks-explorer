@@ -13,9 +13,11 @@
 
         <fileType name="KS" implementationClass="co.anbora.labs.kse.fileTypes.KeystoreFileType"
                   fieldName="INSTANCE" extensions="jks;jceks;bks;p12;uber;bcfks;pfx"/>
-
         <editorOptionsProvider instance="co.anbora.labs.kse.ide.settings.KSEditorSettingsProvider"/>
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.KSEditorProvider"/>
+
+        <fileType name="Cert" implementationClass="co.anbora.labs.kse.fileTypes.CertFileType"
+                  fieldName="INSTANCE" extensions="pub;key;pem;cer;crt"/>
     </extensions>
 
     <actions>
