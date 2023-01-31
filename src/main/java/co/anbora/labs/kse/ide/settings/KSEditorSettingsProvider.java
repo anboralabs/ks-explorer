@@ -1,6 +1,7 @@
 package co.anbora.labs.kse.ide.settings;
 
 import com.intellij.application.options.editor.EditorOptionsProvider;
+import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.util.NlsContexts;
 import org.jetbrains.annotations.NonNls;
@@ -50,27 +51,22 @@ public class KSEditorSettingsProvider implements EditorOptionsProvider {
     }
 
     @Override
-    public boolean isModified(@NotNull JToggleButton toggleButton, boolean value) {
-        return toggleButton.isSelected() != value;
-    }
-
-    @Override
     public boolean isModified() {
         KSEditorSettings editorSettings = KSEditorSettings.getInstance();
-        return  isModified(entryNameCheckBox, editorSettings.getEntryName())
-                || isModified(keySizeCheckBox, editorSettings.getKeySize())
-                || isModified(certificateExpiryCheckBox, editorSettings.getCertificateExpiry())
-                || isModified(subjectKeyIdentifierCheckBox, editorSettings.getSubjectKeyIdentifier())
-                || isModified(issuerDistinguishedNameDNCheckBox, editorSettings.getIssuerDistinguishedName())
-                || isModified(issuerCommonNameCNCheckBox, editorSettings.getIssuerCommonName())
-                || isModified(issuerOrganizationNameOCheckBox, editorSettings.getIssuerOrganizationName())
-                || isModified(algorithmCheckBox, editorSettings.getAlgorithm())
-                || isModified(curveCheckBox, editorSettings.getCurve())
-                || isModified(lastModifiedCheckBox, editorSettings.getLastModified())
-                || isModified(authorityKeyIdentifierCheckBox, editorSettings.getAuthorityKeyIdentifier())
-                || isModified(subjectDistinguishedNameDNCheckBox, editorSettings.getSubjectDistinguishedName())
-                || isModified(subjectCommonNameCNCheckBox, editorSettings.getSubjectCommonName())
-                || isModified(subjectOrganizationNameOCheckBox, editorSettings.getSubjectOrganizationName());
+        return  Configurable.isCheckboxModified(entryNameCheckBox, editorSettings.getEntryName())
+                || Configurable.isCheckboxModified(keySizeCheckBox, editorSettings.getKeySize())
+                || Configurable.isCheckboxModified(certificateExpiryCheckBox, editorSettings.getCertificateExpiry())
+                || Configurable.isCheckboxModified(subjectKeyIdentifierCheckBox, editorSettings.getSubjectKeyIdentifier())
+                || Configurable.isCheckboxModified(issuerDistinguishedNameDNCheckBox, editorSettings.getIssuerDistinguishedName())
+                || Configurable.isCheckboxModified(issuerCommonNameCNCheckBox, editorSettings.getIssuerCommonName())
+                || Configurable.isCheckboxModified(issuerOrganizationNameOCheckBox, editorSettings.getIssuerOrganizationName())
+                || Configurable.isCheckboxModified(algorithmCheckBox, editorSettings.getAlgorithm())
+                || Configurable.isCheckboxModified(curveCheckBox, editorSettings.getCurve())
+                || Configurable.isCheckboxModified(lastModifiedCheckBox, editorSettings.getLastModified())
+                || Configurable.isCheckboxModified(authorityKeyIdentifierCheckBox, editorSettings.getAuthorityKeyIdentifier())
+                || Configurable.isCheckboxModified(subjectDistinguishedNameDNCheckBox, editorSettings.getSubjectDistinguishedName())
+                || Configurable.isCheckboxModified(subjectCommonNameCNCheckBox, editorSettings.getSubjectCommonName())
+                || Configurable.isCheckboxModified(subjectOrganizationNameOCheckBox, editorSettings.getSubjectOrganizationName());
     }
 
     @Override
