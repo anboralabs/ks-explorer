@@ -3,7 +3,6 @@ package co.anbora.labs.kse.ide.settings;
 import static co.anbora.labs.kse.lang.KSLanguage.EDITOR_SETTINGS_ID;
 
 import com.intellij.application.options.editor.EditorOptionsProvider;
-import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.util.NlsContexts;
 import javax.swing.*;
@@ -49,42 +48,46 @@ public class KSEditorSettingsProvider implements EditorOptionsProvider {
     return myMainPanel;
   }
 
+  private static boolean isCheckboxModified(@NotNull JCheckBox checkbox, boolean initialValue) {
+    return checkbox.isSelected() != initialValue;
+  }
+
   @Override
   public boolean isModified() {
     KSEditorSettings editorSettings = KSEditorSettings.getInstance();
-    return Configurable.isCheckboxModified(entryNameCheckBox,
+    return isCheckboxModified(entryNameCheckBox,
                                            editorSettings.getEntryName()) ||
-        Configurable.isCheckboxModified(keySizeCheckBox,
+        isCheckboxModified(keySizeCheckBox,
                                         editorSettings.getKeySize()) ||
-        Configurable.isCheckboxModified(
+        isCheckboxModified(
             certificateExpiryCheckBox, editorSettings.getCertificateExpiry()) ||
-        Configurable.isCheckboxModified(
+        isCheckboxModified(
             subjectKeyIdentifierCheckBox,
             editorSettings.getSubjectKeyIdentifier()) ||
-        Configurable.isCheckboxModified(
+        isCheckboxModified(
             issuerDistinguishedNameDNCheckBox,
             editorSettings.getIssuerDistinguishedName()) ||
-        Configurable.isCheckboxModified(issuerCommonNameCNCheckBox,
+        isCheckboxModified(issuerCommonNameCNCheckBox,
                                         editorSettings.getIssuerCommonName()) ||
-        Configurable.isCheckboxModified(
+        isCheckboxModified(
             issuerOrganizationNameOCheckBox,
             editorSettings.getIssuerOrganizationName()) ||
-        Configurable.isCheckboxModified(algorithmCheckBox,
+        isCheckboxModified(algorithmCheckBox,
                                         editorSettings.getAlgorithm()) ||
-        Configurable.isCheckboxModified(curveCheckBox,
+        isCheckboxModified(curveCheckBox,
                                         editorSettings.getCurve()) ||
-        Configurable.isCheckboxModified(lastModifiedCheckBox,
+        isCheckboxModified(lastModifiedCheckBox,
                                         editorSettings.getLastModified()) ||
-        Configurable.isCheckboxModified(
+        isCheckboxModified(
             authorityKeyIdentifierCheckBox,
             editorSettings.getAuthorityKeyIdentifier()) ||
-        Configurable.isCheckboxModified(
+        isCheckboxModified(
             subjectDistinguishedNameDNCheckBox,
             editorSettings.getSubjectDistinguishedName()) ||
-        Configurable.isCheckboxModified(
+        isCheckboxModified(
             subjectCommonNameCNCheckBox,
             editorSettings.getSubjectCommonName()) ||
-        Configurable.isCheckboxModified(
+        isCheckboxModified(
             subjectOrganizationNameOCheckBox,
             editorSettings.getSubjectOrganizationName());
   }
