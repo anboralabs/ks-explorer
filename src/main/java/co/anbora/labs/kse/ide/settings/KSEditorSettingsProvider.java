@@ -48,7 +48,8 @@ public class KSEditorSettingsProvider implements EditorOptionsProvider {
     return myMainPanel;
   }
 
-  private static boolean isCheckboxModified(@NotNull JCheckBox checkbox, boolean initialValue) {
+  private static boolean isCheckboxModified(@NotNull JCheckBox checkbox,
+                                            boolean initialValue) {
     return checkbox.isSelected() != initialValue;
   }
 
@@ -56,40 +57,30 @@ public class KSEditorSettingsProvider implements EditorOptionsProvider {
   public boolean isModified() {
     KSEditorSettings editorSettings = KSEditorSettings.getInstance();
     return isCheckboxModified(entryNameCheckBox,
-                                           editorSettings.getEntryName()) ||
-        isCheckboxModified(keySizeCheckBox,
-                                        editorSettings.getKeySize()) ||
-        isCheckboxModified(
-            certificateExpiryCheckBox, editorSettings.getCertificateExpiry()) ||
-        isCheckboxModified(
-            subjectKeyIdentifierCheckBox,
-            editorSettings.getSubjectKeyIdentifier()) ||
-        isCheckboxModified(
-            issuerDistinguishedNameDNCheckBox,
-            editorSettings.getIssuerDistinguishedName()) ||
+                              editorSettings.getEntryName()) ||
+        isCheckboxModified(keySizeCheckBox, editorSettings.getKeySize()) ||
+        isCheckboxModified(certificateExpiryCheckBox,
+                           editorSettings.getCertificateExpiry()) ||
+        isCheckboxModified(subjectKeyIdentifierCheckBox,
+                           editorSettings.getSubjectKeyIdentifier()) ||
+        isCheckboxModified(issuerDistinguishedNameDNCheckBox,
+                           editorSettings.getIssuerDistinguishedName()) ||
         isCheckboxModified(issuerCommonNameCNCheckBox,
-                                        editorSettings.getIssuerCommonName()) ||
-        isCheckboxModified(
-            issuerOrganizationNameOCheckBox,
-            editorSettings.getIssuerOrganizationName()) ||
-        isCheckboxModified(algorithmCheckBox,
-                                        editorSettings.getAlgorithm()) ||
-        isCheckboxModified(curveCheckBox,
-                                        editorSettings.getCurve()) ||
+                           editorSettings.getIssuerCommonName()) ||
+        isCheckboxModified(issuerOrganizationNameOCheckBox,
+                           editorSettings.getIssuerOrganizationName()) ||
+        isCheckboxModified(algorithmCheckBox, editorSettings.getAlgorithm()) ||
+        isCheckboxModified(curveCheckBox, editorSettings.getCurve()) ||
         isCheckboxModified(lastModifiedCheckBox,
-                                        editorSettings.getLastModified()) ||
-        isCheckboxModified(
-            authorityKeyIdentifierCheckBox,
-            editorSettings.getAuthorityKeyIdentifier()) ||
-        isCheckboxModified(
-            subjectDistinguishedNameDNCheckBox,
-            editorSettings.getSubjectDistinguishedName()) ||
-        isCheckboxModified(
-            subjectCommonNameCNCheckBox,
-            editorSettings.getSubjectCommonName()) ||
-        isCheckboxModified(
-            subjectOrganizationNameOCheckBox,
-            editorSettings.getSubjectOrganizationName());
+                           editorSettings.getLastModified()) ||
+        isCheckboxModified(authorityKeyIdentifierCheckBox,
+                           editorSettings.getAuthorityKeyIdentifier()) ||
+        isCheckboxModified(subjectDistinguishedNameDNCheckBox,
+                           editorSettings.getSubjectDistinguishedName()) ||
+        isCheckboxModified(subjectCommonNameCNCheckBox,
+                           editorSettings.getSubjectCommonName()) ||
+        isCheckboxModified(subjectOrganizationNameOCheckBox,
+                           editorSettings.getSubjectOrganizationName());
   }
 
   @Override
