@@ -1,7 +1,7 @@
 package co.anbora.labs.kse.ide.editor
 
 import co.anbora.labs.kse.fileTypes.KeystoreFileType.EDITOR_TYPE_ID
-import co.anbora.labs.kse.ide.gui.swing.KeyStoreTableSwing
+import co.anbora.labs.kse.ide.gui.swing.KeyStoreFrame
 import co.anbora.labs.kse.fileTypes.core.KeystoreFile.acceptKSFile
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
@@ -24,7 +24,7 @@ class KSEditorProvider: AsyncFileEditorProvider, DumbAware {
     override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
         return object : AsyncFileEditorProvider.Builder() {
             override fun build(): FileEditor =
-                KeyStoreTableSwing(project, file)
+                KeyStoreFrame(project, file)
         }
     }
 }
