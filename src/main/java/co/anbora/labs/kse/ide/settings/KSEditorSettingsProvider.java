@@ -1,7 +1,5 @@
 package co.anbora.labs.kse.ide.settings;
 
-import static co.anbora.labs.kse.lang.KSLanguage.EDITOR_SETTINGS_ID;
-
 import com.intellij.application.options.editor.EditorOptionsProvider;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.util.NlsContexts;
@@ -9,6 +7,8 @@ import javax.swing.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static co.anbora.labs.kse.fileTypes.KeystoreFileType.EDITOR_SETTINGS_ID;
 
 public class KSEditorSettingsProvider implements EditorOptionsProvider {
 
