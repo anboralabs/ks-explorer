@@ -19,7 +19,7 @@ configurations {
 }
 
 dependencies {
-    implementation("org.bouncycastle:bcpkix-jdk15on:1.72")
+    implementation("org.bouncycastle:bcpkix-jdk15on:1.70")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
 }
 
