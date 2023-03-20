@@ -4,20 +4,29 @@ import co.anbora.labs.kse.ide.gui.TableEditor;
 import co.anbora.labs.kse.ide.gui.render.ColumnRender;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.table.TableRowSorter;
+
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
+import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
-import org.kse.gui.AddKeyStore;
-import org.kse.gui.HistoryKeyStore;
-import org.kse.gui.KeyStoreTableColumns;
-import org.kse.gui.KeyStoreTableModel;
+import org.kse.gui.*;
+import org.kse.gui.actions.NewAction;
 import org.kse.gui.actions.OpenAction;
 import org.kse.gui.actions.PressEnterAction;
 import org.kse.gui.actions.behavior.ActionBehavior;
@@ -26,7 +35,7 @@ import org.kse.gui.statusbar.StatusBar;
 import org.kse.gui.statusbar.StatusBarImpl;
 import org.kse.utilities.history.KeyStoreHistory;
 
-public class KeyStoreTableSwing
+public class KeyStoreFrame
     extends TableEditor implements AddKeyStore, HistoryKeyStore {
 
   private final ResourceBundle res =
@@ -40,27 +49,134 @@ public class KeyStoreTableSwing
   private JTable tblEditor;
   private JLabel jlStatusBar;
   private JPanel unlockPanel;
+  private JToolBar jtbToolBar;
 
   private KeyStoreHistory activeHistory;
   private final ColumnRender tableCustomRenderer;
   private final KeyStoreTableColumns keyStoreTableColumns =
       new KeyStoreTableColumns();
   private final StatusBar statusBar;
+  private OpenAction openAction;
 
-  public KeyStoreTableSwing(@NotNull Project projectArg,
-                            @NotNull VirtualFile fileArg) {
+  //Toolbar controls
+  private JButton jbNew;
+  private JButton jbOpen;
+  private JButton jbSave;
+  private JButton jbUndo;
+  private JButton jbRedo;
+  private JButton jbCut;
+  private JButton jbCopy;
+  private JButton jbPaste;
+  private JButton jbGenerateKeyPair;
+  private JButton jbGenerateSecretKey;
+  private JButton jbImportTrustedCertificate;
+  private JButton jbImportKeyPair;
+  private JButton jbSetPassword;
+  private JButton jbProperties;
+  private JButton jbExamineFile;
+  private JButton jbExamineClipboard;
+  private JButton jbExamineSsl;
+  private JButton jbHelp;
+
+  //Actions
+  private NewAction newAction;
+
+  public KeyStoreFrame(@NotNull Project projectArg,
+                       @NotNull VirtualFile fileArg) {
     super(projectArg, fileArg);
     tableCustomRenderer = new ColumnRender(keyStoreTableColumns, res);
     statusBar = new StatusBarImpl(projectArg, jlStatusBar, this);
-    ActionBehavior actionBehavior =
-        new OpenKeyStoreImpl(projectArg, statusBar, this, this, passwordField);
 
     createUIComponents();
-    OKButton.addActionListener(
-        new OpenAction(projectArg, statusBar, actionBehavior));
+    initUnlockPanel(projectArg);
+    initActions(projectArg, statusBar);
+    initToolbar();
+
+    statusBar.setDefaultStatusBarText();
+
+    addFileListener(projectArg.getMessageBus());
+  }
+
+  private void initActions(Project projectArg, StatusBar statusBar) {
+    newAction = new NewAction(projectArg, statusBar);
+  }
+
+  private void initUnlockPanel(@NotNull Project projectArg) {
+    ActionBehavior actionBehavior =
+            new OpenKeyStoreImpl(projectArg, statusBar, this, this, passwordField);
+    openAction = new OpenAction(projectArg, statusBar, actionBehavior);
+    OKButton.addActionListener(openAction);
     passwordField.addKeyListener(
         new PressEnterAction(projectArg, statusBar, actionBehavior));
-    statusBar.setDefaultStatusBarText();
+  }
+
+  private void addFileListener(MessageBus messageBus) {
+    messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES,
+            new BulkFileListener() {
+              @Override
+              public void after(@NotNull List<? extends VFileEvent> events) {
+                events.forEach((Consumer<VFileEvent>) vFileEvent -> {
+                  if (vFileEvent instanceof VFileContentChangeEvent) {
+                    openAction.doAction();
+                  }
+                });
+              }
+            });
+  }
+
+  private void initToolbar() {
+    /*jbNew = new JButton();
+    jbNew.setAction(newAction);
+    jbNew.setText(null);
+    PlatformUtil.setMnemonic(jbNew, 0);
+    jbNew.setFocusable(false);
+    jbNew.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseEntered(MouseEvent evt) {
+        statusBar.setStatusBarText((String) newAction.getValue(Action.LONG_DESCRIPTION));
+      }
+
+      @Override
+      public void mouseExited(MouseEvent evt) {
+        statusBar.setDefaultStatusBarText();
+      }
+    });
+
+    jtbToolBar.setFloatable(false);
+    jtbToolBar.setRollover(true);
+
+    jtbToolBar.add(jbNew);
+    jtbToolBar.add(jbSave);
+
+    jtbToolBar.addSeparator();
+
+    jtbToolBar.add(jbUndo);
+    jtbToolBar.add(jbRedo);
+
+    jtbToolBar.addSeparator();
+
+    jtbToolBar.add(jbCut);
+    jtbToolBar.add(jbCopy);
+    jtbToolBar.add(jbPaste);
+
+    jtbToolBar.addSeparator();
+
+    jtbToolBar.add(jbGenerateKeyPair);
+    jtbToolBar.add(jbGenerateSecretKey);
+    jtbToolBar.add(jbImportTrustedCertificate);
+    jtbToolBar.add(jbImportKeyPair);
+    jtbToolBar.add(jbSetPassword);
+    jtbToolBar.add(jbProperties);
+
+    jtbToolBar.addSeparator();
+
+    jtbToolBar.add(jbExamineFile);
+    jtbToolBar.add(jbExamineClipboard);
+    jtbToolBar.add(jbExamineSsl);
+
+    jtbToolBar.addSeparator();
+
+    jtbToolBar.add(jbHelp);*/
   }
 
   @Override
