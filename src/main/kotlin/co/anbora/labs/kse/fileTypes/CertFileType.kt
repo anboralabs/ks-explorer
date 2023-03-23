@@ -23,6 +23,6 @@ object CertFileType: UserBinaryFileType() {
 
     override fun getDisplayName(): String = "KS cert explorer"
 
-    override fun getIcon(): Icon = KSIcons.FILE
+    override fun getIcon(): Icon = KSIcons.CERTIFICATE
 
 }

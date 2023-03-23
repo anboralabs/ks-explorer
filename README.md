@@ -46,6 +46,7 @@ git clone https://github.com/anboralabs/ks-explorer
 ## Credits
 
 <div>Icons and core functionalities were borrowed from <a href="https://keystore-explorer.org" title="keystore-explorer">Keystore-Explorer</a> </div>
+<a href="https://iconscout.com/icons/certificate" target="_blank">Certificate Icon</a> by <a href="https://iconscout.com/contributors/jemismali" target="_blank">Jemis Mali</a>
 
 ## License
 
