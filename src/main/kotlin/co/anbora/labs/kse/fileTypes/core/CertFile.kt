@@ -7,6 +7,7 @@ import org.kse.crypto.filetype.CryptoFileType
 import org.kse.crypto.filetype.CryptoFileUtil
 import org.kse.crypto.signing.JarParser
 import java.security.cert.X509Certificate
+import java.util.function.Function
 
 
 object CertFile {
@@ -27,11 +28,29 @@ object CertFile {
         return jarParser.signerCerificates
     }
 
-    fun acceptJarCertFile(file: VirtualFile): Boolean {
+    fun acceptJarCertFile(file: VirtualFile, function: Function<VirtualFile, Array<X509Certificate>>): Boolean {
         return isJarFileType(file)
                 && !SingleRootFileViewProvider.isTooLargeForContentLoading(file)
                 && file !is DiffVirtualFile
-                && jarCertificates(file).isNotEmpty()
+                && function.apply(file).isNotEmpty()
+    }
+
+    fun acceptCertFile(file: VirtualFile, function: Function<VirtualFile, Array<X509Certificate>>): Boolean {
+        return isCertFileType(file)
+                && !SingleRootFileViewProvider.isTooLargeForContentLoading(file)
+                && file !is DiffVirtualFile
+                && function.apply(file).isNotEmpty()
+    }
+
+    private val certFileTypes: Set<CryptoFileType> = setOf(
+        CryptoFileType.CERT
+    )
+
+    private fun isCertFileType(file: VirtualFile): Boolean = try {
+        val fileType = CryptoFileUtil.detectFileType(file.toNioPath().toFile())
+        fileType in certFileTypes
+    } catch (ex: Exception) {
+        false
     }
 
 }

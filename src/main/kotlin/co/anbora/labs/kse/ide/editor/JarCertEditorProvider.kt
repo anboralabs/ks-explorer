@@ -12,7 +12,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 
 class JarCertEditorProvider: AsyncFileEditorProvider, DumbAware {
-    override fun accept(project: Project, file: VirtualFile): Boolean = acceptJarCertFile(file)
+    override fun accept(project: Project, file: VirtualFile): Boolean = acceptJarCertFile(file) {
+        jarCertificates(file)
+    }
 
     override fun createEditor(project: Project, file: VirtualFile): FileEditor =
         createEditorAsync(project, file).build()
@@ -25,7 +27,7 @@ class JarCertEditorProvider: AsyncFileEditorProvider, DumbAware {
         return object : AsyncFileEditorProvider.Builder() {
             override fun build(): FileEditor {
                 val certificates = jarCertificates(file)
-                return DViewCertificate(project, certificates, DViewCertificate.IMPORT_EXPORT)
+                return DViewCertificate(project, file, certificates, DViewCertificate.IMPORT_EXPORT)
             }
         }
     }

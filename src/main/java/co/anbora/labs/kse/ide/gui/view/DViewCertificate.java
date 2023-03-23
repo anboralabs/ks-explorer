@@ -2,15 +2,23 @@ package co.anbora.labs.kse.ide.gui.view;
 
 import co.anbora.labs.kse.ide.gui.CertEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.KeyInfo;
+import org.kse.crypto.digest.DigestType;
+import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.CursorUtil;
 import org.kse.gui.crypto.JCertificateFingerprint;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.dialogs.CertificateTreeCellRend;
+import org.kse.gui.error.DError;
+import org.kse.utilities.StringUtils;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -18,7 +26,10 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.ECPublicKey;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
@@ -70,8 +81,8 @@ public class DViewCertificate extends CertEditor {
 
     private final Project project;
 
-    public DViewCertificate(Project project, X509Certificate[] certs, int importExport) throws CryptoException {
-        super();
+    public DViewCertificate(Project project, VirtualFile file, X509Certificate[] certs, int importExport) throws CryptoException {
+        super(project, file);
         this.project = project;
         this.importExport = importExport;
         this.chain = certs;
@@ -252,16 +263,16 @@ public class DViewCertificate extends CertEditor {
         pane.add(jtfSignatureAlgorithm, "wrap");
         pane.add(jlFingerprint, "");
         pane.add(jcfFingerprint, "spanx, growx, wrap");
-        pane.add(jbImport, "hidemode 1, spanx, split");
-        pane.add(jbExport, "hidemode 1");
-        pane.add(jbExtensions, "");
-        pane.add(jbPem, "");
-        pane.add(jbVerify, "");
-        pane.add(jbAsn1, "wrap");
+        //pane.add(jbImport, "hidemode 1, spanx, split");
+        //pane.add(jbExport, "hidemode 1");
+        //pane.add(jbExtensions, "");
+        //pane.add(jbPem, "");
+        //pane.add(jbVerify, "");
+        //pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         //pane.add(jbOK, "spanx, tag ok");
 
-        /*jtrHierarchy.addTreeSelectionListener(evt -> {
+        jtrHierarchy.addTreeSelectionListener(evt -> {
             try {
                 CursorUtil.setCursorBusy(DViewCertificate.this);
                 populateDetails();
@@ -270,7 +281,7 @@ public class DViewCertificate extends CertEditor {
             }
         });
 
-        jbOK.addActionListener(evt -> okPressed());
+        /*jbOK.addActionListener(evt -> okPressed());
 
         jbExport.addActionListener(evt -> {
             try {
@@ -355,6 +366,137 @@ public class DViewCertificate extends CertEditor {
         }
 
         tree.expandPath(parent);
+    }
+
+    private X509Certificate getSelectedCertificate() {
+        TreePath[] selections = jtrHierarchy.getSelectionPaths();
+
+        if (selections == null) {
+            return null;
+        }
+
+        return (X509Certificate) ((DefaultMutableTreeNode) selections[0].getLastPathComponent()).getUserObject();
+    }
+
+    private void populateDetails() {
+        X509Certificate cert = getSelectedCertificate();
+
+        if (cert == null) {
+            jdnSubject.setEnabled(false);
+            jdnIssuer.setEnabled(false);
+            jbViewPublicKeyDetails.setEnabled(false);
+            jcfFingerprint.setEnabled(false);
+            jbExtensions.setEnabled(false);
+            jbPem.setEnabled(false);
+            jbAsn1.setEnabled(false);
+
+            jtfVersion.setText("");
+            jdnSubject.setDistinguishedName(null);
+            jdnIssuer.setDistinguishedName(null);
+            jtfSerialNumberHex.setText("");
+            jtfSerialNumberDec.setText("");
+            jtfValidFrom.setText("");
+            jtfValidUntil.setText("");
+            jtfPublicKey.setText("");
+            jtfSignatureAlgorithm.setText("");
+            jcfFingerprint.setEncodedCertificate(null);
+        } else {
+            jdnSubject.setEnabled(true);
+            jdnIssuer.setEnabled(true);
+            jbViewPublicKeyDetails.setEnabled(true);
+            jbExtensions.setEnabled(true);
+            jbPem.setEnabled(true);
+            jbAsn1.setEnabled(true);
+
+            try {
+                Date currentDate = new Date();
+
+                Date startDate = cert.getNotBefore();
+                Date endDate = cert.getNotAfter();
+
+                boolean notYetValid = currentDate.before(startDate);
+                boolean noLongerValid = currentDate.after(endDate);
+
+                jtfVersion.setText(Integer.toString(cert.getVersion()));
+                jtfVersion.setCaretPosition(0);
+
+                jdnSubject.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getSubjectX500Principal()));
+
+                jdnIssuer.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getIssuerX500Principal()));
+
+                jtfSerialNumberHex.setText(X509CertUtil.getSerialNumberAsHex(cert));
+                jtfSerialNumberHex.setCaretPosition(0);
+
+                jtfSerialNumberDec.setText(X509CertUtil.getSerialNumberAsDec(cert));
+                jtfSerialNumberDec.setCaretPosition(0);
+
+                jtfValidFrom.setText(StringUtils.formatDate(startDate));
+
+                if (notYetValid) {
+                    jtfValidFrom.setText(
+                            MessageFormat.format(res.getString("DViewCertificate.jtfValidFrom.notyetvalid.text"),
+                                    jtfValidFrom.getText()));
+                    jtfValidFrom.setForeground(Color.red);
+                } else {
+                    jtfValidFrom.setForeground(jtfVersion.getForeground());
+                }
+                jtfValidFrom.setCaretPosition(0);
+
+                jtfValidUntil.setText(StringUtils.formatDate(endDate));
+
+                if (noLongerValid) {
+                    jtfValidUntil.setText(
+                            MessageFormat.format(res.getString("DViewCertificate.jtfValidUntil.expired.text"),
+                                    jtfValidUntil.getText()));
+                    jtfValidUntil.setForeground(Color.red);
+                } else {
+                    jtfValidUntil.setForeground(jtfVersion.getForeground());
+                }
+                jtfValidUntil.setCaretPosition(0);
+
+                KeyInfo keyInfo = KeyPairUtil.getKeyInfo(cert.getPublicKey());
+                jtfPublicKey.setText(keyInfo.getAlgorithm());
+                Integer keySize = keyInfo.getSize();
+
+                if (keySize != null) {
+                    jtfPublicKey.setText(MessageFormat.format(res.getString("DViewCertificate.jtfPublicKey.text"),
+                            jtfPublicKey.getText(), "" + keySize));
+                } else {
+                    jtfPublicKey.setText(MessageFormat.format(res.getString("DViewCertificate.jtfPublicKey.text"),
+                            jtfPublicKey.getText(), "?"));
+                }
+                if (cert.getPublicKey() instanceof ECPublicKey) {
+                    jtfPublicKey.setText(jtfPublicKey.getText() + " (" + keyInfo.getDetailedAlgorithm() + ")");
+                }
+                jtfPublicKey.setCaretPosition(0);
+
+                jtfSignatureAlgorithm.setText(X509CertUtil.getCertificateSignatureAlgorithm(cert));
+                jtfSignatureAlgorithm.setCaretPosition(0);
+
+                byte[] encodedCertificate;
+                try {
+                    encodedCertificate = cert.getEncoded();
+                } catch (CertificateEncodingException ex) {
+                    throw new CryptoException(res.getString("DViewCertificate.NoGetEncodedCert.exception.message"), ex);
+                }
+
+                jcfFingerprint.setEncodedCertificate(encodedCertificate);
+
+                //jcfFingerprint.setFingerprintAlg(DigestType.SHAKE256);
+
+                Set<?> critExts = cert.getCriticalExtensionOIDs();
+                Set<?> nonCritExts = cert.getNonCriticalExtensionOIDs();
+
+                if ((critExts != null && !critExts.isEmpty()) || (nonCritExts != null && !nonCritExts.isEmpty())) {
+                    jbExtensions.setEnabled(true);
+                } else {
+                    jbExtensions.setEnabled(false);
+                }
+            } catch (CryptoException e) {
+                DError.displayError(this.project, e);
+                dispose();
+            }
+        }
     }
 
     private DefaultMutableTreeNode createCertificateNodes(X509Certificate[] certs) {
