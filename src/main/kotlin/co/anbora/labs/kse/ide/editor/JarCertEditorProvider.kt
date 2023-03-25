@@ -1,27 +1,27 @@
 package co.anbora.labs.kse.ide.editor
 
-import co.anbora.labs.kse.fileTypes.CertFileType.JAR_CERT_EDITOR_TYPE_ID
-import co.anbora.labs.kse.fileTypes.core.CertFile.acceptJarCertFile
-import co.anbora.labs.kse.fileTypes.core.CertFile.jarCertificates
 import co.anbora.labs.kse.ide.gui.view.DViewCertificate
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
-import com.intellij.openapi.fileEditor.FileEditorPolicy
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.kse.crypto.filetype.CryptoFileType
+import org.kse.crypto.signing.JarParser
+import java.security.cert.X509Certificate
+import java.util.function.Predicate
 
-class JarCertEditorProvider: AsyncFileEditorProvider, DumbAware {
-    override fun accept(project: Project, file: VirtualFile): Boolean = acceptJarCertFile(file) {
-        jarCertificates(file)
-    }
+private const val JAR_CERT_EDITOR_TYPE_ID = "co.anbora.labs.kse.jar.cert.editor"
+class JarCertEditorProvider: EditorProvider() {
 
-    override fun createEditor(project: Project, file: VirtualFile): FileEditor =
-        createEditorAsync(project, file).build()
+    private val jarFileTypes: Set<CryptoFileType> = setOf(
+        CryptoFileType.JAR
+    )
+
+    override fun fileTypes(): Set<CryptoFileType> = jarFileTypes
+
+    override fun acceptFile(): Predicate<VirtualFile> = Predicate { jarCertificates(it).isNotEmpty() }
 
     override fun getEditorTypeId(): String = JAR_CERT_EDITOR_TYPE_ID
-
-    override fun getPolicy(): FileEditorPolicy = FileEditorPolicy.HIDE_DEFAULT_EDITOR
 
     override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
         return object : AsyncFileEditorProvider.Builder() {
@@ -30,5 +30,10 @@ class JarCertEditorProvider: AsyncFileEditorProvider, DumbAware {
                 return DViewCertificate(project, file, certificates, DViewCertificate.IMPORT_EXPORT)
             }
         }
+    }
+
+    private fun jarCertificates(file: VirtualFile): Array<X509Certificate> {
+        val jarParser = JarParser(file.toNioPath().toFile())
+        return jarParser.signerCerificates
     }
 }

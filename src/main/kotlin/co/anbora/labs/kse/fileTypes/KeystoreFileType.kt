@@ -10,8 +10,6 @@ object KeystoreFileType: UserBinaryFileType() {
 
     const val EDITOR_NAME = "keystore"
 
-    const val EDITOR_TYPE_ID = "co.anbora.labs.kse.editor"
-
     const val EDITOR_SETTINGS_ID = "co.anbora.labs.kse.editor.settings"
 
     override fun getName(): String = FILETYPE_NAME

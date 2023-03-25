@@ -10,8 +10,6 @@ object CertFileType: UserBinaryFileType() {
 
     const val EDITOR_NAME = "cert"
 
-    const val JAR_CERT_EDITOR_TYPE_ID = "co.anbora.labs.kse.jar.cert.editor"
-    const val CERT_EDITOR_TYPE_ID = "co.anbora.labs.kse.cert.editor"
     const val CLR_EDITOR_TYPE_ID = "co.anbora.labs.kse.clr.editor"
     const val CSR_EDITOR_TYPE_ID = "co.anbora.labs.kse.csr.editor"
     const val PRIVATE_KEY_EDITOR_TYPE_ID = "co.anbora.labs.kse.private.key.editor"

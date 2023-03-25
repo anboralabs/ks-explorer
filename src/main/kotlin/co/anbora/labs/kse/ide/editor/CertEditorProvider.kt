@@ -1,27 +1,26 @@
 package co.anbora.labs.kse.ide.editor
 
-import co.anbora.labs.kse.fileTypes.CertFileType.CERT_EDITOR_TYPE_ID
-import co.anbora.labs.kse.fileTypes.core.CertFile.acceptCertFile
 import co.anbora.labs.kse.ide.gui.view.DViewCertificate
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
-import com.intellij.openapi.fileEditor.FileEditorPolicy
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.kse.crypto.filetype.CryptoFileType
 import org.kse.gui.actions.KeyStoreExploreActionUtils.openCertificate
+import java.util.function.Predicate
 
-class CertEditorProvider: AsyncFileEditorProvider, DumbAware {
-    override fun accept(project: Project, file: VirtualFile): Boolean = acceptCertFile(file) {
-        openCertificate(file.toNioPath().toFile())
-    }
+private const val CERT_EDITOR_TYPE_ID = "co.anbora.labs.kse.cert.editor"
+class CertEditorProvider: EditorProvider() {
 
-    override fun createEditor(project: Project, file: VirtualFile): FileEditor =
-        createEditorAsync(project, file).build()
+    private val certFileTypes: Set<CryptoFileType> = setOf(
+        CryptoFileType.CERT
+    )
+
+    override fun fileTypes(): Set<CryptoFileType> = certFileTypes
+
+    override fun acceptFile(): Predicate<VirtualFile> = Predicate { openCertificate(it.toNioPath().toFile()).isNotEmpty() }
 
     override fun getEditorTypeId(): String = CERT_EDITOR_TYPE_ID
-
-    override fun getPolicy(): FileEditorPolicy = FileEditorPolicy.HIDE_DEFAULT_EDITOR
 
     override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
         return object : AsyncFileEditorProvider.Builder() {

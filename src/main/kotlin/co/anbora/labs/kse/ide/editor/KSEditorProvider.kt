@@ -1,25 +1,28 @@
 package co.anbora.labs.kse.ide.editor
 
-import co.anbora.labs.kse.fileTypes.KeystoreFileType.EDITOR_TYPE_ID
 import co.anbora.labs.kse.ide.gui.swing.KeyStoreFrame
-import co.anbora.labs.kse.fileTypes.core.KeystoreFile.acceptKSFile
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
-import com.intellij.openapi.fileEditor.FileEditorPolicy
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.kse.crypto.filetype.CryptoFileType
+import java.util.function.Predicate
 
-class KSEditorProvider: AsyncFileEditorProvider, DumbAware {
+private const val EDITOR_TYPE_ID = "co.anbora.labs.kse.editor"
+class KSEditorProvider: EditorProvider() {
 
-    override fun accept(project: Project, file: VirtualFile): Boolean = acceptKSFile(file)
-
-    override fun createEditor(project: Project, file: VirtualFile): FileEditor =
-        createEditorAsync(project, file).build()
+    private val fileTypes: Set<CryptoFileType> = setOf(
+        CryptoFileType.JCEKS_KS,
+        CryptoFileType.JKS_KS,
+        CryptoFileType.PKCS12_KS,
+        CryptoFileType.BKS_KS,
+        CryptoFileType.BKS_V1_KS,
+        CryptoFileType.BCFKS_KS,
+        CryptoFileType.UBER_KS
+    )
+    override fun fileTypes(): Set<CryptoFileType> = fileTypes
 
     override fun getEditorTypeId(): String = EDITOR_TYPE_ID
-
-    override fun getPolicy(): FileEditorPolicy = FileEditorPolicy.HIDE_DEFAULT_EDITOR
 
     override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
         return object : AsyncFileEditorProvider.Builder() {
