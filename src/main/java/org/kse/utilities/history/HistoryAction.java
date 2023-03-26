@@ -24,10 +24,10 @@ package org.kse.utilities.history;
  * undo/redo history.
  */
 public interface HistoryAction {
-    /**
-     * Get description of action for undo/redo history.
-     *
-     * @return Description
-     */
-    String getHistoryDescription();
+  /**
+   * Get description of action for undo/redo history.
+   *
+   * @return Description
+   */
+  String getHistoryDescription();
 }

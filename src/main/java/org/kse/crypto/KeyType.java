@@ -22,7 +22,4 @@ package org.kse.crypto;
 /**
  * Enumeration of Key Types.
  */
-public enum KeyType {
-    SYMMETRIC,
-    ASYMMETRIC
-}
+public enum KeyType { SYMMETRIC, ASYMMETRIC }

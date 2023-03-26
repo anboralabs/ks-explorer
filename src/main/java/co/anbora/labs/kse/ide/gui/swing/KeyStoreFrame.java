@@ -4,7 +4,11 @@ import co.anbora.labs.kse.ide.gui.TableEditor;
 import co.anbora.labs.kse.ide.gui.render.ColumnRender;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
+import com.intellij.util.messages.MessageBus;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -16,12 +20,6 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.table.TableRowSorter;
-
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.newvfs.BulkFileListener;
-import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kse.crypto.CryptoException;
@@ -50,7 +48,8 @@ public class KeyStoreFrame
   private JToolBar jtbToolBar;
   private JPanel centerPanel;
 
-  private final UnlockPanel customUnlockPanel = new UnlockPanel("Unlock Keystore");
+  private final UnlockPanel customUnlockPanel =
+      new UnlockPanel("Unlock Keystore");
 
   private KeyStoreHistory activeHistory;
   private final ColumnRender tableCustomRenderer;
@@ -59,7 +58,7 @@ public class KeyStoreFrame
   private final StatusBar statusBar;
   private OpenAction openAction;
 
-  //Toolbar controls
+  // Toolbar controls
   private JButton jbNew;
   private JButton jbOpen;
   private JButton jbSave;
@@ -79,7 +78,7 @@ public class KeyStoreFrame
   private JButton jbExamineSsl;
   private JButton jbHelp;
 
-  //Actions
+  // Actions
   private NewAction newAction;
 
   public KeyStoreFrame(@NotNull Project projectArg,
@@ -104,25 +103,27 @@ public class KeyStoreFrame
 
   private void initUnlockPanel(@NotNull Project projectArg) {
     ActionBehavior actionBehavior =
-            new OpenKeyStoreImpl(projectArg, statusBar, this, this, customUnlockPanel.getPasswordField());
+        new OpenKeyStoreImpl(projectArg, statusBar, this, this,
+                             customUnlockPanel.getPasswordField());
     openAction = new OpenAction(projectArg, statusBar, actionBehavior);
 
     customUnlockPanel.addActionListener(openAction);
-    customUnlockPanel.addKeyListener(new PressEnterAction(projectArg, statusBar, actionBehavior));
+    customUnlockPanel.addKeyListener(
+        new PressEnterAction(projectArg, statusBar, actionBehavior));
   }
 
   private void addFileListener(MessageBus messageBus) {
-    messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES,
-            new BulkFileListener() {
-              @Override
-              public void after(@NotNull List<? extends VFileEvent> events) {
-                events.forEach((Consumer<VFileEvent>) vFileEvent -> {
-                  if (vFileEvent instanceof VFileContentChangeEvent) {
-                    openAction.doAction();
-                  }
-                });
+    messageBus.connect().subscribe(
+        VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
+          @Override
+          public void after(@NotNull List<? extends VFileEvent> events) {
+            events.forEach((Consumer<VFileEvent>)vFileEvent -> {
+              if (vFileEvent instanceof VFileContentChangeEvent) {
+                openAction.doAction();
               }
             });
+          }
+        });
   }
 
   private void initToolbar() {
@@ -134,7 +135,8 @@ public class KeyStoreFrame
     jbNew.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseEntered(MouseEvent evt) {
-        statusBar.setStatusBarText((String) newAction.getValue(Action.LONG_DESCRIPTION));
+        statusBar.setStatusBarText((String)
+    newAction.getValue(Action.LONG_DESCRIPTION));
       }
 
       @Override
