@@ -2,9 +2,15 @@ package co.anbora.labs.kse.fileTypes
 
 import co.anbora.labs.kse.ide.icons.KSIcons
 import com.intellij.openapi.fileTypes.UserBinaryFileType
+import org.kse.KSE
+import java.security.Security
 import javax.swing.Icon
 
 object KeystoreFileType: UserBinaryFileType() {
+
+    init {
+        Security.addProvider(KSE.BC)
+    }
 
     private const val FILETYPE_NAME = "KS"
 
