@@ -12,11 +12,9 @@ import java.util.function.Predicate
 private const val CERT_EDITOR_TYPE_ID = "co.anbora.labs.kse.cert.editor"
 class CertEditorProvider: EditorProvider() {
 
-    private val certFileTypes: Set<CryptoFileType> = setOf(
+    override fun fileTypes(): Set<CryptoFileType> = setOf(
         CryptoFileType.CERT
     )
-
-    override fun fileTypes(): Set<CryptoFileType> = certFileTypes
 
     override fun acceptFile(): Predicate<VirtualFile> = Predicate { openCertificate(it.toNioPath().toFile()).isNotEmpty() }
 

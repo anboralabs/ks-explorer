@@ -13,11 +13,9 @@ import java.util.function.Predicate
 private const val JAR_CERT_EDITOR_TYPE_ID = "co.anbora.labs.kse.jar.cert.editor"
 class JarCertEditorProvider: EditorProvider() {
 
-    private val jarFileTypes: Set<CryptoFileType> = setOf(
+    override fun fileTypes(): Set<CryptoFileType> = setOf(
         CryptoFileType.JAR
     )
-
-    override fun fileTypes(): Set<CryptoFileType> = jarFileTypes
 
     override fun acceptFile(): Predicate<VirtualFile> = Predicate { jarCertificates(it).isNotEmpty() }
 

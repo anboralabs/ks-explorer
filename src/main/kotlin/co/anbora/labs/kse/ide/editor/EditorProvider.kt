@@ -12,7 +12,7 @@ import org.kse.crypto.filetype.CryptoFileType
 import org.kse.crypto.filetype.CryptoFileUtil
 import java.util.function.Predicate
 
-sealed class EditorProvider: AsyncFileEditorProvider, DumbAware {
+abstract class EditorProvider: AsyncFileEditorProvider, DumbAware {
 
     abstract fun fileTypes(): Set<CryptoFileType>
 

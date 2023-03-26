@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
-import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
@@ -86,48 +85,7 @@ public class DViewCertificate extends CertEditor {
         this.project = project;
         this.importExport = importExport;
         this.chain = certs;
-        containerInit();
         initComponents(certs);
-    }
-
-    protected void containerInit() {
-        setRootPane(createRootPane());
-    }
-
-    protected JRootPane createRootPane() {
-        JRootPane rp = new JRootPane();
-        // NOTE: this uses setOpaque vs LookAndFeel.installProperty as there
-        // is NO reason for the RootPane not to be opaque. For painting to
-        // work the contentPane must be opaque, therefor the RootPane can
-        // also be opaque.
-        rp.setOpaque(true);
-        return rp;
-    }
-
-    protected void setRootPane(JRootPane root) {
-        if(rootPane != null) {
-            remove(rootPane);
-        }
-        rootPane = root;
-        if(rootPane != null) {
-            add(rootPane, BorderLayout.CENTER);
-        }
-    }
-
-    public void remove(Component comp) {
-        if (comp == rootPane) {
-            super.remove(comp);
-        } else {
-            getContentPane().remove(comp);
-        }
-    }
-
-    public Container getContentPane() {
-        return getRootPane().getContentPane();
-    }
-
-    public JRootPane getRootPane() {
-        return rootPane;
     }
 
     private void initComponents(X509Certificate[] certs) throws CryptoException {

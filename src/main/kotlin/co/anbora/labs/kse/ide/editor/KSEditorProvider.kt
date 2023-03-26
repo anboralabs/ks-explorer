@@ -11,7 +11,7 @@ import java.util.function.Predicate
 private const val EDITOR_TYPE_ID = "co.anbora.labs.kse.editor"
 class KSEditorProvider: EditorProvider() {
 
-    private val fileTypes: Set<CryptoFileType> = setOf(
+    override fun fileTypes(): Set<CryptoFileType> = setOf(
         CryptoFileType.JCEKS_KS,
         CryptoFileType.JKS_KS,
         CryptoFileType.PKCS12_KS,
@@ -20,7 +20,6 @@ class KSEditorProvider: EditorProvider() {
         CryptoFileType.BCFKS_KS,
         CryptoFileType.UBER_KS
     )
-    override fun fileTypes(): Set<CryptoFileType> = fileTypes
 
     override fun getEditorTypeId(): String = EDITOR_TYPE_ID
 
