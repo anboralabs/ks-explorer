@@ -16,9 +16,6 @@ object CertFileType: UserBinaryFileType() {
 
     const val EDITOR_NAME = "cert"
 
-    const val PRIVATE_KEY_EDITOR_TYPE_ID = "co.anbora.labs.kse.private.key.editor"
-    const val PUBLIC_KEY_EDITOR_TYPE_ID = "co.anbora.labs.kse.public.key.editor"
-
     override fun getName(): String = FILETYPE_NAME
 
     override fun getDescription(): String = "Java Cert explorer"

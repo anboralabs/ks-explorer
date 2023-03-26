@@ -27,6 +27,7 @@
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.pvk.unenc.OpenSslEditorProvider"/>
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.pvk.unenc.MsPvkEditorProvider"/>
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.EncPrivateKeyEditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.PublicKeyEditorProvider"/>
 
     </extensions>
 
