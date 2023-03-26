@@ -38,9 +38,6 @@ class CrlEditorProvider: EditorProvider() {
     }
 
     private fun openClr(file: File?): X509CRL? = try {
-        if (file == null) {
-            null
-        }
         val data = FileUtils.readFileToByteArray(file)
         X509CertUtil.loadCRL(data)
     } catch (ex: Exception) {

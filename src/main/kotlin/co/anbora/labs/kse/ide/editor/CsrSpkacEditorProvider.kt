@@ -34,9 +34,6 @@ class CsrSpkacEditorProvider: EditorProvider() {
     }
 
     private fun openCsr(file: File?): Spkac? = try {
-        if (file == null) {
-            null
-        }
         val data: ByteArray = CertUtils.decodeIfBase64(FileUtils.readFileToByteArray(file))
         Spkac(data)
     } catch (ex: Exception) {

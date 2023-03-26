@@ -35,9 +35,6 @@ class CsrPkcs10EditorProvider: EditorProvider() {
     }
 
     private fun openCsr(file: File?): PKCS10CertificationRequest? = try {
-        if (file == null) {
-            null
-        }
         val data: ByteArray = decodeIfBase64(FileUtils.readFileToByteArray(file))
         Pkcs10Util.loadCsr(data)
     } catch (ex: Exception) {
