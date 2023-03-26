@@ -21,6 +21,6 @@
 package org.kse.utilities;
 
 @FunctionalInterface
-public interface VarFunction<V,R> {
-    R call(V... args);
+public interface VarFunction<V, R> {
+  R call(V... args);
 }

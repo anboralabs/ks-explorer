@@ -19,135 +19,134 @@
  */
 package org.kse.gui;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
+import javax.swing.*;
 
 /**
  * Cursor utility methods.
  */
 public class CursorUtil {
-    private CursorUtil() {
+  private CursorUtil() {}
+
+  /**
+   * Set cursor to busy and disable application input. This can be reversed by
+   * a subsequent call to setCursorFree.
+   *
+   * @param frame Frame to apply to
+   */
+  public static void setCursorBusy(JFrame frame) {
+    setCursorBusy(frame.getRootPane().getGlassPane());
+  }
+
+  /**
+   * Set cursor to free and enable application input. Called after a call to
+   * setCursorBusy.
+   *
+   * @param frame Frame to apply to
+   */
+  public static void setCursorFree(JFrame frame) {
+    setCursorFree(frame.getRootPane().getGlassPane());
+  }
+
+  /**
+   * Set cursor to busy and disable application input. This can be reversed by
+   * a subsequent call to setCursorFree.
+   *
+   * @param component Component within container to apply to
+   */
+  public static void setCursorBusy(JComponent component) {
+    JDialog dialog = findContainingDialog(component);
+
+    if (dialog != null) {
+      setCursorBusy(dialog);
+    } else {
+      JFrame frame = findContainingFrame(component);
+
+      if (frame != null) {
+        setCursorBusy(frame);
+      }
+    }
+  }
+
+  /**
+   * Set cursor to free and enable application input. Called after a call to
+   * setCursorBusy.
+   *
+   * @param component Component within container to apply to
+   */
+  public static void setCursorFree(JComponent component) {
+    JDialog dialog = findContainingDialog(component);
+
+    if (dialog != null) {
+      setCursorFree(dialog);
+    } else {
+      JFrame frame = findContainingFrame(component);
+
+      if (frame != null) {
+        setCursorFree(frame);
+      }
+    }
+  }
+
+  private static JDialog findContainingDialog(JComponent component) {
+    Container container = component.getParent();
+
+    while (container != null) {
+      if (container instanceof JDialog) {
+        return (JDialog)container;
+      }
+
+      container = container.getParent();
     }
 
-    /**
-     * Set cursor to busy and disable application input. This can be reversed by
-     * a subsequent call to setCursorFree.
-     *
-     * @param frame Frame to apply to
-     */
-    public static void setCursorBusy(JFrame frame) {
-        setCursorBusy(frame.getRootPane().getGlassPane());
+    return null;
+  }
+
+  private static JFrame findContainingFrame(JComponent component) {
+    Container container = component.getParent();
+
+    while (container != null) {
+      if (container instanceof JFrame) {
+        return (JFrame)container;
+      }
+
+      container = container.getParent();
     }
 
-    /**
-     * Set cursor to free and enable application input. Called after a call to
-     * setCursorBusy.
-     *
-     * @param frame Frame to apply to
-     */
-    public static void setCursorFree(JFrame frame) {
-        setCursorFree(frame.getRootPane().getGlassPane());
-    }
+    return null;
+  }
 
-    /**
-     * Set cursor to busy and disable application input. This can be reversed by
-     * a subsequent call to setCursorFree.
-     *
-     * @param component Component within container to apply to
-     */
-    public static void setCursorBusy(JComponent component) {
-        JDialog dialog = findContainingDialog(component);
+  /**
+   * Set cursor to busy and disable application input. This can be reversed by
+   * a subsequent call to setCursorFree.
+   *
+   * @param dialog Dialog to apply to
+   */
+  public static void setCursorBusy(JDialog dialog) {
+    setCursorBusy(dialog.getRootPane().getGlassPane());
+  }
 
-        if (dialog != null) {
-            setCursorBusy(dialog);
-        } else {
-            JFrame frame = findContainingFrame(component);
+  /**
+   * Set cursor to free and enable application input. Called after a call to
+   * setCursorBusy.
+   *
+   * @param dialog Dialog to apply to
+   */
+  public static void setCursorFree(JDialog dialog) {
+    setCursorFree(dialog.getRootPane().getGlassPane());
+  }
 
-            if (frame != null) {
-                setCursorBusy(frame);
-            }
-        }
-    }
+  public static void setCursorBusy(Component glassPane) {
+    glassPane.addMouseListener(new MouseAdapter() {});
+    glassPane.setVisible(true);
 
-    /**
-     * Set cursor to free and enable application input. Called after a call to
-     * setCursorBusy.
-     *
-     * @param component Component within container to apply to
-     */
-    public static void setCursorFree(JComponent component) {
-        JDialog dialog = findContainingDialog(component);
+    glassPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+  }
 
-        if (dialog != null) {
-            setCursorFree(dialog);
-        } else {
-            JFrame frame = findContainingFrame(component);
+  public static void setCursorFree(Component glassPane) {
+    glassPane.setVisible(false);
 
-            if (frame != null) {
-                setCursorFree(frame);
-            }
-        }
-    }
-
-    private static JDialog findContainingDialog(JComponent component) {
-        Container container = component.getParent();
-
-        while (container != null) {
-            if (container instanceof JDialog) {
-                return (JDialog) container;
-            }
-
-            container = container.getParent();
-        }
-
-        return null;
-    }
-
-    private static JFrame findContainingFrame(JComponent component) {
-        Container container = component.getParent();
-
-        while (container != null) {
-            if (container instanceof JFrame) {
-                return (JFrame) container;
-            }
-
-            container = container.getParent();
-        }
-
-        return null;
-    }
-
-    /**
-     * Set cursor to busy and disable application input. This can be reversed by
-     * a subsequent call to setCursorFree.
-     *
-     * @param dialog Dialog to apply to
-     */
-    public static void setCursorBusy(JDialog dialog) {
-        setCursorBusy(dialog.getRootPane().getGlassPane());
-    }
-
-    /**
-     * Set cursor to free and enable application input. Called after a call to
-     * setCursorBusy.
-     *
-     * @param dialog Dialog to apply to
-     */
-    public static void setCursorFree(JDialog dialog) {
-        setCursorFree(dialog.getRootPane().getGlassPane());
-    }
-
-    public static void setCursorBusy(Component glassPane) {
-        glassPane.addMouseListener(new MouseAdapter() {});
-        glassPane.setVisible(true);
-
-        glassPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    }
-
-    public static void setCursorFree(Component glassPane) {
-        glassPane.setVisible(false);
-
-        glassPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    }
+    glassPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+  }
 }

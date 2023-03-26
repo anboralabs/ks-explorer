@@ -28,39 +28,38 @@ import java.net.UnknownHostException;
  */
 public class IpAddress {
 
-    private static InetAddress localAddr;
+  private static InetAddress localAddr;
 
-    private IpAddress() {
-    }
+  private IpAddress() {}
 
-    /**
-     * Return IP address
-     *
-     * @return (One of possibly several) IP address of this machine
-     */
-    public static String getIpAddress() {
-        try {
-            if (localAddr == null) {
-                localAddr = InetAddress.getLocalHost();
-            }
-            return localAddr.getHostAddress();
-        } catch (UnknownHostException e) {
-            return "";
-        }
+  /**
+   * Return IP address
+   *
+   * @return (One of possibly several) IP address of this machine
+   */
+  public static String getIpAddress() {
+    try {
+      if (localAddr == null) {
+        localAddr = InetAddress.getLocalHost();
+      }
+      return localAddr.getHostAddress();
+    } catch (UnknownHostException e) {
+      return "";
     }
+  }
 
-    /**
-     * Return host name
-     * @return Host name of this machine
-     */
-    public static String getHostName() {
-        try {
-            if (localAddr == null) {
-                localAddr = InetAddress.getLocalHost();
-            }
-            return localAddr.getCanonicalHostName();
-        } catch (UnknownHostException e) {
-            return "";
-        }
+  /**
+   * Return host name
+   * @return Host name of this machine
+   */
+  public static String getHostName() {
+    try {
+      if (localAddr == null) {
+        localAddr = InetAddress.getLocalHost();
+      }
+      return localAddr.getCanonicalHostName();
+    } catch (UnknownHostException e) {
+      return "";
     }
+  }
 }

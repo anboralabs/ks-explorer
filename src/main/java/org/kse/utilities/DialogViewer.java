@@ -19,56 +19,57 @@
  */
 package org.kse.utilities;
 
-//import com.formdev.flatlaf.FlatLightLaf;
+// import com.formdev.flatlaf.FlatLightLaf;
+import java.awt.event.WindowEvent;
+import java.security.Security;
+import javax.swing.*;
 import org.kse.KSE;
 import org.kse.gui.JEscDialog;
 
-import javax.swing.*;
-import java.awt.event.WindowEvent;
-import java.security.Security;
-
 /**
- * This is a helper class for quickly viewing KSE dialogs (mainly for testing purposes during development).
+ * This is a helper class for quickly viewing KSE dialogs (mainly for testing
+ * purposes during development).
  */
 public class DialogViewer {
 
-    private DialogViewer() {
-    }
+  private DialogViewer() {}
 
-    /**
-     * Add BC provider and set l&f (only required when BC is needed before calling the run() method)
-     */
-    /*public static void prepare() throws UnsupportedLookAndFeelException {
-        UIManager.setLookAndFeel(new FlatLightLaf());
-        Security.addProvider(KSE.BC);
-    }*/
+  /**
+   * Add BC provider and set l&f (only required when BC is needed before calling
+   * the run() method)
+   */
+  /*public static void prepare() throws UnsupportedLookAndFeelException {
+      UIManager.setLookAndFeel(new FlatLightLaf());
+      Security.addProvider(KSE.BC);
+  }*/
 
-    /**
-     * Create environment for showing the given dialog
-     */
-    /*public static void run(final JEscDialog dialog) throws UnsupportedLookAndFeelException {
+  /**
+   * Create environment for showing the given dialog
+   */
+  /*public static void run(final JEscDialog dialog) throws
+  UnsupportedLookAndFeelException {
 
-        prepare();
+      prepare();
 
-        SwingUtilities.updateComponentTreeUI(dialog);
+      SwingUtilities.updateComponentTreeUI(dialog);
 
-        SwingUtilities.invokeLater(() -> {
+      SwingUtilities.invokeLater(() -> {
 
-            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    super.windowClosing(e);
-                    System.exit(0);
-                }
+          dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+              @Override
+              public void windowClosing(WindowEvent e) {
+                  super.windowClosing(e);
+                  System.exit(0);
+              }
 
-                @Override
-                public void windowDeactivated(WindowEvent e) {
-                    super.windowDeactivated(e);
-                    System.exit(0);
-                }
-            });
-            dialog.setLocationRelativeTo(null);
-            dialog.setVisible(true);
-        });
-    }*/
+              @Override
+              public void windowDeactivated(WindowEvent e) {
+                  super.windowDeactivated(e);
+                  System.exit(0);
+              }
+          });
+          dialog.setLocationRelativeTo(null);
+          dialog.setVisible(true);
+      });
+  }*/
 }

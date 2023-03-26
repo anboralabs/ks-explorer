@@ -19,66 +19,67 @@
  */
 package org.kse.gui.dialogs;
 
-import org.kse.utilities.StringUtils;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.math.BigInteger;
 import java.util.Date;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import org.kse.utilities.StringUtils;
 
 /**
  * Custom cell renderer for the cells of the RevokedCerts table of DViewCrl.
  */
 public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * Returns the rendered cell.
-     *
-     * @param jtRevokedCerts The JTable
-     * @param value          The value to assign to the cell
-     * @param isSelected     True if cell is selected
-     * @param row            The row of the cell to render
-     * @param col            The column of the cell to render
-     * @param hasFocus       If true, render cell appropriately
-     * @return The renderered cell
-     */
-    @Override
-    public Component getTableCellRendererComponent(JTable jtRevokedCerts, Object value, boolean isSelected,
-                                                   boolean hasFocus, int row, int col) {
-        JLabel cell = (JLabel) super.getTableCellRendererComponent(jtRevokedCerts, value, isSelected, hasFocus, row,
-                                                                   col);
+  /**
+   * Returns the rendered cell.
+   *
+   * @param jtRevokedCerts The JTable
+   * @param value          The value to assign to the cell
+   * @param isSelected     True if cell is selected
+   * @param row            The row of the cell to render
+   * @param col            The column of the cell to render
+   * @param hasFocus       If true, render cell appropriately
+   * @return The renderered cell
+   */
+  @Override
+  public Component
+  getTableCellRendererComponent(JTable jtRevokedCerts, Object value,
+                                boolean isSelected, boolean hasFocus, int row,
+                                int col) {
+    JLabel cell = (JLabel)super.getTableCellRendererComponent(
+        jtRevokedCerts, value, isSelected, hasFocus, row, col);
 
-        if (col == 0) {
-            cell.setText(formatSerialNumberAsHexString((BigInteger) value));
-        } else {
-            cell.setText(StringUtils.formatDate((Date) value));
-        }
-
-        cell.setBorder(new EmptyBorder(0, 5, 0, 5));
-
-        return cell;
+    if (col == 0) {
+      cell.setText(formatSerialNumberAsHexString((BigInteger)value));
+    } else {
+      cell.setText(StringUtils.formatDate((Date)value));
     }
 
-    private String formatSerialNumberAsHexString(BigInteger serialNumber) {
-        // The string is divided by spaces into groups of four hex characters.
-        String hexSerialNumber = serialNumber.toString(16).toUpperCase();
+    cell.setBorder(new EmptyBorder(0, 5, 0, 5));
 
-        StringBuilder strBuff = new StringBuilder();
+    return cell;
+  }
 
-        strBuff.append("0x");
+  private String formatSerialNumberAsHexString(BigInteger serialNumber) {
+    // The string is divided by spaces into groups of four hex characters.
+    String hexSerialNumber = serialNumber.toString(16).toUpperCase();
 
-        for (int i = 0; i < hexSerialNumber.length(); i++) {
-            strBuff.append(hexSerialNumber.charAt(i));
+    StringBuilder strBuff = new StringBuilder();
 
-            if ((i + 1) % 4 == 0 && i + 1 != hexSerialNumber.length()) {
-                strBuff.append(' ');
-            }
-        }
+    strBuff.append("0x");
 
-        return strBuff.toString();
+    for (int i = 0; i < hexSerialNumber.length(); i++) {
+      strBuff.append(hexSerialNumber.charAt(i));
+
+      if ((i + 1) % 4 == 0 && i + 1 != hexSerialNumber.length()) {
+        strBuff.append(' ');
+      }
     }
+
+    return strBuff.toString();
+  }
 }
