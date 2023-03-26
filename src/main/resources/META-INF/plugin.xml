@@ -23,7 +23,10 @@
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.CrlEditorProvider"/>
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.CsrPkcs10EditorProvider"/>
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.CsrSpkacEditorProvider"/>
-
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.pvk.unenc.Pcks8EditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.pvk.unenc.OpenSslEditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.pvk.unenc.MsPvkEditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.EncPrivateKeyEditorProvider"/>
 
     </extensions>
 

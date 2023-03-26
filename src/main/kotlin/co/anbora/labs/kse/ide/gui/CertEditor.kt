@@ -19,8 +19,8 @@ import javax.swing.JRootPane
 
 abstract class CertEditor(): Container(), FileEditor, FileEditorLocation {
 
-    private lateinit var projectArg: Project
-    private lateinit var fileArg: VirtualFile
+    protected lateinit var projectArg: Project
+    protected lateinit var fileArg: VirtualFile
     private var rootPane: JRootPane = createRootPane()
 
     constructor(projectArg: Project, fileArg: VirtualFile) : this() {

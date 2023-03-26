@@ -5,6 +5,7 @@ import co.anbora.labs.kse.ide.gui.render.ColumnRender;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -44,12 +45,12 @@ public class KeyStoreFrame
   private final int autoResizeMode = JTable.AUTO_RESIZE_ALL_COLUMNS;
 
   private JPanel panelMain;
-  private JPasswordField passwordField;
-  private JButton OKButton;
   private JTable tblEditor;
   private JLabel jlStatusBar;
-  private JPanel unlockPanel;
   private JToolBar jtbToolBar;
+  private JPanel centerPanel;
+
+  private final UnlockPanel customUnlockPanel = new UnlockPanel("Unlock Keystore");
 
   private KeyStoreHistory activeHistory;
   private final ColumnRender tableCustomRenderer;
@@ -103,11 +104,11 @@ public class KeyStoreFrame
 
   private void initUnlockPanel(@NotNull Project projectArg) {
     ActionBehavior actionBehavior =
-            new OpenKeyStoreImpl(projectArg, statusBar, this, this, passwordField);
+            new OpenKeyStoreImpl(projectArg, statusBar, this, this, customUnlockPanel.getPasswordField());
     openAction = new OpenAction(projectArg, statusBar, actionBehavior);
-    OKButton.addActionListener(openAction);
-    passwordField.addKeyListener(
-        new PressEnterAction(projectArg, statusBar, actionBehavior));
+
+    customUnlockPanel.addActionListener(openAction);
+    customUnlockPanel.addKeyListener(new PressEnterAction(projectArg, statusBar, actionBehavior));
   }
 
   private void addFileListener(MessageBus messageBus) {
@@ -187,7 +188,7 @@ public class KeyStoreFrame
         new KeyStoreHistory(keyStore, keyStoreFile, password);
     setActiveHistory(history);
     ((KeyStoreTableModel)tblEditor.getModel()).load(history);
-    unlockPanel.setVisible(false);
+    customUnlockPanel.setVisible(false);
   }
 
   private void setActiveHistory(KeyStoreHistory history) {
@@ -226,6 +227,8 @@ public class KeyStoreFrame
   private JTable getActiveKeyStoreTable() { return tblEditor; }
 
   private void createUIComponents() {
+    centerPanel.add(customUnlockPanel.getComponent(), BorderLayout.NORTH);
+
     KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns);
     tblEditor.setModel(ksModel);
 
