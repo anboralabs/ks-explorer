@@ -9,7 +9,7 @@
 
 KeyStore Explorer is an open source GUI replacement for the Java command-line utilities keytool and jarsigner.
 
-KS-Explorer is an Intellij plugin to view all information related with a keystore, 
+KS-Explorer is an Intellij plugin to view all information related with a keystore,
 and we use <a href="https://keystore-explorer.org" title="keystore-explorer">Keystore-Explorer</a> as a core.
 
 We don't pretend to be a replacement of KeyStore Explorer, KS-explorer is an extension from them to use in Intellij.
@@ -46,6 +46,7 @@ git clone https://github.com/anboralabs/ks-explorer
 ## Credits
 
 <div>Icons and core functionalities were borrowed from <a href="https://keystore-explorer.org" title="keystore-explorer">Keystore-Explorer</a> </div>
+<a href="https://iconscout.com/icons/certificate" target="_blank">Certificate Icon</a> by <a href="https://iconscout.com/contributors/jemismali" target="_blank">Jemis Mali</a>
 
 ## License
 

@@ -1,6 +1,6 @@
 package org.kse.gui.column
 
-import co.anbora.labs.kse.lang.settings.Settings
+import co.anbora.labs.kse.fileTypes.settings.Settings
 import org.kse.gui.Certificate
 import org.kse.utilities.history.KeyStoreHistory
 import java.util.*

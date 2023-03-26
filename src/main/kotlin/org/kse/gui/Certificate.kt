@@ -1,11 +1,12 @@
 package org.kse.gui
 
-import co.anbora.labs.kse.lang.settings.Settings.EXPIRY_WAR_N_DAYS
+import co.anbora.labs.kse.fileTypes.settings.Settings.EXPIRY_WAR_N_DAYS
 import org.bouncycastle.asn1.DEROctetString
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier
 import org.bouncycastle.asn1.x509.Extension
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.kse.KSE
 import org.kse.crypto.CryptoException
 import org.kse.crypto.KeyInfo
 import org.kse.crypto.KeyType
@@ -25,10 +26,6 @@ import java.util.*
 import javax.crypto.SecretKey
 
 object Certificate {
-
-    init {
-        Security.addProvider(BouncyCastleProvider())
-    }
 
     @Throws(KeyStoreException::class, CryptoException::class)
     private fun getCertificate(alias: String, keyStore: KeyStore): X509Certificate? {

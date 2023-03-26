@@ -11,11 +11,24 @@
         <applicationService
                 serviceImplementation="co.anbora.labs.kse.ide.settings.KSEditorSettings"/>
 
-        <fileType name="KS" implementationClass="co.anbora.labs.kse.lang.JKSFileType"
-                  fieldName="INSTANCE" language="KS" extensions="jks;jceks;bks;p12;uber;bcfks;pfx"/>
-
+        <fileType name="KS" implementationClass="co.anbora.labs.kse.fileTypes.KeystoreFileType"
+                  fieldName="INSTANCE" extensions="jks;jceks;bks;p12;uber;bcfks;pfx"/>
         <editorOptionsProvider instance="co.anbora.labs.kse.ide.settings.KSEditorSettingsProvider"/>
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.KSEditorProvider"/>
+
+        <fileType name="Cert" implementationClass="co.anbora.labs.kse.fileTypes.CertFileType"
+                  fieldName="INSTANCE" extensions="pub;key;pem;cer;crt;p7;p7b;pkipath;spc;p10;spkac;pkcs8;pvk;crl"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.JarCertEditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.CertEditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.CrlEditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.CsrPkcs10EditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.CsrSpkacEditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.pvk.unenc.Pcks8EditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.pvk.unenc.OpenSslEditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.pvk.unenc.MsPvkEditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.EncPrivateKeyEditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.PublicKeyEditorProvider"/>
+
     </extensions>
 
     <actions>

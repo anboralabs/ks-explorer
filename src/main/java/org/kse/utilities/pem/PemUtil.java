@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,206 +19,224 @@
  */
 package org.kse.utilities.pem;
 
-import org.bouncycastle.util.encoders.Base64;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.charset.StandardCharsets;
+import org.bouncycastle.util.encoders.Base64;
 
 /**
  * Provides utility methods relating to PEM.
- *
  */
 public class PemUtil {
-	private static final int MAX_PRINTABLE_ENCODING_LINE_LENGTH = 64;
+  private static final int MAX_PRINTABLE_ENCODING_LINE_LENGTH = 64;
 
-	// Begin OpenSSL EC parameters PEM (see "openssl ecparam -name prime256v1 -genkey -out key.pem"; missing "-noout")
-	private static final String OPENSSL_EC_PARAMS_PEM_TYPE = "EC PARAMETERS";
+  // Begin OpenSSL EC parameters PEM (see "openssl ecparam -name prime256v1
+  // -genkey -out key.pem"; missing "-noout")
+  private static final String OPENSSL_EC_PARAMS_PEM_TYPE = "EC PARAMETERS";
 
-	private PemUtil() {
-	}
+  public static final String PEM_BEGIN_MARKER = "-----BEGIN ";
+  public static final String PEM_FIVE_DASHES = "-----";
+  public static final String PEM_END_MARKER = "-----END ";
 
-	/**
-	 * Encode the supplied information as PEM.
-	 *
-	 * @param pemInfo
-	 *            PEM Information
-	 * @return PEM encoding
-	 */
-	public static String encode(PemInfo pemInfo) {
-		StringBuilder sbPem = new StringBuilder();
+  private PemUtil() {}
 
-		// Ouput header
-		sbPem.append("-----BEGIN ");
-		sbPem.append(pemInfo.getType());
-		sbPem.append("-----");
-		sbPem.append("\n");
+  /**
+   * Simple detection of PEM format (does not check if format is correct, only
+   * if it claims to be PEM).
+   *
+   * @param data Binary or text data
+   * @return True, if data starts with PEM header
+   */
+  public static boolean isPemFormat(byte[] data) {
+    return new String(data, StandardCharsets.US_ASCII)
+        .startsWith(PEM_BEGIN_MARKER);
+  }
 
-		// Output any header attributes
-		PemAttributes attributes = pemInfo.getAttributes();
+  /**
+   * Encode the supplied information as PEM.
+   *
+   * @param pemInfo PEM Information
+   * @return PEM encoding
+   */
+  public static String encode(PemInfo pemInfo) {
+    StringBuilder sbPem = new StringBuilder();
 
-		if (attributes != null && attributes.size() > 0) {
-			for (PemAttribute attribute : attributes.values()) {
-				sbPem.append(attribute);
-				sbPem.append('\n');
-			}
+    // Output header
+    sbPem.append(PEM_BEGIN_MARKER);
+    sbPem.append(pemInfo.getType());
+    sbPem.append(PEM_FIVE_DASHES);
+    sbPem.append("\n");
 
-			// Empty line separator between attributes and content
-			sbPem.append('\n');
-		}
+    // Output any header attributes
+    PemAttributes attributes = pemInfo.getAttributes();
 
-		// Output content
-		String base64 = new String(Base64.encode(pemInfo.getContent()));
+    if (attributes != null && attributes.size() > 0) {
+      for (PemAttribute attribute : attributes.values()) {
+        sbPem.append(attribute);
+        sbPem.append('\n');
+      }
 
-		// Limit line lengths
-		for (int i = 0; i < base64.length(); i += MAX_PRINTABLE_ENCODING_LINE_LENGTH) {
-			int lineLength;
+      // Empty line separator between attributes and content
+      sbPem.append('\n');
+    }
 
-			if (i + MAX_PRINTABLE_ENCODING_LINE_LENGTH > base64.length()) {
-				lineLength = base64.length() - i;
-			} else {
-				lineLength = MAX_PRINTABLE_ENCODING_LINE_LENGTH;
-			}
+    // Output content
+    String base64 = new String(Base64.encode(pemInfo.getContent()));
 
-			sbPem.append(base64.substring(i, i + lineLength));
-			sbPem.append("\n");
-		}
+    // Limit line lengths
+    for (int i = 0; i < base64.length();
+         i += MAX_PRINTABLE_ENCODING_LINE_LENGTH) {
+      int lineLength;
 
-		// Output footer
-		sbPem.append("-----END ");
-		sbPem.append(pemInfo.getType());
-		sbPem.append("-----");
-		sbPem.append("\n");
+      if (i + MAX_PRINTABLE_ENCODING_LINE_LENGTH > base64.length()) {
+        lineLength = base64.length() - i;
+      } else {
+        lineLength = MAX_PRINTABLE_ENCODING_LINE_LENGTH;
+      }
 
-		return sbPem.toString();
-	}
+      sbPem.append(base64.substring(i, i + lineLength));
+      sbPem.append("\n");
+    }
 
-	/**
-	 * Decode the PEM included in the supplied input stream.
-	 *
-	 * @param pemData PEM data as byte array
-	 * @return PEM information or null if stream does not contain PEM
-	 * @throws IOException
-	 *             If an I/O problem occurs
-	 */
-	public static PemInfo decode(byte[] pemData) throws IOException {
+    // Output footer
+    sbPem.append(PEM_END_MARKER);
+    sbPem.append(pemInfo.getType());
+    sbPem.append(PEM_FIVE_DASHES);
+    sbPem.append("\n");
 
-		try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(pemData);
-				InputStreamReader inputStreamReader = new InputStreamReader(byteArrayInputStream);
-				LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
+    return sbPem.toString();
+  }
 
-			// we ignore EC parameter blocks for now
-			String line = skipOverEcParams(lnr);
-			StringBuilder sbBase64 = new StringBuilder();
+  /**
+   * Decode the PEM included in the supplied input stream.
+   *
+   * @param pemData PEM data as byte array
+   * @return PEM information or null if stream does not contain PEM
+   * @throws IOException If an I/O problem occurs
+   */
+  public static PemInfo decode(byte[] pemData) throws IOException {
 
-			if (line != null) {
-				line = line.trim();
-				String headerType = getTypeFromHeader(line);
+    try (ByteArrayInputStream byteArrayInputStream =
+             new ByteArrayInputStream(pemData);
+         InputStreamReader inputStreamReader =
+             new InputStreamReader(byteArrayInputStream);
+         LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
 
-				if (headerType != null) {
-					line = lnr.readLine();
+      // we ignore EC parameter blocks for now
+      String line = skipOverEcParams(lnr);
+      StringBuilder sbBase64 = new StringBuilder();
 
-					PemAttributes attributes = null;
+      if (line != null) {
+        line = line.trim();
+        String headerType = getTypeFromHeader(line);
 
-					// Read any header attributes
-					if (line != null && line.contains(": ")) {
-						line = line.trim();
+        if (headerType != null) {
+          line = lnr.readLine();
 
-						attributes = new PemAttributes();
+          PemAttributes attributes = null;
 
-						while (line != null) {
-							line = line.trim();
+          // Read any header attributes
+          if (line != null && line.contains(": ")) {
+            line = line.trim();
 
-							// Empty line - end of attributes
-							if (line.equals("")) {
-								line = lnr.readLine();
-								break;
-							}
+            attributes = new PemAttributes();
 
-							// Run out of attributes before blank line - not PEM
-							if (!line.contains(": ")) {
-								return null;
-							}
+            while (line != null) {
+              line = line.trim();
 
-							// Parse attribute from line
-							int separator = line.indexOf(':');
+              // Empty line - end of attributes
+              if (line.equals("")) {
+                line = lnr.readLine();
+                break;
+              }
 
-							String attributeName = line.substring(0, separator);
-							String attributeValue = line.substring(separator + 2);
+              // Run out of attributes before blank line - not PEM
+              if (!line.contains(": ")) {
+                return null;
+              }
 
-							attributes.add(new PemAttribute(attributeName, attributeValue));
+              // Parse attribute from line
+              int separator = line.indexOf(':');
 
-							line = lnr.readLine();
-						}
-					}
+              String attributeName = line.substring(0, separator);
+              String attributeValue = line.substring(separator + 2);
 
-					// Read content
-					while (line != null) {
-						line = line.trim();
-						String footerType = getTypeFromFooter(line);
+              attributes.add(new PemAttribute(attributeName, attributeValue));
 
-						if (footerType == null) {
-							sbBase64.append(line);
-						} else {
-							// Header and footer types do not match - not PEM
-							if (!headerType.equals(footerType)) {
-								return null;
-							} else {
-								// Decode base 64 content
-								byte[] content = Base64.decode(sbBase64.toString());
+              line = lnr.readLine();
+            }
+          }
 
-								return new PemInfo(headerType, attributes, content);
-							}
-						}
+          // Read content
+          while (line != null) {
+            line = line.trim();
+            String footerType = getTypeFromFooter(line);
 
-						line = lnr.readLine();
-					}
-				}
-			}
-		}
+            if (footerType == null) {
+              sbBase64.append(line);
+            } else {
+              // Header and footer types do not match - not PEM
+              if (!headerType.equals(footerType)) {
+                return null;
+              } else {
+                // Decode base 64 content
+                byte[] content = Base64.decode(sbBase64.toString());
 
-		return null; // Not PEM
-	}
+                return new PemInfo(headerType, attributes, content);
+              }
+            }
 
+            line = lnr.readLine();
+          }
+        }
+      }
+    }
 
-	private static String skipOverEcParams(LineNumberReader lnr) throws IOException {
+    return null; // Not PEM
+  }
 
-		String line = lnr.readLine();
+  private static String skipOverEcParams(LineNumberReader lnr)
+      throws IOException {
 
-		// skip over EC parameter block
-		if (line != null && OPENSSL_EC_PARAMS_PEM_TYPE.equals(getTypeFromHeader(line.trim()))) {
+    String line = lnr.readLine();
 
-			// now find end line
-			while( (line = lnr.readLine()) != null ) {
-				line = line.trim();
-				if (OPENSSL_EC_PARAMS_PEM_TYPE.equals(getTypeFromFooter(line))) {
-					line = lnr.readLine();
-					break;
-				}
-			}
-		}
+    // skip over EC parameter block
+    if (line != null &&
+        OPENSSL_EC_PARAMS_PEM_TYPE.equals(getTypeFromHeader(line.trim()))) {
 
-		return line;
-	}
+      // now find end line
+      while ((line = lnr.readLine()) != null) {
+        line = line.trim();
+        if (OPENSSL_EC_PARAMS_PEM_TYPE.equals(getTypeFromFooter(line))) {
+          line = lnr.readLine();
+          break;
+        }
+      }
+    }
 
-	private static String getTypeFromHeader(String header) {
-		String type = null;
+    return line;
+  }
 
-		if (header.startsWith("-----BEGIN ") && header.endsWith("-----")) {
-			type = header.substring(11, header.length() - 5);
-		}
+  private static String getTypeFromHeader(String header) {
+    String type = null;
 
-		return type;
-	}
+    if (header.startsWith(PEM_BEGIN_MARKER) &&
+        header.endsWith(PEM_FIVE_DASHES)) {
+      type = header.substring(11, header.length() - 5);
+    }
 
-	private static String getTypeFromFooter(String footer) {
-		String type = null;
+    return type;
+  }
 
-		if (footer.startsWith("-----END ") && footer.endsWith("-----")) {
-			type = footer.substring(9, footer.length() - 5);
-		}
+  private static String getTypeFromFooter(String footer) {
+    String type = null;
 
-		return type;
-	}
+    if (footer.startsWith(PEM_END_MARKER) && footer.endsWith(PEM_FIVE_DASHES)) {
+      type = footer.substring(9, footer.length() - 5);
+    }
+
+    return type;
+  }
 }

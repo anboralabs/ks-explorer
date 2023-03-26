@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -33,7 +33,6 @@ import org.kse.crypto.digest.DigestUtil;
 
 /**
  * Generator for public key identifiers of various forms.
- *
  */
 public class KeyIdentifierGenerator {
   private static ResourceBundle res =
@@ -44,8 +43,7 @@ public class KeyIdentifierGenerator {
   /**
    * Construct KeyIdentifierGenerator.
    *
-   * @param publicKey
-   *            Public key to generate identifiers for
+   * @param publicKey Public key to generate identifiers for
    */
   public KeyIdentifierGenerator(PublicKey publicKey) {
     this.publicKey = publicKey;
@@ -55,12 +53,11 @@ public class KeyIdentifierGenerator {
    * Generate 160 bit hash key identifier.
    *
    * @return Key identifier
-   * @throws CryptoException
-   *             If generation fails
+   * @throws CryptoException If generation fails
    */
   public byte[] generate160BitHashId() throws CryptoException {
     /*
-     * RFC 3280: The keyIdentifier is composed of the 160-bit SHA-1 hash of
+     * RFC 5280: The keyIdentifier is composed of the 160-bit SHA-1 hash of
      * the value of the BIT STRING subjectPublicKey (excluding the tag,
      * length, and number of unused bits)
      */
@@ -79,12 +76,11 @@ public class KeyIdentifierGenerator {
    * Generate 64 bit hash key identifier.
    *
    * @return Key identifier
-   * @throws CryptoException
-   *             If generation fails
+   * @throws CryptoException If generation fails
    */
   public byte[] generate64BitHashId() throws CryptoException {
     /*
-     * RFC 3280: The keyIdentifier is composed of a four bit type field with
+     * RFC 5280: The keyIdentifier is composed of a four bit type field with
      * the value 0100 followed by the least significant 60 bits of the SHA-1
      * hash of the value of the BIT STRING subjectPublicKey (excluding the
      * tag, length, and number of unused bit string bits)

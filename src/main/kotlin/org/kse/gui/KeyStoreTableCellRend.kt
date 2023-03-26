@@ -1,8 +1,8 @@
 package org.kse.gui
 
-import co.anbora.labs.kse.lang.settings.Settings.ENTRY_TYPE
-import co.anbora.labs.kse.lang.settings.Settings.EXPIRY_STATUS
-import co.anbora.labs.kse.lang.settings.Settings.LOCK_STATUS
+import co.anbora.labs.kse.fileTypes.settings.Settings.ENTRY_TYPE
+import co.anbora.labs.kse.fileTypes.settings.Settings.EXPIRY_STATUS
+import co.anbora.labs.kse.fileTypes.settings.Settings.LOCK_STATUS
 import org.bouncycastle.util.encoders.Hex
 import org.kse.gui.ColumnValues.KEY_PAIR_ENTRY
 import org.kse.gui.ColumnValues.TRUST_CERT_ENTRY

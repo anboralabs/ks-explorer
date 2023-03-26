@@ -1,6 +1,6 @@
 package co.anbora.labs.kse.ide.settings;
 
-import static co.anbora.labs.kse.lang.KSLanguage.EDITOR_SETTINGS_ID;
+import static co.anbora.labs.kse.fileTypes.KeystoreFileType.EDITOR_SETTINGS_ID;
 
 import com.intellij.application.options.editor.EditorOptionsProvider;
 import com.intellij.openapi.options.ConfigurationException;
