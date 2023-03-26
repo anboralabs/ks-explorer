@@ -21,6 +21,9 @@
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.JarCertEditorProvider"/>
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.CertEditorProvider"/>
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.CrlEditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.CsrPkcs10EditorProvider"/>
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.CsrSpkacEditorProvider"/>
+
 
     </extensions>
 
