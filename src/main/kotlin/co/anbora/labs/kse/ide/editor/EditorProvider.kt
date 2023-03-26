@@ -10,7 +10,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.SingleRootFileViewProvider
 import org.kse.crypto.filetype.CryptoFileType
 import org.kse.crypto.filetype.CryptoFileUtil
-import java.util.function.Predicate
 
 abstract class EditorProvider: AsyncFileEditorProvider, DumbAware {
 
@@ -23,13 +22,10 @@ abstract class EditorProvider: AsyncFileEditorProvider, DumbAware {
         false
     }
 
-    open fun acceptFile(): Predicate<VirtualFile> = Predicate { true }
-
     override fun accept(project: Project, file: VirtualFile): Boolean {
         return isFileType(file)
                 && !SingleRootFileViewProvider.isTooLargeForContentLoading(file)
                 && file !is DiffVirtualFile
-                && acceptFile().test(file)
     }
 
     override fun createEditor(project: Project, file: VirtualFile): FileEditor =

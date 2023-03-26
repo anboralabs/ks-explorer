@@ -2,6 +2,7 @@ package co.anbora.labs.kse.ide.editor
 
 import co.anbora.labs.kse.ide.gui.view.DViewCertificate
 import co.anbora.labs.kse.ide.gui.view.DViewCrl
+import co.anbora.labs.kse.ide.gui.view.DViewError
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.Project
@@ -21,15 +22,17 @@ class CrlEditorProvider: EditorProvider() {
         CryptoFileType.CRL
     )
 
-    override fun acceptFile(): Predicate<VirtualFile> = Predicate { openClr(it.toNioPath().toFile()) != null }
-
     override fun getEditorTypeId(): String = CLR_EDITOR_TYPE_ID
 
     override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
         return object : AsyncFileEditorProvider.Builder() {
             override fun build(): FileEditor {
                 val clr = openClr(file.toNioPath().toFile())
-                return DViewCrl(project, file, clr)
+                return if (clr != null) {
+                    DViewCrl(project, file, clr)
+                } else {
+                    DViewError(project, file, "Invalid CLR Cert")
+                }
             }
         }
     }
