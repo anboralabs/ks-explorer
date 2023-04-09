@@ -14,7 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import java.beans.PropertyChangeListener
 
 abstract class TableEditor(
-    private val projectArg: Project,
+    protected val projectArg: Project,
     private val fileArg: VirtualFile
 ): FileEditor, FileEditorLocation {
 
