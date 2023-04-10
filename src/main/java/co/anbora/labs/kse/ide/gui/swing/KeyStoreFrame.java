@@ -2,6 +2,7 @@ package co.anbora.labs.kse.ide.gui.swing;
 
 import co.anbora.labs.kse.ide.gui.TableEditor;
 import co.anbora.labs.kse.ide.gui.render.ColumnRender;
+import co.anbora.labs.kse.ide.vfs.VirtualFileHelper;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -35,7 +36,6 @@ import org.kse.gui.error.DError;
 import org.kse.gui.statusbar.StatusBar;
 import org.kse.gui.statusbar.StatusBarImpl;
 import org.kse.utilities.history.KeyStoreHistory;
-import co.anbora.labs.kse.ide.vfs.VirtualFileHelper;
 
 public class KeyStoreFrame
     extends TableEditor implements AddKeyStore, HistoryKeyStore {
@@ -262,7 +262,7 @@ public class KeyStoreFrame
     // Check if a double click occurred on the KeyStore table. If it has
     // show the relevant details of the entry clicked upon
     if (evt.getClickCount() > 1) {
-      JTable jtKeyStore = (JTable) evt.getComponent();
+      JTable jtKeyStore = (JTable)evt.getComponent();
 
       Point point = new Point(evt.getX(), evt.getY());
       int row = jtKeyStore.rowAtPoint(point);
@@ -279,7 +279,7 @@ public class KeyStoreFrame
 
   private void showSelectedEntryDetails(JTable jtKeyStore, int row) {
     jtKeyStore.setRowSelectionInterval(row, row);
-    //updateCutCopyPasteControls(); // Selection changed - update edit controls
+    // updateCutCopyPasteControls(); // Selection changed - update edit controls
 
     try {
 
@@ -288,11 +288,14 @@ public class KeyStoreFrame
       String alias = getSelectedEntryAlias();
 
       if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
-        VirtualFileHelper.INSTANCE.showCertificateSelectedEntry(getProjectArg(), alias, keyStore);
+        VirtualFileHelper.INSTANCE.showCertificateSelectedEntry(
+            getProjectArg(), alias, keyStore);
       } else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-        VirtualFileHelper.INSTANCE.showCertificateSelectedEntry(getProjectArg(), alias, keyStore);
+        VirtualFileHelper.INSTANCE.showCertificateSelectedEntry(
+            getProjectArg(), alias, keyStore);
       } else if (KeyStoreUtil.isKeyEntry(alias, keyStore)) {
-        VirtualFileHelper.INSTANCE.showKeySelectedEntry(getProjectArg(), alias, keyStore, history.getCurrentState());
+        VirtualFileHelper.INSTANCE.showKeySelectedEntry(
+            getProjectArg(), alias, keyStore, history.getCurrentState());
       }
     } catch (Exception ex) {
       DError.displayError(getProjectArg(), ex);
@@ -307,7 +310,7 @@ public class KeyStoreFrame
       return null;
     }
 
-    return (String) jtKeyStore.getValueAt(row, 3);
+    return (String)jtKeyStore.getValueAt(row, 3);
   }
 
   @Override
