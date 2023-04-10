@@ -2,6 +2,7 @@ package co.anbora.labs.kse.ide.gui.swing;
 
 import co.anbora.labs.kse.ide.gui.TableEditor;
 import co.anbora.labs.kse.ide.gui.render.ColumnRender;
+import co.anbora.labs.kse.ide.vfs.VirtualFileHelper;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -24,12 +25,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
+import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.*;
 import org.kse.gui.actions.NewAction;
 import org.kse.gui.actions.OpenAction;
 import org.kse.gui.actions.PressEnterAction;
 import org.kse.gui.actions.behavior.ActionBehavior;
 import org.kse.gui.actions.behavior.OpenKeyStoreImpl;
+import org.kse.gui.error.DError;
 import org.kse.gui.statusbar.StatusBar;
 import org.kse.gui.statusbar.StatusBarImpl;
 import org.kse.utilities.history.KeyStoreHistory;
@@ -246,6 +249,68 @@ public class KeyStoreFrame
         tblEditor.getRowHeight())); // min. height of 18 because of 16x16 icons
 
     tableCustomRenderer.accept(tblEditor);
+
+    tblEditor.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        maybeShowSelectedEntryDetails(e);
+      }
+    });
+  }
+
+  private void maybeShowSelectedEntryDetails(MouseEvent evt) {
+    // Check if a double click occurred on the KeyStore table. If it has
+    // show the relevant details of the entry clicked upon
+    if (evt.getClickCount() > 1) {
+      JTable jtKeyStore = (JTable)evt.getComponent();
+
+      Point point = new Point(evt.getX(), evt.getY());
+      int row = jtKeyStore.rowAtPoint(point);
+
+      if (row != -1) {
+        try {
+          showSelectedEntryDetails(jtKeyStore, row);
+        } catch (Exception ex) {
+          DError.displayError(getProjectArg(), ex);
+        }
+      }
+    }
+  }
+
+  private void showSelectedEntryDetails(JTable jtKeyStore, int row) {
+    jtKeyStore.setRowSelectionInterval(row, row);
+    // updateCutCopyPasteControls(); // Selection changed - update edit controls
+
+    try {
+
+      KeyStoreHistory history = getActiveKeyStoreHistory();
+      KeyStore keyStore = history.getCurrentState().getKeyStore();
+      String alias = getSelectedEntryAlias();
+
+      if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+        VirtualFileHelper.INSTANCE.showCertificateSelectedEntry(
+            getProjectArg(), alias, keyStore);
+      } else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+        VirtualFileHelper.INSTANCE.showCertificateSelectedEntry(
+            getProjectArg(), alias, keyStore);
+      } else if (KeyStoreUtil.isKeyEntry(alias, keyStore)) {
+        VirtualFileHelper.INSTANCE.showKeySelectedEntry(
+            getProjectArg(), alias, keyStore, history.getCurrentState());
+      }
+    } catch (Exception ex) {
+      DError.displayError(getProjectArg(), ex);
+    }
+  }
+
+  public String getSelectedEntryAlias() {
+    JTable jtKeyStore = getActiveKeyStoreTable();
+    int row = jtKeyStore.getSelectedRow();
+
+    if (row == -1) {
+      return null;
+    }
+
+    return (String)jtKeyStore.getValueAt(row, 3);
   }
 
   @Override

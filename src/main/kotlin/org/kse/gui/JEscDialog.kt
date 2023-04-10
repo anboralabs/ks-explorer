@@ -10,7 +10,7 @@ import javax.swing.JRootPane
 import javax.swing.KeyStroke
 
 open class JEscDialog(
-    private val project: Project,
+    protected val project: Project,
     private val type: IdeModalityType
 ): DialogWrapper(project, true, type) {
     override fun createCenterPanel(): JComponent {
