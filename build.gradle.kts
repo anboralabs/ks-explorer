@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "co.anbora.labs"
-version = "1.3.8"
+version = "1.4.0"
 
 repositories {
     mavenCentral()
@@ -31,7 +31,8 @@ apply {
 
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellij {
-    version.set("LATEST-EAP-SNAPSHOT")
+    //version.set("LATEST-EAP-SNAPSHOT")
+    version.set("2022.2.5")
     type.set("IU") // Target IDE Platform
     plugins.set(listOf())
 }
