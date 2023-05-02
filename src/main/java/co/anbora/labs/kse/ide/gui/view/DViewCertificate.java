@@ -28,6 +28,7 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JCertificateFingerprint;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.dialogs.CertificateTreeCellRend;
+import org.kse.gui.dialogs.DViewPem;
 import org.kse.gui.error.DError;
 import org.kse.utilities.StringUtils;
 
@@ -265,12 +266,13 @@ public class DViewCertificate extends CertEditor {
     pane.add(jtfSignatureAlgorithm, "wrap");
     pane.add(jlFingerprint, "");
     pane.add(jcfFingerprint, "spanx, growx, wrap");
-    // pane.add(jbImport, "hidemode 1, spanx, split");
-    // pane.add(jbExport, "hidemode 1");
-    // pane.add(jbExtensions, "");
-    // pane.add(jbPem, "");
-    // pane.add(jbVerify, "");
-    // pane.add(jbAsn1, "wrap");
+
+    pane.add(jbImport, "hidemode 1, spanx, split");
+    pane.add(jbExport, "hidemode 1");
+    pane.add(jbExtensions, "");
+    pane.add(jbPem, "");
+    pane.add(jbVerify, "");
+    pane.add(jbAsn1, "wrap");
     pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
     // pane.add(jbOK, "spanx, tag ok");
 
@@ -319,7 +321,7 @@ public class DViewCertificate extends CertEditor {
         } finally {
             CursorUtil.setCursorFree(DViewCertificate.this);
         }
-    });
+    });*/
 
     jbPem.addActionListener(evt -> {
         try {
@@ -330,7 +332,7 @@ public class DViewCertificate extends CertEditor {
         }
     });
 
-    jbAsn1.addActionListener(evt -> {
+    /*jbAsn1.addActionListener(evt -> {
         try {
             CursorUtil.setCursorBusy(DViewCertificate.this);
             asn1DumpPressed();
@@ -513,6 +515,17 @@ public class DViewCertificate extends CertEditor {
         dispose();
       }
     }
+
+    disableUnImplementedButtons();
+  }
+
+  public void disableUnImplementedButtons() {
+    // TODO delete each line for button implemented
+    jbImport.setEnabled(false);
+    jbExport.setEnabled(false);
+    jbExtensions.setEnabled(false);
+    jbVerify.setEnabled(false);
+    jbAsn1.setEnabled(false);
   }
 
   private DefaultMutableTreeNode
@@ -655,6 +668,17 @@ public class DViewCertificate extends CertEditor {
       return cert1.getSerialNumber()
           .subtract(cert2.getSerialNumber())
           .intValue();
+    }
+  }
+
+  private void pemEncodingPressed() {
+    X509Certificate cert = getSelectedCertificate();
+
+    try {
+      DViewPem dViewCertPem = new DViewPem(project, res.getString("DViewCertificate.Pem.Title"), cert);
+      dViewCertPem.show();
+    } catch (CryptoException e) {
+      DError.displayError(project, e);
     }
   }
 }
