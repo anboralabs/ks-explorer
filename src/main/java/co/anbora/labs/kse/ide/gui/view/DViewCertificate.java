@@ -324,12 +324,12 @@ public class DViewCertificate extends CertEditor {
     });*/
 
     jbPem.addActionListener(evt -> {
-        try {
-            CursorUtil.setCursorBusy(DViewCertificate.this);
-            pemEncodingPressed();
-        } finally {
-            CursorUtil.setCursorFree(DViewCertificate.this);
-        }
+      try {
+        CursorUtil.setCursorBusy(DViewCertificate.this);
+        pemEncodingPressed();
+      } finally {
+        CursorUtil.setCursorFree(DViewCertificate.this);
+      }
     });
 
     /*jbAsn1.addActionListener(evt -> {
@@ -675,7 +675,8 @@ public class DViewCertificate extends CertEditor {
     X509Certificate cert = getSelectedCertificate();
 
     try {
-      DViewPem dViewCertPem = new DViewPem(project, res.getString("DViewCertificate.Pem.Title"), cert);
+      DViewPem dViewCertPem = new DViewPem(
+          project, res.getString("DViewCertificate.Pem.Title"), cert);
       dViewCertPem.show();
     } catch (CryptoException e) {
       DError.displayError(project, e);
