@@ -15,7 +15,7 @@ abstract class EditorProvider: AsyncFileEditorProvider, DumbAware {
 
     abstract fun fileTypes(): Set<CryptoFileType>
 
-    private fun isFileType(file: VirtualFile): Boolean = try {
+    fun isFileType(file: VirtualFile): Boolean = try {
         val fileType = CryptoFileUtil.detectFileType(file.toNioPath().toFile())
         fileType in fileTypes()
     } catch (ex: Exception) {

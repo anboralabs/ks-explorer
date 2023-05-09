@@ -4,18 +4,15 @@ import co.anbora.labs.kse.ide.gui.view.DViewCertificate
 import co.anbora.labs.kse.ide.gui.view.DViewError
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
-import com.intellij.openapi.fileEditor.FileEditorPolicy
-import com.intellij.openapi.fileEditor.FileEditorState
-import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jdom.Element
 import org.kse.crypto.filetype.CryptoFileType
+import org.kse.crypto.x509.X509CertUtil.isBase64Certificate
+import org.kse.crypto.x509.X509CertUtil.isPemCertificate
 import org.kse.gui.actions.KeyStoreExploreActionUtils.openCertificate
-import java.util.function.BiConsumer
 
 private const val CERT_EDITOR_TYPE_ID = "co.anbora.labs.kse.cert.editor"
-class CertEditorProvider: EditorProvider() {
+open class CertEditorProvider: EditorProvider() {
 
     override fun fileTypes(): Set<CryptoFileType> = setOf(
         CryptoFileType.CERT
@@ -38,5 +35,9 @@ class CertEditorProvider: EditorProvider() {
         }
     }
 
-    override fun getPolicy(): FileEditorPolicy = FileEditorPolicy.PLACE_BEFORE_DEFAULT_EDITOR
+    override fun accept(project: Project, file: VirtualFile): Boolean {
+        return super.accept(project, file)
+                && !(isPemCertificate(file.contentsToByteArray())
+                    || isBase64Certificate(file.contentsToByteArray()))
+    }
 }

@@ -106,6 +106,34 @@ public final class X509CertUtil {
     }
   }
 
+  public static boolean isPemCertificate(byte[] certsBytes)
+          throws CryptoException {
+    try {
+      CertificateFactory cf =
+              CertificateFactory.getInstance(X509_CERT_TYPE, KSE.BC);
+
+      // try to parse data as PEM encoded
+      List<X509Certificate> loadedCerts = loadAsPEM(certsBytes, cf);
+      return !loadedCerts.isEmpty();
+    } catch (CertificateException ex) {
+      return false;
+    }
+  }
+
+  public static boolean isBase64Certificate(byte[] certsBytes)
+          throws CryptoException {
+    try {
+      CertificateFactory cf =
+              CertificateFactory.getInstance(X509_CERT_TYPE, KSE.BC);
+
+      // try to parse data as PEM encoded
+      List<X509Certificate> loadedCerts = loadAsBase64(certsBytes, cf);
+      return !loadedCerts.isEmpty();
+    } catch (CertificateException ex) {
+      return false;
+    }
+  }
+
   private static List<X509Certificate> loadAsBase64(byte[] certsBytes,
                                                     CertificateFactory cf) {
     try {
