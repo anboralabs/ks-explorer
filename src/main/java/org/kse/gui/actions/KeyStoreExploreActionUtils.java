@@ -19,7 +19,7 @@ public class KeyStoreExploreActionUtils {
     }
   }
 
-  protected static X509Certificate[] openCertificate(byte[] data, String name) {
+  public static X509Certificate[] openCertificate(byte[] data, String name) {
     try {
       return X509CertUtil.loadCertificates(data);
     } catch (Exception ex) {

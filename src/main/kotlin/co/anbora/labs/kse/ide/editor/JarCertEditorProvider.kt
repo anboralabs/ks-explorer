@@ -24,7 +24,9 @@ class JarCertEditorProvider: EditorProvider() {
             override fun build(): FileEditor {
                 val certificates = jarCertificates(file)
                 return if (certificates.isNotEmpty()) {
-                    DViewCertificate(project, file, certificates, DViewCertificate.IMPORT_EXPORT)
+                    DViewCertificate(project, file, certificates, DViewCertificate.IMPORT_EXPORT) { _, _ ->
+                        //view.restartView(KeyStoreExploreActionUtils.openCertificate(cert.toByteArray(), file.name))
+                    }
                 } else {
                     DViewError(project, file, "Invalid JAR Cert")
                 }

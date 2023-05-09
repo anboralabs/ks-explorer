@@ -1,6 +1,10 @@
 package co.anbora.labs.kse.ide.gui.view;
 
 import co.anbora.labs.kse.ide.gui.CertEditor;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.event.DocumentListener;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import java.awt.*;
@@ -10,11 +14,11 @@ import java.security.interfaces.ECPublicKey;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.tree.*;
+
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,13 +86,32 @@ public class DViewCertificate extends CertEditor {
   private final Project project;
 
   public DViewCertificate(Project project, VirtualFile file,
-                          X509Certificate[] certs, int importExport)
+                          X509Certificate[] certs, int importExport, BiConsumer<DViewCertificate, String> consumer)
       throws CryptoException {
     super(project, file);
     this.project = project;
     this.importExport = importExport;
     this.chain = certs;
+    Document document = FileDocumentManager.getInstance().getDocument(file);
+    if (document != null) {
+      document.addDocumentListener(new DocumentListener() {
+        @Override
+        public void documentChanged(@NotNull DocumentEvent event) {
+          consumer.accept(DViewCertificate.this, document.getText());
+        }
+      });
+    }
     initComponents(certs);
+  }
+
+  public void restartView(X509Certificate[] certs) throws CryptoException {
+    jtrHierarchy.setModel(new DefaultTreeModel(createCertificateNodes(certs)));
+    TreeNode topNode = (TreeNode)jtrHierarchy.getModel().getRoot();
+    expandTree(jtrHierarchy, new TreePath(topNode));
+    // select (first) leaf in certificate tree
+    DefaultMutableTreeNode firstLeaf =
+            ((DefaultMutableTreeNode)topNode).getFirstLeaf();
+    jtrHierarchy.setSelectionPath(new TreePath(firstLeaf.getPath()));
   }
 
   private void initComponents(X509Certificate[] certs) throws CryptoException {
