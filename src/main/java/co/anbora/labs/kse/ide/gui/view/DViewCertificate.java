@@ -18,7 +18,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.tree.*;
-
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,7 +85,8 @@ public class DViewCertificate extends CertEditor {
   private final Project project;
 
   public DViewCertificate(Project project, VirtualFile file,
-                          X509Certificate[] certs, int importExport, BiConsumer<DViewCertificate, String> consumer)
+                          X509Certificate[] certs, int importExport,
+                          BiConsumer<DViewCertificate, String> consumer)
       throws CryptoException {
     super(project, file);
     this.project = project;
@@ -110,7 +110,7 @@ public class DViewCertificate extends CertEditor {
     expandTree(jtrHierarchy, new TreePath(topNode));
     // select (first) leaf in certificate tree
     DefaultMutableTreeNode firstLeaf =
-            ((DefaultMutableTreeNode)topNode).getFirstLeaf();
+        ((DefaultMutableTreeNode)topNode).getFirstLeaf();
     jtrHierarchy.setSelectionPath(new TreePath(firstLeaf.getPath()));
   }
 
@@ -347,12 +347,12 @@ public class DViewCertificate extends CertEditor {
     });*/
 
     jbPem.addActionListener(evt -> {
-        try {
-            CursorUtil.setCursorBusy(DViewCertificate.this);
-            pemEncodingPressed();
-        } finally {
-            CursorUtil.setCursorFree(DViewCertificate.this);
-        }
+      try {
+        CursorUtil.setCursorBusy(DViewCertificate.this);
+        pemEncodingPressed();
+      } finally {
+        CursorUtil.setCursorFree(DViewCertificate.this);
+      }
     });
 
     /*jbAsn1.addActionListener(evt -> {
@@ -698,7 +698,8 @@ public class DViewCertificate extends CertEditor {
     X509Certificate cert = getSelectedCertificate();
 
     try {
-      DViewPem dViewCertPem = new DViewPem(project, res.getString("DViewCertificate.Pem.Title"), cert);
+      DViewPem dViewCertPem = new DViewPem(
+          project, res.getString("DViewCertificate.Pem.Title"), cert);
       dViewCertPem.show();
     } catch (CryptoException e) {
       DError.displayError(project, e);

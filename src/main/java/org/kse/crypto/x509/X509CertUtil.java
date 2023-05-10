@@ -107,10 +107,10 @@ public final class X509CertUtil {
   }
 
   public static boolean isPemCertificate(byte[] certsBytes)
-          throws CryptoException {
+      throws CryptoException {
     try {
       CertificateFactory cf =
-              CertificateFactory.getInstance(X509_CERT_TYPE, KSE.BC);
+          CertificateFactory.getInstance(X509_CERT_TYPE, KSE.BC);
 
       // try to parse data as PEM encoded
       List<X509Certificate> loadedCerts = loadAsPEM(certsBytes, cf);
@@ -121,10 +121,10 @@ public final class X509CertUtil {
   }
 
   public static boolean isBase64Certificate(byte[] certsBytes)
-          throws CryptoException {
+      throws CryptoException {
     try {
       CertificateFactory cf =
-              CertificateFactory.getInstance(X509_CERT_TYPE, KSE.BC);
+          CertificateFactory.getInstance(X509_CERT_TYPE, KSE.BC);
 
       // try to parse data as PEM encoded
       List<X509Certificate> loadedCerts = loadAsBase64(certsBytes, cf);
