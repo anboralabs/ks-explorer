@@ -3,6 +3,8 @@
     <name>KS-Explorer</name>
     <vendor email="anboralabs@gmail.com" url="https://labs.anbora.co">Anbora-labs</vendor>
 
+    <product-descriptor code="PKSEXPLORER" release-date="20230509" release-version="20231"/>
+
     <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
@@ -17,7 +19,12 @@
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.KSEditorProvider"/>
 
         <fileType name="Cert" implementationClass="co.anbora.labs.kse.fileTypes.CertFileType"
-                  fieldName="INSTANCE" extensions="pub;key;pem;cer;crt;p7;p7b;pkipath;spc;p10;spkac;pkcs8;pvk;crl"/>
+                  fieldName="INSTANCE" extensions="pub;key;p7;p7b;pkipath;spc;p10;spkac;pkcs8;pvk;crl"/>
+
+        <fileType name="Pem" language="pem" implementationClass="co.anbora.labs.kse.fileTypes.PemFileType"
+                  fieldName="INSTANCE" extensions="pem;cer;crt"/>
+
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.PemCertEditorProvider"/>
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.JarCertEditorProvider"/>
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.CertEditorProvider"/>
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.CrlEditorProvider"/>

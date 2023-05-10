@@ -22,16 +22,12 @@ class Pcks8EditorProvider: EditorProvider() {
 
     override fun getEditorTypeId(): String = PRIVATE_EDITOR_TYPE_ID
 
-    override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
-        return object : AsyncFileEditorProvider.Builder() {
-            override fun build(): FileEditor {
-                val privateKey = openPrivateKey(file.toNioPath().toFile())
-                return if (privateKey != null) {
-                    DViewPrivateKey(project, file, privateKey)
-                } else {
-                    DViewError(project, file, "Invalid PCKS8 Cert")
-                }
-            }
+    override fun createLicensedEditorAsync(project: Project, file: VirtualFile): FileEditor {
+        val privateKey = openPrivateKey(file.toNioPath().toFile())
+        return if (privateKey != null) {
+            DViewPrivateKey(project, file, privateKey)
+        } else {
+            DViewError(project, file, "Invalid PCKS8 Cert")
         }
     }
 

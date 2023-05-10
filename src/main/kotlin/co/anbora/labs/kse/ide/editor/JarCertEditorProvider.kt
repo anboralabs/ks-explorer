@@ -19,16 +19,14 @@ class JarCertEditorProvider: EditorProvider() {
 
     override fun getEditorTypeId(): String = JAR_CERT_EDITOR_TYPE_ID
 
-    override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
-        return object : AsyncFileEditorProvider.Builder() {
-            override fun build(): FileEditor {
-                val certificates = jarCertificates(file)
-                return if (certificates.isNotEmpty()) {
-                    DViewCertificate(project, file, certificates, DViewCertificate.IMPORT_EXPORT)
-                } else {
-                    DViewError(project, file, "Invalid JAR Cert")
-                }
+    override fun createLicensedEditorAsync(project: Project, file: VirtualFile): FileEditor {
+        val certificates = jarCertificates(file)
+        return if (certificates.isNotEmpty()) {
+            DViewCertificate(project, file, certificates, DViewCertificate.IMPORT_EXPORT) { _, _ ->
+                //view.restartView(KeyStoreExploreActionUtils.openCertificate(cert.toByteArray(), file.name))
             }
+        } else {
+            DViewError(project, file, "Invalid JAR Cert")
         }
     }
 

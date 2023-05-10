@@ -20,16 +20,12 @@ class CsrSpkacEditorProvider: EditorProvider() {
 
     override fun getEditorTypeId(): String = CSR_EDITOR_TYPE_ID
 
-    override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
-        return object : AsyncFileEditorProvider.Builder() {
-            override fun build(): FileEditor {
-                val csr = openCsr(file.toNioPath().toFile())
-                return if (csr != null) {
-                    DViewCsr(project, file, csr)
-                } else {
-                    DViewError(project, file, "Invalid CSR Cert")
-                }
-            }
+    override fun createLicensedEditorAsync(project: Project, file: VirtualFile): FileEditor  {
+        val csr = openCsr(file.toNioPath().toFile())
+        return if (csr != null) {
+            DViewCsr(project, file, csr)
+        } else {
+            DViewError(project, file, "Invalid CSR Cert")
         }
     }
 

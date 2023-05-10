@@ -24,16 +24,12 @@ class CrlEditorProvider: EditorProvider() {
 
     override fun getEditorTypeId(): String = CLR_EDITOR_TYPE_ID
 
-    override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
-        return object : AsyncFileEditorProvider.Builder() {
-            override fun build(): FileEditor {
-                val clr = openClr(file.toNioPath().toFile())
-                return if (clr != null) {
-                    DViewCrl(project, file, clr)
-                } else {
-                    DViewError(project, file, "Invalid CLR Cert")
-                }
-            }
+    override fun createLicensedEditorAsync(project: Project, file: VirtualFile): FileEditor {
+        val clr = openClr(file.toNioPath().toFile())
+        return if (clr != null) {
+            DViewCrl(project, file, clr)
+        } else {
+            DViewError(project, file, "Invalid CLR Cert")
         }
     }
 
