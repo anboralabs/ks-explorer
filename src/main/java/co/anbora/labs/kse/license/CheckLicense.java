@@ -1,4 +1,4 @@
-package co.anbora.labs.sqlfluff.license;
+package co.anbora.labs.kse.license;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;

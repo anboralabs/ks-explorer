@@ -2,6 +2,7 @@ package co.anbora.labs.kse.ide.editor
 
 import co.anbora.labs.kse.ide.gui.view.DViewCertificate
 import co.anbora.labs.kse.ide.gui.view.DViewError
+import co.anbora.labs.kse.license.CheckLicense
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.Project
@@ -20,18 +21,14 @@ open class CertEditorProvider: EditorProvider() {
 
     override fun getEditorTypeId(): String = CERT_EDITOR_TYPE_ID
 
-    override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
-        return object : AsyncFileEditorProvider.Builder() {
-            override fun build(): FileEditor {
-                val certificates = openCertificate(file.toNioPath().toFile())
-                return if (certificates.isNotEmpty()) {
-                    DViewCertificate(project, file, certificates, DViewCertificate.IMPORT_EXPORT) { view, cert ->
-                        view.restartView(openCertificate(cert.toByteArray(), file.name))
-                    }
-                } else {
-                    DViewError(project, file, "Invalid Cert")
-                }
+    override fun createLicensedEditorAsync(project: Project, file: VirtualFile): FileEditor {
+        val certificates = openCertificate(file.toNioPath().toFile())
+        return if (certificates.isNotEmpty()) {
+            DViewCertificate(project, file, certificates, DViewCertificate.IMPORT_EXPORT) { view, cert ->
+                view.restartView(openCertificate(cert.toByteArray(), file.name))
             }
+        } else {
+            DViewError(project, file, "Invalid Cert")
         }
     }
 

@@ -21,16 +21,12 @@ class PublicKeyEditorProvider: EditorProvider() {
 
     override fun getEditorTypeId(): String = PRIVATE_EDITOR_TYPE_ID
 
-    override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
-        return object : AsyncFileEditorProvider.Builder() {
-            override fun build(): FileEditor {
-                val public = openPublicKey(file.toNioPath().toFile())
-                return if (public != null) {
-                    DViewPublicKey(project, file, public)
-                } else {
-                    DViewError(project, file, "Invalid Public Key Cert")
-                }
-            }
+    override fun createLicensedEditorAsync(project: Project, file: VirtualFile): FileEditor {
+        val public = openPublicKey(file.toNioPath().toFile())
+        return if (public != null) {
+            DViewPublicKey(project, file, public)
+        } else {
+            DViewError(project, file, "Invalid Public Key Cert")
         }
     }
 

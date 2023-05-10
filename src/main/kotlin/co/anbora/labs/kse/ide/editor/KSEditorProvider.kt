@@ -23,10 +23,7 @@ class KSEditorProvider: EditorProvider() {
 
     override fun getEditorTypeId(): String = EDITOR_TYPE_ID
 
-    override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
-        return object : AsyncFileEditorProvider.Builder() {
-            override fun build(): FileEditor =
-                KeyStoreFrame(project, file)
-        }
+    override fun createLicensedEditorAsync(project: Project, file: VirtualFile): FileEditor {
+        return KeyStoreFrame(project, file)
     }
 }

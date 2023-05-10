@@ -17,10 +17,7 @@ class EncPrivateKeyEditorProvider: EditorProvider() {
 
     override fun getEditorTypeId(): String = PRIVATE_EDITOR_TYPE_ID
 
-    override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
-        return object : AsyncFileEditorProvider.Builder() {
-            override fun build(): FileEditor =
-                PrivateKeyWithPasswordView(project, file)
-        }
+    override fun createLicensedEditorAsync(project: Project, file: VirtualFile): FileEditor {
+        return PrivateKeyWithPasswordView(project, file)
     }
 }

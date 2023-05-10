@@ -1,5 +1,7 @@
 package co.anbora.labs.kse.ide.editor
 
+import co.anbora.labs.kse.ide.gui.view.DViewError
+import co.anbora.labs.kse.license.CheckLicense
 import com.intellij.diff.editor.DiffVirtualFile
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
@@ -32,5 +34,19 @@ abstract class EditorProvider: AsyncFileEditorProvider, DumbAware {
         createEditorAsync(project, file).build()
 
     override fun getPolicy(): FileEditorPolicy = FileEditorPolicy.HIDE_DEFAULT_EDITOR
+
+    override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
+        return object : AsyncFileEditorProvider.Builder() {
+            override fun build(): FileEditor {
+                val licensed = CheckLicense.isLicensed() ?: true
+                if (!licensed) {
+                    return DViewError(project, file, "If you want to support my work, please buy a license only 3 USD per year for plugin maintaining.")
+                }
+                return createLicensedEditorAsync(project, file)
+            }
+        }
+    }
+
+    abstract fun createLicensedEditorAsync(project: Project, file: VirtualFile): FileEditor
 
 }
