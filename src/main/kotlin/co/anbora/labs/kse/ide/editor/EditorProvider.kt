@@ -30,8 +30,13 @@ abstract class EditorProvider: AsyncFileEditorProvider, DumbAware {
                 && file !is DiffVirtualFile
     }
 
-    override fun createEditor(project: Project, file: VirtualFile): FileEditor =
-        createEditorAsync(project, file).build()
+    override fun createEditor(project: Project, file: VirtualFile): FileEditor {
+        val licensed = CheckLicense.isLicensed() ?: true
+        if (!licensed) {
+            return DViewError(project, file, "If you want to support my work, please buy a license only 3 USD per year for plugin maintaining.")
+        }
+        return createLicensedEditorAsync(project, file)
+    }
 
     override fun getPolicy(): FileEditorPolicy = FileEditorPolicy.HIDE_DEFAULT_EDITOR
 
