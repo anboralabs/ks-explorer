@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "co.anbora.labs"
-version = "2023.1.6"
+version = "2023.1.7"
 
 repositories {
     mavenCentral()
@@ -31,8 +31,8 @@ apply {
 
 // Configure Gradle IntelliJ Plugin - read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellij {
-    //version.set("LATEST-EAP-SNAPSHOT")
-    version.set("2022.2.5")
+    version.set("LATEST-EAP-SNAPSHOT")
+    //version.set("2022.2.5")
     type.set("IU") // Target IDE Platform
     plugins.set(listOf())
 }
@@ -48,8 +48,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("222")
-        untilBuild.set("232.*")
+        sinceBuild.set("232")
+        untilBuild.set("233.*")
         changeNotes.set(file("src/main/html/change-notes.html").inputStream().readBytes().toString(Charsets.UTF_8))
         pluginDescription.set(file("src/main/html/description.html").inputStream().readBytes().toString(Charsets.UTF_8))
     }
