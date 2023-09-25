@@ -1,8 +1,10 @@
 package co.anbora.labs.kse.ide.gui.view;
 
 import co.anbora.labs.kse.ide.gui.CertEditor;
+import co.anbora.labs.kse.license.CheckLicense;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.components.JBScrollPane;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -15,6 +17,8 @@ public class DViewError extends CertEditor {
 
   private JPanel jpError;
   private JLabel jlError;
+
+  private JButton jbActivateLicense;
 
   public DViewError(Project project, VirtualFile file, String errorMessage) {
     super(project, file);
@@ -32,7 +36,12 @@ public class DViewError extends CertEditor {
     jlError.setHorizontalTextPosition(SwingConstants.TRAILING);
     jlError.setIconTextGap(15);
 
+    jbActivateLicense = new JButton("Activate License");
+    jbActivateLicense.addActionListener(
+        e -> { CheckLicense.requestLicense("Activate License"); });
+
     jpError.add(jlError);
+    jpError.add(jbActivateLicense);
 
     getContentPane().add(jpError, BorderLayout.CENTER);
   }
