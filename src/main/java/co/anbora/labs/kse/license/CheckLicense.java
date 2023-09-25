@@ -4,6 +4,8 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.ui.LicensingFacade;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -125,6 +127,11 @@ public class CheckLicense {
       return isEvaluationValid(cstamp.substring(EVAL_PREFIX.length()));
     }
     return false;
+  }
+
+  public static void requestLicense(final String message) {
+    // ensure the dialog is appeared from UI thread and in a non-modal context
+    ApplicationManager.getApplication().invokeLater(() -> showRegisterDialog(PRODUCT_CODE, message), ModalityState.nonModal());
   }
 
   private static void showRegisterDialog(final String productCode,
