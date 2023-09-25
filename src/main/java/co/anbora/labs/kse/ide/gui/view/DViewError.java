@@ -4,11 +4,10 @@ import co.anbora.labs.kse.ide.gui.CertEditor;
 import co.anbora.labs.kse.license.CheckLicense;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.components.JBScrollPane;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
-import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,9 +37,8 @@ public class DViewError extends CertEditor {
     jlError.setIconTextGap(15);
 
     jbActivateLicense = new JButton("Activate License");
-    jbActivateLicense.addActionListener(e -> {
-      CheckLicense.requestLicense("Activate License");
-    });
+    jbActivateLicense.addActionListener(
+        e -> { CheckLicense.requestLicense("Activate License"); });
 
     jpError.add(jlError);
     jpError.add(jbActivateLicense);
