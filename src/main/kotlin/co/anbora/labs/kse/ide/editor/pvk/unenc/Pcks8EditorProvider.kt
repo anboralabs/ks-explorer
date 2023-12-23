@@ -6,6 +6,7 @@ import co.anbora.labs.kse.ide.gui.view.DViewError
 import co.anbora.labs.kse.ide.gui.view.DViewPrivateKey
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
+import com.intellij.openapi.fileEditor.FileEditorPolicy
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.apache.commons.io.FileUtils
@@ -30,6 +31,8 @@ class Pcks8EditorProvider: EditorProvider() {
             DViewError(project, file, "Invalid PCKS8 Cert")
         }
     }
+
+    override fun getPolicy(): FileEditorPolicy = FileEditorPolicy.PLACE_BEFORE_DEFAULT_EDITOR
 
     private fun openPrivateKey(file: File?): PrivateKey? = try {
         if (file == null) {
