@@ -5,6 +5,7 @@ import co.anbora.labs.kse.ide.gui.view.DViewCsr
 import co.anbora.labs.kse.ide.gui.view.DViewError
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
+import com.intellij.openapi.fileEditor.FileEditorPolicy
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.apache.commons.io.FileUtils
@@ -29,6 +30,8 @@ class CsrPkcs10EditorProvider: EditorProvider() {
             DViewError(project, file, "Invalid CSR Cert")
         }
     }
+
+    override fun getPolicy(): FileEditorPolicy = FileEditorPolicy.PLACE_BEFORE_DEFAULT_EDITOR
 
     private fun openCsr(file: File?): PKCS10CertificationRequest? = try {
         val data: ByteArray = decodeIfBase64(FileUtils.readFileToByteArray(file))

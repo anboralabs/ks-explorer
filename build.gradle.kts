@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "co.anbora.labs"
-version = "2023.3.1"
+version = "2023.3.2"
 
 repositories {
     mavenCentral()

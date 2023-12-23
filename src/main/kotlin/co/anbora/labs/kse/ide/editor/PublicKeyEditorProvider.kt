@@ -5,6 +5,7 @@ import co.anbora.labs.kse.ide.gui.view.DViewError
 import co.anbora.labs.kse.ide.gui.view.DViewPublicKey
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
+import com.intellij.openapi.fileEditor.FileEditorPolicy
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.apache.commons.io.FileUtils
@@ -29,6 +30,8 @@ class PublicKeyEditorProvider: EditorProvider() {
             DViewError(project, file, "Invalid Public Key Cert")
         }
     }
+
+    override fun getPolicy(): FileEditorPolicy = FileEditorPolicy.PLACE_BEFORE_DEFAULT_EDITOR
 
     private fun openPublicKey(file: File): PublicKey? = try {
         val data: ByteArray = decodeIfBase64(FileUtils.readFileToByteArray(file))
