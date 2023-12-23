@@ -33,7 +33,7 @@ abstract class EditorProvider: AsyncFileEditorProvider, DumbAware {
     override fun createEditor(project: Project, file: VirtualFile): FileEditor {
         val licensed = CheckLicense.isLicensed() ?: true
         if (!licensed) {
-            return DViewError(project, file, "If you want to support my work, please buy a license only 3 USD per year for plugin maintaining.")
+            return DViewError(project, file, "If you want to support my work, please buy a license only 5 USD per year for plugin maintaining.")
         }
         return createLicensedEditorAsync(project, file)
     }
