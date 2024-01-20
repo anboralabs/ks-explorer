@@ -88,7 +88,7 @@ public class DViewPem extends JEscDialog {
    */
   public DViewPem(Project project, String title, X509Certificate cert)
       throws CryptoException {
-    super(project, DialogWrapper.IdeModalityType.PROJECT);
+    super(project, DialogWrapper.IdeModalityType.IDE);
     setTitle(title);
     this.cert = cert;
     initComponents();
@@ -105,7 +105,7 @@ public class DViewPem extends JEscDialog {
    */
   public DViewPem(Project project, String title,
                   PKCS10CertificationRequest pkcs10Csr) throws CryptoException {
-    super(project, DialogWrapper.IdeModalityType.PROJECT);
+    super(project, DialogWrapper.IdeModalityType.IDE);
     setTitle(title);
     this.pkcs10Csr = pkcs10Csr;
     initComponents();
@@ -119,7 +119,7 @@ public class DViewPem extends JEscDialog {
    */
   public DViewPem(Project project, String title, PrivateKey privateKey)
       throws CryptoException {
-    super(project, DialogWrapper.IdeModalityType.PROJECT);
+    super(project, DialogWrapper.IdeModalityType.IDE);
     setTitle(title);
     this.privKey = privateKey;
     initComponents();
@@ -133,7 +133,7 @@ public class DViewPem extends JEscDialog {
    */
   public DViewPem(Project project, String title, PublicKey publicKey)
       throws CryptoException {
-    super(project, DialogWrapper.IdeModalityType.PROJECT);
+    super(project, DialogWrapper.IdeModalityType.IDE);
     setTitle(title);
     this.pubKey = publicKey;
     initComponents();
