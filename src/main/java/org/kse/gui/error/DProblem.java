@@ -64,7 +64,7 @@ public class DProblem extends JEscDialog {
    * @param problem
    */
   public DProblem(Project parent, String title, Problem problem) {
-    super(parent, DialogWrapper.IdeModalityType.PROJECT);
+    super(parent, DialogWrapper.IdeModalityType.IDE);
     setTitle(title);
     this.problem = problem;
 

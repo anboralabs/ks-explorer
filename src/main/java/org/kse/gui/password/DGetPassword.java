@@ -61,7 +61,7 @@ public class DGetPassword extends JEscDialog {
    * @param title  The dialog's title
    */
   public DGetPassword(Project parent, String title) {
-    super(parent, DialogWrapper.IdeModalityType.PROJECT);
+    super(parent, DialogWrapper.IdeModalityType.IDE);
     setTitle(title);
     initComponents();
   }

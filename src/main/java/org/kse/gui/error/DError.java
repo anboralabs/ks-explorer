@@ -55,7 +55,7 @@ public class DError extends JEscDialog {
 	 * @param error
 	 */
 	public DError(Project parent, Throwable error) {
-		super(parent, DialogWrapper.IdeModalityType.PROJECT);
+		super(parent, DialogWrapper.IdeModalityType.IDE);
 		this.setTitle(res.getString("DError.Title"));
 		this.error = error;
 		initComponents();
