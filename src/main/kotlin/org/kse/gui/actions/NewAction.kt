@@ -14,8 +14,8 @@ class NewAction(
     init {
         putValue(
             ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-                res.getString("NewAction.accelerator")[0].code,
-                Toolkit.getDefaultToolkit().menuShortcutKeyMask
+                'N',
+                Toolkit.getDefaultToolkit().menuShortcutKeyMaskEx
             )
         )
         putValue(LONG_DESCRIPTION, res.getString("NewAction.statusbar"))
