@@ -19,12 +19,9 @@
  */
 package org.kse.crypto.jcepolicy;
 
-import org.apache.commons.io.IOUtils;
-import org.kse.crypto.CryptoException;
-import org.kse.utilities.net.URLs;
-import org.kse.version.JavaVersion;
+import static org.kse.crypto.jcepolicy.CryptoStrength.LIMITED;
+import static org.kse.crypto.jcepolicy.CryptoStrength.UNLIMITED;
 
-import javax.crypto.Cipher;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -37,164 +34,180 @@ import java.util.ResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-
-import static org.kse.crypto.jcepolicy.CryptoStrength.LIMITED;
-import static org.kse.crypto.jcepolicy.CryptoStrength.UNLIMITED;
+import javax.crypto.Cipher;
+import org.apache.commons.io.IOUtils;
+import org.kse.crypto.CryptoException;
+import org.kse.utilities.net.URLs;
+import org.kse.version.JavaVersion;
 
 /**
  * Provides utility methods relating to JCE policies.
  */
 public class JcePolicyUtil {
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/jcepolicy/resources");
+  private static ResourceBundle res =
+      ResourceBundle.getBundle("org/kse/crypto/jcepolicy/resources");
 
-    private JcePolicyUtil() {
-    }
+  private JcePolicyUtil() {}
 
-    /**
-     * Is the local JCE policy's crypto strength limited?
-     *
-     * @return True if it is
-     * @throws CryptoException If there was a problem getting the policy or crypto strength
-     */
-    public static boolean isLocalPolicyCrytoStrengthLimited() throws CryptoException {
-        return unlimitedStrengthTest() == CryptoStrength.LIMITED;
-    }
+  /**
+   * Is the local JCE policy's crypto strength limited?
+   *
+   * @return True if it is
+   * @throws CryptoException If there was a problem getting the policy or crypto
+   *     strength
+   */
+  public static boolean isLocalPolicyCrytoStrengthLimited()
+      throws CryptoException {
+    return unlimitedStrengthTest() == CryptoStrength.LIMITED;
+  }
 
-    /**
-     * Get a JCE policy's crypto strength.
-     *
-     * @param jcePolicy JCE policy
-     * @return Crypto strength
-     * @throws CryptoException If there was a problem getting the crypto strength
-     */
-    public static CryptoStrength getCryptoStrength(JcePolicy jcePolicy) throws CryptoException {
-        JarFile jarFile = null;
-        try {
-            File file = getJarFile(jcePolicy);
+  /**
+   * Get a JCE policy's crypto strength.
+   *
+   * @param jcePolicy JCE policy
+   * @return Crypto strength
+   * @throws CryptoException If there was a problem getting the crypto strength
+   */
+  public static CryptoStrength getCryptoStrength(JcePolicy jcePolicy)
+      throws CryptoException {
+    JarFile jarFile = null;
+    try {
+      File file = getJarFile(jcePolicy);
 
-            // if there is no policy file at all, we assume that we are running under OpenJDK
-            if (!file.exists()) {
-                return UNLIMITED;
-            }
+      // if there is no policy file at all, we assume that we are running under
+      // OpenJDK
+      if (!file.exists()) {
+        return UNLIMITED;
+      }
 
-            jarFile = new JarFile(file);
+      jarFile = new JarFile(file);
 
-            Manifest jarManifest = jarFile.getManifest();
-            String strength = jarManifest.getMainAttributes().getValue("Crypto-Strength");
+      Manifest jarManifest = jarFile.getManifest();
+      String strength =
+          jarManifest.getMainAttributes().getValue("Crypto-Strength");
 
-            // workaround for IBM JDK: test for maximum key size
-            if (strength == null) {
-                return unlimitedStrengthTest();
-            }
+      // workaround for IBM JDK: test for maximum key size
+      if (strength == null) {
+        return unlimitedStrengthTest();
+      }
 
-            if (strength.equals(LIMITED.manifestValue())) {
-                return LIMITED;
-            } else {
-                return UNLIMITED;
-            }
-        } catch (IOException ex) {
-            throw new CryptoException(
-                    MessageFormat.format(res.getString("NoGetCryptoStrength.exception.message"), jcePolicy), ex);
-        } finally {
-            IOUtils.closeQuietly(jarFile);
-        }
-    }
-
-    private static CryptoStrength unlimitedStrengthTest() {
-        try {
-            if (Cipher.getMaxAllowedKeyLength("AES") >= 256) {
-                return UNLIMITED;
-            }
-        } catch (NoSuchAlgorithmException e) {
-            // swallow exception
-        }
+      if (strength.equals(LIMITED.manifestValue())) {
         return LIMITED;
+      } else {
+        return UNLIMITED;
+      }
+    } catch (IOException ex) {
+      throw new CryptoException(
+          MessageFormat.format(
+              res.getString("NoGetCryptoStrength.exception.message"),
+              jcePolicy),
+          ex);
+    } finally {
+      IOUtils.closeQuietly(jarFile);
     }
+  }
 
-    /**
-     * Get a JCE policy's details.
-     *
-     * @param jcePolicy JCE policy
-     * @return Policy details
-     * @throws CryptoException If there was a problem getting the policy details
-     */
-    public static String getPolicyDetails(JcePolicy jcePolicy) throws CryptoException {
-        JarFile jarFile = null;
-        try {
-            StringWriter sw = new StringWriter();
+  private static CryptoStrength unlimitedStrengthTest() {
+    try {
+      if (Cipher.getMaxAllowedKeyLength("AES") >= 256) {
+        return UNLIMITED;
+      }
+    } catch (NoSuchAlgorithmException e) {
+      // swallow exception
+    }
+    return LIMITED;
+  }
 
-            File file = getJarFile(jcePolicy);
+  /**
+   * Get a JCE policy's details.
+   *
+   * @param jcePolicy JCE policy
+   * @return Policy details
+   * @throws CryptoException If there was a problem getting the policy details
+   */
+  public static String getPolicyDetails(JcePolicy jcePolicy)
+      throws CryptoException {
+    JarFile jarFile = null;
+    try {
+      StringWriter sw = new StringWriter();
 
-            // if there is no policy file at all, return empty string
-            if (!file.exists()) {
-                return "";
-            }
+      File file = getJarFile(jcePolicy);
 
-            jarFile = new JarFile(file);
+      // if there is no policy file at all, return empty string
+      if (!file.exists()) {
+        return "";
+      }
 
-            Enumeration<JarEntry> jarEntries = jarFile.entries();
+      jarFile = new JarFile(file);
 
-            while (jarEntries.hasMoreElements()) {
-                JarEntry jarEntry = jarEntries.nextElement();
+      Enumeration<JarEntry> jarEntries = jarFile.entries();
 
-                String entryName = jarEntry.getName();
+      while (jarEntries.hasMoreElements()) {
+        JarEntry jarEntry = jarEntries.nextElement();
 
-                if (!jarEntry.isDirectory() && entryName.endsWith(".policy")) {
-                    sw.write(entryName + ":\n\n");
+        String entryName = jarEntry.getName();
 
-                    try (InputStreamReader isr = new InputStreamReader(jarFile.getInputStream(jarEntry))) {
-                        IOUtils.copy(isr, sw);
-                    }
+        if (!jarEntry.isDirectory() && entryName.endsWith(".policy")) {
+          sw.write(entryName + ":\n\n");
 
-                    sw.write('\n');
-                }
-            }
+          try (InputStreamReader isr =
+                   new InputStreamReader(jarFile.getInputStream(jarEntry))) {
+            IOUtils.copy(isr, sw);
+          }
 
-            return sw.toString();
-        } catch (IOException ex) {
-            throw new CryptoException(
-                    MessageFormat.format(res.getString("NoGetPolicyDetails.exception.message"), jcePolicy), ex);
-        } finally {
-            IOUtils.closeQuietly(jarFile);
+          sw.write('\n');
         }
+      }
+
+      return sw.toString();
+    } catch (IOException ex) {
+      throw new CryptoException(
+          MessageFormat.format(
+              res.getString("NoGetPolicyDetails.exception.message"), jcePolicy),
+          ex);
+    } finally {
+      IOUtils.closeQuietly(jarFile);
     }
+  }
 
-    /**
-     * Get a JCE policy's JAR file.
-     *
-     * @param jcePolicy JCE policy
-     * @return JAR file
-     */
-    public static File getJarFile(JcePolicy jcePolicy) {
-        String fileSeperator = System.getProperty("file.separator");
-        String javaHome = System.getProperty("java.home");
-        File libSecurityFile = new File(javaHome, "lib" + fileSeperator + "security");
+  /**
+   * Get a JCE policy's JAR file.
+   *
+   * @param jcePolicy JCE policy
+   * @return JAR file
+   */
+  public static File getJarFile(JcePolicy jcePolicy) {
+    String fileSeperator = System.getProperty("file.separator");
+    String javaHome = System.getProperty("java.home");
+    File libSecurityFile =
+        new File(javaHome, "lib" + fileSeperator + "security");
 
-        return new File(libSecurityFile, jcePolicy.jar());
-    }
+    return new File(libSecurityFile, jcePolicy.jar());
+  }
 
-    /**
-     * Get JCE Unlimited Strength Jurisdiction Policy download URL for the
-     * current JRE.
-     *
-     * @return Download page URL
-     */
-    public static String getJcePolicyDownloadUrl() {
-        JavaVersion jreVersion = JavaVersion.getJreVersion();
+  /**
+   * Get JCE Unlimited Strength Jurisdiction Policy download URL for the
+   * current JRE.
+   *
+   * @return Download page URL
+   */
+  public static String getJcePolicyDownloadUrl() {
+    JavaVersion jreVersion = JavaVersion.getJreVersion();
 
-        int major = jreVersion.getMajor();
-        int middle = jreVersion.getMinor();
-        int minor = jreVersion.getSecurity();
+    int major = jreVersion.getMajor();
+    int middle = jreVersion.getMinor();
+    int minor = jreVersion.getSecurity();
 
-        String version = MessageFormat.format("{0}.{1}.{2}", major, middle, minor);
+    String version = MessageFormat.format("{0}.{1}.{2}", major, middle, minor);
 
-        return MessageFormat.format(URLs.JCE_POLICY_DOWNLOAD_URL, version);
-    }
+    return MessageFormat.format(URLs.JCE_POLICY_DOWNLOAD_URL, version);
+  }
 
-    /**
-     * Disable crypto restrictions (for Java 8u151/8u152, later versions are unrestricted by default)
-     */
-    public static void removeRestrictions() {
-        Security.setProperty("crypto.policy", "unlimited");
-    }
+  /**
+   * Disable crypto restrictions (for Java 8u151/8u152, later versions are
+   * unrestricted by default)
+   */
+  public static void removeRestrictions() {
+    Security.setProperty("crypto.policy", "unlimited");
+  }
 }

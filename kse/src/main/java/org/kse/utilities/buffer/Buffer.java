@@ -25,57 +25,50 @@ import java.util.List;
  * Singleton buffer for copy/paste. Holds at most one KeyStore entry.
  */
 public class Buffer {
-    private static List<BufferEntry> bufferEntries;
+  private static List<BufferEntry> bufferEntries;
 
-    private Buffer() {
+  private Buffer() {}
+
+  /**
+   * Populate buffer with supplied entry.
+   *
+   * @param bufferEntries Buffer entry
+   */
+  public static void populate(List<BufferEntry> bufferEntries) {
+    Buffer.bufferEntries = bufferEntries;
+  }
+
+  /**
+   * Interrogate buffer.
+   *
+   * @return Buffer entry or null if empty
+   */
+  public static List<BufferEntry> interrogate() { return bufferEntries; }
+
+  /**
+   * Is buffer clear?
+   *
+   * @return True if its is
+   */
+  public static boolean isClear() { return (interrogate() == null); }
+
+  /**
+   * Is buffer populated?
+   *
+   * @return True if its is
+   */
+  public static boolean isPopulated() { return (interrogate() != null); }
+
+  /**
+   * Clear buffer.
+   */
+  public static void clear() {
+    if (bufferEntries != null) {
+      for (BufferEntry bufferEntry : bufferEntries) {
+        bufferEntry.clear();
+      }
     }
 
-    /**
-     * Populate buffer with supplied entry.
-     *
-     * @param bufferEntries Buffer entry
-     */
-    public static void populate(List<BufferEntry> bufferEntries) {
-        Buffer.bufferEntries = bufferEntries;
-    }
-
-    /**
-     * Interrogate buffer.
-     *
-     * @return Buffer entry or null if empty
-     */
-    public static List<BufferEntry> interrogate() {
-        return bufferEntries;
-    }
-
-    /**
-     * Is buffer clear?
-     *
-     * @return True if its is
-     */
-    public static boolean isClear() {
-        return (interrogate() == null);
-    }
-
-    /**
-     * Is buffer populated?
-     *
-     * @return True if its is
-     */
-    public static boolean isPopulated() {
-        return (interrogate() != null);
-    }
-
-    /**
-     * Clear buffer.
-     */
-    public static void clear() {
-        if (bufferEntries != null) {
-            for (BufferEntry bufferEntry : bufferEntries) {
-                bufferEntry.clear();
-            }
-        }
-
-        bufferEntries = null;
-    }
+    bufferEntries = null;
+  }
 }

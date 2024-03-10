@@ -22,7 +22,4 @@ package org.kse.crypto.x509;
 /**
  * X.509 certificate versions.
  */
-public enum X509CertificateVersion {
-    VERSION1,
-    VERSION3
-}
+public enum X509CertificateVersion { VERSION1, VERSION3 }

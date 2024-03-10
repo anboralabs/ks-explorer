@@ -19,6 +19,10 @@
  */
 package org.kse.gui.dialogs;
 
+import java.security.PrivateKey;
+import java.util.Collections;
+import java.util.List;
+import javax.swing.*;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERPrintableString;
@@ -32,11 +36,6 @@ import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;
-
-import javax.swing.*;
-import java.security.PrivateKey;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Helper class that bundles redundant code from the dialogs.

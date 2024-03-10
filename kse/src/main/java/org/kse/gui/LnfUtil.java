@@ -19,10 +19,9 @@
  */
 package org.kse.gui;
 
-import org.kse.utilities.os.OperatingSystem;
-
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
+import org.kse.utilities.os.OperatingSystem;
 
 /**
  * Look and Feel utility methods.
@@ -30,31 +29,32 @@ import java.awt.*;
  */
 public class LnfUtil {
 
-	// VAqua LnF class as constant to avoid compile dependency
-	private static final String VAQUA_LAF_CLASS = "org.violetlib.aqua.AquaLookAndFeel";
+  // VAqua LnF class as constant to avoid compile dependency
+  private static final String VAQUA_LAF_CLASS =
+      "org.violetlib.aqua.AquaLookAndFeel";
 
-	private LnfUtil() {
-	}
+  private LnfUtil() {}
 
-	/**
-	 * Is a Mac l&amp;f (Aqua) currently being used?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean usingMacLnf() {
-		String lnfClass = UIManager.getLookAndFeel().getClass().getName();
+  /**
+   * Is a Mac l&amp;f (Aqua) currently being used?
+   *
+   * @return True if it is
+   */
+  public static boolean usingMacLnf() {
+    String lnfClass = UIManager.getLookAndFeel().getClass().getName();
 
-		return OperatingSystem.isMacOs()
-				&& (UIManager.getSystemLookAndFeelClassName().equals(lnfClass) || lnfClass.equals(VAQUA_LAF_CLASS));
-	}
+    return OperatingSystem.isMacOs() &&
+        (UIManager.getSystemLookAndFeelClassName().equals(lnfClass) ||
+         lnfClass.equals(VAQUA_LAF_CLASS));
+  }
 
-	/**
-	 * Get default font size for a label.
-	 *
-	 * @return Font size
-	 */
-	public static int getDefaultFontSize() {
-		Font defaultFont = new JLabel().getFont();
-		return defaultFont.getSize();
-	}
+  /**
+   * Get default font size for a label.
+   *
+   * @return Font size
+   */
+  public static int getDefaultFontSize() {
+    Font defaultFont = new JLabel().getFont();
+    return defaultFont.getSize();
+  }
 }

@@ -23,43 +23,44 @@ import java.util.Collections;
 
 public class ArrayUtils {
 
-    private ArrayUtils() {
+  private ArrayUtils() {}
+
+  /**
+   * Concatenate two byte arrays.
+   *
+   * @param a array 1
+   * @param b array 2
+   * @return Concatenation of a and b or empty byte array if both values are
+   *     null
+   */
+  public static byte[] add(byte[] a, byte[] b) {
+
+    // graceful handling of null values
+    if (a == null) {
+      if (b == null) {
+        return new byte[0];
+      } else {
+        return b;
+      }
+    }
+    if (b == null) {
+      return a;
     }
 
-    /**
-     * Concatenate two byte arrays.
-     *
-     * @param a array 1
-     * @param b array 2
-     * @return Concatenation of a and b or empty byte array if both values are null
-     */
-    public static byte[] add(byte[] a, byte[] b) {
+    byte[] result = new byte[a.length + b.length];
+    System.arraycopy(a, 0, result, 0, a.length);
+    System.arraycopy(b, 0, result, a.length, b.length);
+    return result;
+  }
 
-        // graceful handling of null values
-        if (a == null) {
-            if (b == null) {
-                return new byte[0];
-            } else {
-                return b;
-            }
-        }
-        if (b == null) {
-            return a;
-        }
-
-        byte[] result = new byte[a.length + b.length];
-        System.arraycopy(a, 0, result, 0, a.length);
-        System.arraycopy(b, 0, result, a.length, b.length);
-        return result;
-    }
-
-    /**
-     * Null-safe access to iterable
-     *
-     * @param iterable Possibly null iterable
-     * @return Immutable empty list if iterable is null, original iterable if it is not null
-     */
-    public static <T> Iterable<T> emptyIfNull(Iterable<T> iterable) {
-        return iterable == null ? Collections.emptyList() : iterable;
-    }
+  /**
+   * Null-safe access to iterable
+   *
+   * @param iterable Possibly null iterable
+   * @return Immutable empty list if iterable is null, original iterable if it
+   *     is not null
+   */
+  public static <T> Iterable<T> emptyIfNull(Iterable<T> iterable) {
+    return iterable == null ? Collections.emptyList() : iterable;
+  }
 }

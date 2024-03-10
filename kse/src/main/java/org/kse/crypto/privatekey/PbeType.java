@@ -24,10 +24,10 @@ package org.kse.crypto.privatekey;
  * such as PKCS #8 and OpenSSL.
  */
 public interface PbeType {
-    /**
-     * Get type's friendly name.
-     *
-     * @return Friendly name
-     */
-    String friendly();
+  /**
+   * Get type's friendly name.
+   *
+   * @return Friendly name
+   */
+  String friendly();
 }

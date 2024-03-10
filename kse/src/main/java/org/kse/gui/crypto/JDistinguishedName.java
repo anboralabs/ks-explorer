@@ -19,14 +19,13 @@
  */
 package org.kse.gui.crypto;
 
+import java.awt.*;
+import java.util.ResourceBundle;
+import javax.swing.*;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.kse.crypto.x509.KseX500NameStyle;
 import org.kse.gui.CursorUtil;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ResourceBundle;
 
 /**
  * Component to view or edit a distinguished name.

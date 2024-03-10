@@ -19,11 +19,11 @@
  */
 package org.kse.gui.dialogs;
 
+import java.awt.*;
+import java.util.ResourceBundle;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import java.awt.*;
-import java.util.ResourceBundle;
 
 /**
  * Custom cell renderer for the headers of the RevokedCerts table of DViewCrl.

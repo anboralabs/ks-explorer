@@ -19,45 +19,48 @@
  */
 package org.kse.utilities.ssl;
 
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import javax.net.ssl.HandshakeCompletedEvent;
 import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
 
-public class RetrieveSslInfosHandshakeListener implements HandshakeCompletedListener {
+public class RetrieveSslInfosHandshakeListener
+    implements HandshakeCompletedListener {
 
-    private SslConnectionInfos sslConnectionInfos = new SslConnectionInfos();
+  private SslConnectionInfos sslConnectionInfos = new SslConnectionInfos();
 
-    @Override
-    public void handshakeCompleted(HandshakeCompletedEvent event) {
+  @Override
+  public void handshakeCompleted(HandshakeCompletedEvent event) {
 
-        SSLSession session = event.getSession();
-        sslConnectionInfos.setPeerHost(session.getPeerHost());
-        sslConnectionInfos.setPeerPort(session.getPeerPort());
-        sslConnectionInfos.setProtocol(session.getProtocol());
-        sslConnectionInfos.setCipherSuite(session.getCipherSuite());
+    SSLSession session = event.getSession();
+    sslConnectionInfos.setPeerHost(session.getPeerHost());
+    sslConnectionInfos.setPeerPort(session.getPeerPort());
+    sslConnectionInfos.setProtocol(session.getProtocol());
+    sslConnectionInfos.setCipherSuite(session.getCipherSuite());
 
-        Certificate[] locChain = session.getLocalCertificates();
-        if (locChain != null) {
-            X509Certificate[] clientCertificates = Arrays.copyOf(locChain, locChain.length, X509Certificate[].class);
-            sslConnectionInfos.setClientCertificates(clientCertificates);
-        }
-
-        try {
-            Certificate[] chain = session.getPeerCertificates();
-            if (chain != null) {
-                X509Certificate[] serverCertificates = Arrays.copyOf(chain, chain.length, X509Certificate[].class);
-                sslConnectionInfos.setServerCertificates(serverCertificates);
-            }
-        } catch (SSLPeerUnverifiedException e) {
-            // do nothing
-        }
+    Certificate[] locChain = session.getLocalCertificates();
+    if (locChain != null) {
+      X509Certificate[] clientCertificates =
+          Arrays.copyOf(locChain, locChain.length, X509Certificate[].class);
+      sslConnectionInfos.setClientCertificates(clientCertificates);
     }
 
-    public SslConnectionInfos getSslConnectionInfos() {
-        return sslConnectionInfos;
+    try {
+      Certificate[] chain = session.getPeerCertificates();
+      if (chain != null) {
+        X509Certificate[] serverCertificates =
+            Arrays.copyOf(chain, chain.length, X509Certificate[].class);
+        sslConnectionInfos.setServerCertificates(serverCertificates);
+      }
+    } catch (SSLPeerUnverifiedException e) {
+      // do nothing
     }
+  }
+
+  public SslConnectionInfos getSslConnectionInfos() {
+    return sslConnectionInfos;
+  }
 }

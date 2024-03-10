@@ -1,7 +1,5 @@
 package org.kse.utilities.net;
 
-import org.kse.utilities.StringUtils;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Clock;
@@ -14,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.kse.utilities.StringUtils;
 
 /**
  * Implementation of the 12 PAC script helper functions as defined by Netscape.

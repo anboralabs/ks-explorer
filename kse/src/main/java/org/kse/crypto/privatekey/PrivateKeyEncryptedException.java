@@ -26,42 +26,39 @@ import org.kse.crypto.CryptoException;
  * encrypted.
  */
 public class PrivateKeyEncryptedException extends CryptoException {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * Creates a new PrivateKeyEncryptedException.
-     */
-    public PrivateKeyEncryptedException() {
-        super();
-    }
+  /**
+   * Creates a new PrivateKeyEncryptedException.
+   */
+  public PrivateKeyEncryptedException() { super(); }
 
-    /**
-     * Creates a new PrivateKeyEncryptedException with the specified message.
-     *
-     * @param message Exception message
-     */
-    public PrivateKeyEncryptedException(String message) {
-        super(message);
-    }
+  /**
+   * Creates a new PrivateKeyEncryptedException with the specified message.
+   *
+   * @param message Exception message
+   */
+  public PrivateKeyEncryptedException(String message) { super(message); }
 
-    /**
-     * Creates a new PrivateKeyEncryptedException with the specified message and
-     * cause throwable.
-     *
-     * @param message        Exception message
-     * @param causeThrowable The throwable that caused this exception to be thrown
-     */
-    public PrivateKeyEncryptedException(String message, Throwable causeThrowable) {
-        super(message, causeThrowable);
-    }
+  /**
+   * Creates a new PrivateKeyEncryptedException with the specified message and
+   * cause throwable.
+   *
+   * @param message        Exception message
+   * @param causeThrowable The throwable that caused this exception to be thrown
+   */
+  public PrivateKeyEncryptedException(String message,
+                                      Throwable causeThrowable) {
+    super(message, causeThrowable);
+  }
 
-    /**
-     * Creates a new PrivateKeyEncryptedException with the specified cause
-     * throwable.
-     *
-     * @param causeThrowable The throwable that caused this exception to be thrown
-     */
-    public PrivateKeyEncryptedException(Throwable causeThrowable) {
-        super(causeThrowable);
-    }
+  /**
+   * Creates a new PrivateKeyEncryptedException with the specified cause
+   * throwable.
+   *
+   * @param causeThrowable The throwable that caused this exception to be thrown
+   */
+  public PrivateKeyEncryptedException(Throwable causeThrowable) {
+    super(causeThrowable);
+  }
 }

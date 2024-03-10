@@ -19,10 +19,10 @@
  */
 package org.kse.gui.dialogs;
 
-import javax.swing.table.AbstractTableModel;
 import java.math.BigInteger;
 import java.security.cert.X509CRLEntry;
 import java.util.*;
+import javax.swing.table.AbstractTableModel;
 
 /**
  * The table model used to display an array of X.509 CRL entries sorted by

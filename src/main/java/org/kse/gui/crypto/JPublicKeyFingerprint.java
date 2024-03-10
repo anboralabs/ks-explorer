@@ -20,7 +20,6 @@
 package org.kse.gui.crypto;
 
 import com.intellij.openapi.project.Project;
-
 import java.security.PublicKey;
 import java.util.ResourceBundle;
 import javax.swing.*;

@@ -19,6 +19,21 @@
  */
 package org.kse.crypto.signing;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigInteger;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.KeyManagementException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
@@ -30,134 +45,125 @@ import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.util.encoders.Base64;
 import org.kse.crypto.digest.DigestType;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigInteger;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.KeyManagementException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
-
 public class TimeStampingClient {
 
-    private TimeStampingClient() {
+  private TimeStampingClient() {}
+
+  /**
+   * Get RFC 3161 timeStampToken.
+   *
+   * @param tsaUrl  Location of TSA
+   * @param data    The data to be time-stamped
+   * @param hashAlg The algorithm used for generating a hash value of the data
+   *     to be time-stamped
+   * @return encoded, TSA signed data of the timeStampToken
+   * @throws IOException when request to TSA server fails
+   */
+  public static byte[] getTimeStampToken(String tsaUrl, byte[] data,
+                                         DigestType hashAlg)
+      throws IOException {
+
+    TimeStampResponse response = null;
+    try {
+
+      // calculate hash value
+      MessageDigest digest = MessageDigest.getInstance(hashAlg.jce());
+      byte[] hashValue = digest.digest(data);
+
+      // Set up the time stamp request
+      TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
+      tsqGenerator.setCertReq(true);
+      BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());
+      TimeStampRequest request = tsqGenerator.generate(
+          new ASN1ObjectIdentifier(hashAlg.oid()), hashValue, nonce);
+      byte[] requestBytes = request.getEncoded();
+
+      // send http request
+      byte[] respBytes = queryServer(tsaUrl, requestBytes);
+
+      // process response
+      response = new TimeStampResponse(respBytes);
+
+      // validate communication level attributes (RFC 3161 PKIStatus)
+      response.validate(request);
+      PKIFailureInfo failure = response.getFailInfo();
+      int value = failure == null ? 0 : failure.intValue();
+      if (value != 0) {
+        throw new IOException("Server returned error code: " + value);
+      }
+    } catch (NoSuchAlgorithmException | TSPException e) {
+      throw new IOException(e);
     }
 
-    /**
-     * Get RFC 3161 timeStampToken.
-     *
-     * @param tsaUrl  Location of TSA
-     * @param data    The data to be time-stamped
-     * @param hashAlg The algorithm used for generating a hash value of the data to be time-stamped
-     * @return encoded, TSA signed data of the timeStampToken
-     * @throws IOException when request to TSA server fails
-     */
-    public static byte[] getTimeStampToken(String tsaUrl, byte[] data, DigestType hashAlg) throws IOException {
-
-        TimeStampResponse response = null;
-        try {
-
-            // calculate hash value
-            MessageDigest digest = MessageDigest.getInstance(hashAlg.jce());
-            byte[] hashValue = digest.digest(data);
-
-            // Set up the time stamp request
-            TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
-            tsqGenerator.setCertReq(true);
-            BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());
-            TimeStampRequest request = tsqGenerator.generate(new ASN1ObjectIdentifier(hashAlg.oid()), hashValue, nonce);
-            byte[] requestBytes = request.getEncoded();
-
-            // send http request
-            byte[] respBytes = queryServer(tsaUrl, requestBytes);
-
-            // process response
-            response = new TimeStampResponse(respBytes);
-
-            // validate communication level attributes (RFC 3161 PKIStatus)
-            response.validate(request);
-            PKIFailureInfo failure = response.getFailInfo();
-            int value = failure == null ? 0 : failure.intValue();
-            if (value != 0) {
-                throw new IOException("Server returned error code: " + value);
-            }
-        } catch (NoSuchAlgorithmException | TSPException e) {
-            throw new IOException(e);
-        }
-
-        // extract the time stamp token
-        TimeStampToken tsToken = response.getTimeStampToken();
-        if (tsToken == null) {
-            throw new IOException("TSA returned no time stamp token: " + response.getStatusString());
-        }
-
-        return tsToken.getEncoded();
+    // extract the time stamp token
+    TimeStampToken tsToken = response.getTimeStampToken();
+    if (tsToken == null) {
+      throw new IOException("TSA returned no time stamp token: " +
+                            response.getStatusString());
     }
 
-    /**
-     * Get timestamp token (HTTP communication)
-     *
-     * @return TSA response, raw bytes (RFC 3161 encoded)
-     * @throws IOException when request to TSA server fails
-     */
-    private static byte[] queryServer(String tsaUrl, byte[] requestBytes) throws IOException {
+    return tsToken.getEncoded();
+  }
 
-        // Install the all-trusting trust manager
-        SSLContext sc;
-        try {
-            sc = SSLContext.getInstance("SSL");
+  /**
+   * Get timestamp token (HTTP communication)
+   *
+   * @return TSA response, raw bytes (RFC 3161 encoded)
+   * @throws IOException when request to TSA server fails
+   */
+  private static byte[] queryServer(String tsaUrl, byte[] requestBytes)
+      throws IOException {
+
+    // Install the all-trusting trust manager
+    SSLContext sc;
+    try {
+      sc = SSLContext.getInstance("SSL");
             sc.init(null, new TrustManager[] { new X509TrustManager() {
                 @Override
                 public X509Certificate[] getAcceptedIssuers() {
                     return null;
-                }
-
-                @Override
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                }
-
-                @Override
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                }
-            } }, new java.security.SecureRandom());
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            throw new IOException(e);
-        }
-        SSLSocketFactory defaultSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
-        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-        try {
-            URL url = new URL(tsaUrl);
-            URLConnection con = url.openConnection();
-            con.setDoInput(true);
-            con.setDoOutput(true);
-            con.setUseCaches(false);
-            con.setRequestProperty("Content-Type", "application/timestamp-query");
-            con.setRequestProperty("Content-Transfer-Encoding", "binary");
-
-            OutputStream out = con.getOutputStream();
-            out.write(requestBytes);
-            out.close();
-
-            InputStream is = con.getInputStream();
-            byte[] respBytes = IOUtils.toByteArray(is);
-            String encoding = con.getContentEncoding();
-            if (encoding != null && encoding.equalsIgnoreCase("base64")) {
-                respBytes = Base64.decode(new String(respBytes));
-            }
-            return respBytes;
-
-        } finally {
-            // restore default trust manager
-            HttpsURLConnection.setDefaultSSLSocketFactory(defaultSSLSocketFactory);
-        }
     }
+
+    @
+    Override public void checkClientTrusted(X509Certificate[] certs,
+                                            String authType) {}
+
+    @Override
+    public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+  }
+}, new java.security.SecureRandom());
+}
+catch (NoSuchAlgorithmException | KeyManagementException e) {
+  throw new IOException(e);
+}
+SSLSocketFactory defaultSSLSocketFactory =
+    HttpsURLConnection.getDefaultSSLSocketFactory();
+HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+try {
+  URL url = new URL(tsaUrl);
+  URLConnection con = url.openConnection();
+  con.setDoInput(true);
+  con.setDoOutput(true);
+  con.setUseCaches(false);
+  con.setRequestProperty("Content-Type", "application/timestamp-query");
+  con.setRequestProperty("Content-Transfer-Encoding", "binary");
+
+  OutputStream out = con.getOutputStream();
+  out.write(requestBytes);
+  out.close();
+
+  InputStream is = con.getInputStream();
+  byte[] respBytes = IOUtils.toByteArray(is);
+  String encoding = con.getContentEncoding();
+  if (encoding != null && encoding.equalsIgnoreCase("base64")) {
+    respBytes = Base64.decode(new String(respBytes));
+  }
+  return respBytes;
+
+} finally {
+  // restore default trust manager
+  HttpsURLConnection.setDefaultSSLSocketFactory(defaultSSLSocketFactory);
+}
+}
 }
