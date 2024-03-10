@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -26,73 +26,74 @@ import java.util.ResourceBundle;
  */
 public enum AttributeTypeType {
 
-  // @formatter:off
+    // @formatter:off
 
-  COMMON_NAME("2.5.4.3", "CommonNameAttributeType"),
-  SERIAL_NUMBER("2.5.4.5", "SerialNumberAttributeType"),
-  COUNTRY_NAME("2.5.4.6", "CountryNameAttributeType"),
-  LOCALITY_NAME("2.5.4.7", "LocalityNameAttributeType"),
-  STATE_NAME("2.5.4.8", "StateOrProvinceNameAttributeType"),
-  STREET_ADDRESS("2.5.4.9", "StreetAddressAttributeType"),
-  ORGANIZATION_NAME("2.5.4.10", "OrganizationNameAttributeType"),
-  ORGANIZATIONAL_UNIT("2.5.4.11", "OrganizationalUnitNameAttributeType"),
-  TITLE("2.5.4.12", "TitleAttributeType"),
-  EMAIL_ADDRESS("1.2.840.113549.1.9.1", "EmailAddressAttributeType"),
-  UNSTRUCTURED_NAME("1.2.840.113549.1.9.2", "UnstructuredNameAttributeType"),
-  UNSTRUCTURED_ADDRESS("1.2.840.113549.1.9.8",
-                       "UnstructuredAddressAttributeType"),
-  USER_ID("0.9.2342.19200300.100.1.1", "UserIdAttributeType"),
-  MAIL("0.9.2342.19200300.100.1.3", "MailAttributeType"),
-  DOMAIN_COMPONENT("0.9.2342.19200300.100.1.2.25",
-                   "DomainComponentAttributeType"),
+	COMMON_NAME("2.5.4.3", "CommonNameAttributeType"),
+	SERIAL_NUMBER("2.5.4.5", "SerialNumberAttributeType"),
+	COUNTRY_NAME("2.5.4.6", "CountryNameAttributeType"),
+	LOCALITY_NAME("2.5.4.7", "LocalityNameAttributeType"),
+	STATE_NAME("2.5.4.8", "StateOrProvinceNameAttributeType"),
+	STREET_ADDRESS("2.5.4.9", "StreetAddressAttributeType"),
+	ORGANIZATION_NAME("2.5.4.10", "OrganizationNameAttributeType"),
+	ORGANIZATIONAL_UNIT("2.5.4.11", "OrganizationalUnitNameAttributeType"),
+	TITLE("2.5.4.12", "TitleAttributeType"),
+	EMAIL_ADDRESS("1.2.840.113549.1.9.1", "EmailAddressAttributeType"),
+	UNSTRUCTURED_NAME("1.2.840.113549.1.9.2", "UnstructuredNameAttributeType"),
+	UNSTRUCTURED_ADDRESS("1.2.840.113549.1.9.8", "UnstructuredAddressAttributeType"),
+	USER_ID("0.9.2342.19200300.100.1.1", "UserIdAttributeType"),
+	MAIL("0.9.2342.19200300.100.1.3", "MailAttributeType"),
+	DOMAIN_COMPONENT("0.9.2342.19200300.100.1.2.25", "DomainComponentAttributeType"),
 
-  DATE_OF_BIRTH("1.3.6.1.5.5.7.9.1", "DateOfBirth"),
-  PLACE_OF_BIRTH("1.3.6.1.5.5.7.9.2", "PlaceOfBirth"),
-  GENDER("1.3.6.1.5.5.7.9.3", "Gender"),
-  COUNTRY_OF_CITIZENSHIP("1.3.6.1.5.5.7.9.4", "CountryOfCitizenship"),
-  COUNTRY_OF_RESIDENCE("1.3.6.1.5.5.7.9.5", "CountryOfResidence"),
+	DATE_OF_BIRTH("1.3.6.1.5.5.7.9.1", "DateOfBirth"),
+	PLACE_OF_BIRTH("1.3.6.1.5.5.7.9.2", "PlaceOfBirth"),
+	GENDER("1.3.6.1.5.5.7.9.3", "Gender"),
+	COUNTRY_OF_CITIZENSHIP("1.3.6.1.5.5.7.9.4", "CountryOfCitizenship"),
+	COUNTRY_OF_RESIDENCE("1.3.6.1.5.5.7.9.5", "CountryOfResidence"),
 
-  UNKNOWN("0", "unknown");
+	UNKNOWN("0", "unknown");
 
-  // @formatter:on
+	// @formatter:on
 
-  private static ResourceBundle res =
-      ResourceBundle.getBundle("org/kse/crypto/x509/resources");
-  private String oid;
-  private String friendlyKey;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
+    private String oid;
+    private String friendlyKey;
 
-  AttributeTypeType(String oid, String friendlyKey) {
-    this.oid = oid;
-    this.friendlyKey = friendlyKey;
-  }
-
-  /**
-   * Get type's friendly name.
-   *
-   * @return Friendly name
-   */
-  public String friendly() { return res.getString(friendlyKey); }
-
-  /**
-   * Resolve the supplied object identifier to a matching type.
-   *
-   * @param oid Object identifier
-   * @return Type or null if none
-   */
-  public static AttributeTypeType resolveOid(String oid) {
-    for (AttributeTypeType extType : values()) {
-      if (oid.equals(extType.oid())) {
-        return extType;
-      }
+    AttributeTypeType(String oid, String friendlyKey) {
+        this.oid = oid;
+        this.friendlyKey = friendlyKey;
     }
 
-    return UNKNOWN;
-  }
+    /**
+     * Get type's friendly name.
+     *
+     * @return Friendly name
+     */
+    public String friendly() {
+        return res.getString(friendlyKey);
+    }
 
-  /**
-   * Get Attribute Type's Object Identifier.
-   *
-   * @return Object Identifier
-   */
-  public String oid() { return oid; }
+    /**
+     * Resolve the supplied object identifier to a matching type.
+     *
+     * @param oid Object identifier
+     * @return Type or null if none
+     */
+    public static AttributeTypeType resolveOid(String oid) {
+        for (AttributeTypeType extType : values()) {
+            if (oid.equals(extType.oid())) {
+                return extType;
+            }
+        }
+
+        return UNKNOWN;
+    }
+
+    /**
+     * Get Attribute Type's Object Identifier.
+     *
+     * @return Object Identifier
+     */
+    public String oid() {
+        return oid;
+    }
 }

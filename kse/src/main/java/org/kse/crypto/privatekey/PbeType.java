@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -24,10 +24,10 @@ package org.kse.crypto.privatekey;
  * such as PKCS #8 and OpenSSL.
  */
 public interface PbeType {
-  /**
-   * Get type's friendly name.
-   *
-   * @return Friendly name
-   */
-  String friendly();
+    /**
+     * Get type's friendly name.
+     *
+     * @return Friendly name
+     */
+    String friendly();
 }

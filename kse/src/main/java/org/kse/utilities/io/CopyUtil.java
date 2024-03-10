@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,45 +19,36 @@
  */
 package org.kse.utilities.io;
 
-import java.io.*;
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * Class of utility methods to copy data between I/O streams.
  */
 public class CopyUtil {
-  private CopyUtil() {}
-
-  /**
-   * Copy data from one stream to another and do not close I/O.
-   *
-   * @param in  Input stream
-   * @param out Output stream
-   * @throws IOException If an I/O problem occurred
-   */
-  public static void copy(InputStream in, OutputStream out) throws IOException {
-    byte[] buffer = new byte[2048];
-    int i;
-    while ((i = in.read(buffer)) > 0) {
-      out.write(buffer, 0, i);
+    private CopyUtil() {
     }
-  }
 
-  /**
-   * Copy data from one stream to another and close I/O.
-   *
-   * @param in  Input stream
-   * @param out Output stream
-   * @throws IOException If an I/O problem occurred
-   */
-  public static void copyClose(InputStream in, OutputStream out)
-      throws IOException {
-    try {
-      copy(in, out);
-    } finally {
-      IOUtils.closeQuietly(in);
-      IOUtils.closeQuietly(out);
+    /**
+     * Copy data from one stream to another and close I/O.
+     *
+     * @param in  Input stream
+     * @param out Output stream
+     * @throws IOException If an I/O problem occurred
+     */
+    public static void copyClose(InputStream in, OutputStream out) throws IOException {
+        try {
+            IOUtils.copy(in, out);
+        } finally {
+            IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(out);
+        }
     }
-  }
 
   /**
    * Copy data from a reader to a writer and do not close I/O.

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,56 +34,50 @@ import java.util.ResourceBundle;
 import static org.kse.crypto.KeyType.SYMMETRIC;
 
 public class SecretKeyUtil {
-  private static ResourceBundle res =
-      ResourceBundle.getBundle("org/kse/crypto/secretkey/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/secretkey/resources");
 
-  private SecretKeyUtil() {}
-
-  /**
-   * Generate a secret key.
-   *
-   * @param secretKeyType Secret key type to generate
-   * @param keySize       Key size of secret key
-   * @return Secret key
-   * @throws CryptoException If there was a problem generating the secret key
-   */
-  public static SecretKey generateSecretKey(SecretKeyType secretKeyType,
-                                            int keySize)
-      throws CryptoException {
-    try {
-      KeyGenerator keyGenerator =
-          KeyGenerator.getInstance(secretKeyType.jce(), KSE.BC);
-      keyGenerator.init(keySize, SecureRandom.getInstance("SHA1PRNG"));
-
-      return keyGenerator.generateKey();
-    } catch (GeneralSecurityException ex) {
-      throw new CryptoException(
-          MessageFormat.format(
-              res.getString("NoGenerateSecretKey.exception.message"),
-              secretKeyType),
-          ex);
-    }
-  }
-
-  /**
-   * Get the information about the supplied secret key.
-   *
-   * @param secretKey The secret key
-   * @return Key information
-   */
-  public static KeyInfo getKeyInfo(SecretKey secretKey) {
-    String algorithm = secretKey.getAlgorithm();
-
-    if (algorithm.equals("RC4")) {
-      algorithm = "ARC4"; // RC4 is trademarked so we never want to display it
+    private SecretKeyUtil() {
     }
 
-    if (secretKey.getFormat().equals("RAW")) {
-      int keySize = secretKey.getEncoded().length * 8;
-      return new KeyInfo(SYMMETRIC, algorithm, keySize);
-    } else {
-      // Key size unknown
-      return new KeyInfo(SYMMETRIC, algorithm);
+    /**
+     * Generate a secret key.
+     *
+     * @param secretKeyType Secret key type to generate
+     * @param keySize       Key size of secret key
+     * @return Secret key
+     * @throws CryptoException If there was a problem generating the secret key
+     */
+    public static SecretKey generateSecretKey(SecretKeyType secretKeyType, int keySize) throws CryptoException {
+        try {
+            KeyGenerator keyGenerator = KeyGenerator.getInstance(secretKeyType.jce(), KSE.BC);
+            keyGenerator.init(keySize, SecureRandom.getInstance("SHA1PRNG"));
+
+            return keyGenerator.generateKey();
+        } catch (GeneralSecurityException ex) {
+            throw new CryptoException(
+                    MessageFormat.format(res.getString("NoGenerateSecretKey.exception.message"), secretKeyType), ex);
+        }
     }
-  }
+
+    /**
+     * Get the information about the supplied secret key.
+     *
+     * @param secretKey The secret key
+     * @return Key information
+     */
+    public static KeyInfo getKeyInfo(SecretKey secretKey) {
+        String algorithm = secretKey.getAlgorithm();
+
+        if (algorithm.equals("RC4")) {
+            algorithm = "ARC4"; // RC4 is trademarked so we never want to display it
+        }
+
+        if (secretKey.getFormat().equals("RAW")) {
+            int keySize = secretKey.getEncoded().length * 8;
+            return new KeyInfo(SYMMETRIC, algorithm, keySize);
+        } else {
+            // Key size unknown
+            return new KeyInfo(SYMMETRIC, algorithm);
+        }
+    }
 }

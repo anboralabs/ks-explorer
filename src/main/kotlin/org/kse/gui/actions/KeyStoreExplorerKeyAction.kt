@@ -1,6 +1,7 @@
 package org.kse.gui.actions
 
 import com.intellij.openapi.project.Project
+import org.kse.gui.error.DError
 import org.kse.gui.statusbar.StatusBar
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent

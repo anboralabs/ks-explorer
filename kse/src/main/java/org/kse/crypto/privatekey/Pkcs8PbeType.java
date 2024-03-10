@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,82 +19,91 @@
  */
 package org.kse.crypto.privatekey;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.crypto.util.PBKDF2Config;
+
 import java.util.ResourceBundle;
+
+import static org.bouncycastle.asn1.nist.NISTObjectIdentifiers.id_aes128_CBC;
+import static org.bouncycastle.asn1.nist.NISTObjectIdentifiers.id_aes256_CBC;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.des_EDE3_CBC;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pbeWithSHAAnd128BitRC2_CBC;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pbeWithSHAAnd128BitRC4;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pbeWithSHAAnd2_KeyTripleDES_CBC;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pbeWithSHAAnd3_KeyTripleDES_CBC;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pbeWithSHAAnd40BitRC2_CBC;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pbeWithSHAAnd40BitRC4;
 
 /**
  * Enumeration of Password based Encryption (PBE) Types supported by Pkcs8Util.
  */
 public enum Pkcs8PbeType implements PbeType {
-  /**
-   * SHA-1 with 2 key Triple DES
-   */
-  SHA1_2KEY_DESEDE("1.2.840.113549.1.12.1.4",
-                   "Pkcs8PbeType.PbeWithSha1And2KeyDesede"),
 
-  /**
-   * SHA-1 with 3 key Triple DES
-   */
-  SHA1_3KEY_DESEDE("1.2.840.113549.1.12.1.3",
-                   "Pkcs8PbeType.PbeWithSha1And3KeyDesede"),
+    // PBE algorithms from PKCS#12
+    SHA1_128BIT_RC4(pbeWithSHAAnd128BitRC4, "Pkcs8PbeType.PbeWithSha1And128BitRc4"),
+    SHA1_40BIT_RC4(pbeWithSHAAnd40BitRC4, "Pkcs8PbeType.PbeWithSha1And40BitRc4"),
+    SHA1_3KEY_DESEDE(pbeWithSHAAnd3_KeyTripleDES_CBC, "Pkcs8PbeType.PbeWithSha1And3KeyDesede"),
+    SHA1_2KEY_DESEDE(pbeWithSHAAnd2_KeyTripleDES_CBC, "Pkcs8PbeType.PbeWithSha1And2KeyDesede"),
+    SHA1_128BIT_RC2(pbeWithSHAAnd128BitRC2_CBC, "Pkcs8PbeType.PbeWithSha1And128BitRc2"),
+    SHA1_40BIT_RC2(pbeWithSHAAnd40BitRC2_CBC, "Pkcs8PbeType.PbeWithSha1And40bitRc2"),
 
-  /**
-   * SHA-1 with 40 bit RC2
-   */
-  SHA1_40BIT_RC2("1.2.840.113549.1.12.1.6",
-                 "Pkcs8PbeType.PbeWithSha1And40bitRc2"),
+    // PKCS#5 2.0/2.1 PBES2 algorithms
+    PBES2_3DES_SHA1(des_EDE3_CBC, PBKDF2Config.PRF_SHA1, "Pkcs8PbeType.Pbes2WithSha1And3Des"),
+    PBES2_AES128_SHA1(id_aes128_CBC, PBKDF2Config.PRF_SHA1, "Pkcs8PbeType.Pbes2WithSha1AndAes128"),
+    PBES2_AES256_SHA1(id_aes256_CBC, PBKDF2Config.PRF_SHA1, "Pkcs8PbeType.Pbes2WithSha1AndAes256"),
+    PBES2_AES256_SHA256(id_aes256_CBC, PBKDF2Config.PRF_SHA256, "Pkcs8PbeType.Pbes2WithSha256AndAes256");
 
-  /**
-   * SHA-1 with 128 bit RC2
-   */
-  SHA1_128BIT_RC2("1.2.840.113549.1.12.1.5",
-                  "Pkcs8PbeType.PbeWithSha1And128BitRc2"),
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/privatekey/resources");
+    private ASN1ObjectIdentifier oid;
+    private String friendlyKey;
+    private AlgorithmIdentifier prfOid = null;
 
-  /**
-   * SHA-1 with 40 bit RC4
-   */
-  SHA1_40BIT_RC4("1.2.840.113549.1.12.1.2",
-                 "Pkcs8PbeType.PbeWithSha1And40BitRc4"),
+    Pkcs8PbeType(ASN1ObjectIdentifier oid, String friendlyKey) {
+        this.oid = oid;
+        this.friendlyKey = friendlyKey;
+    }
 
-  /**
-   * SHA-1 with 128 bit RC4
-   */
-  SHA1_128BIT_RC4("1.2.840.113549.1.12.1.1",
-                  "Pkcs8PbeType.PbeWithSha1And128BitRc4");
+    Pkcs8PbeType(ASN1ObjectIdentifier oid, AlgorithmIdentifier prfOid, String friendlyKey) {
+        this.oid = oid;
+        this.prfOid = prfOid;
+        this.friendlyKey = friendlyKey;
+    }
 
-  private static ResourceBundle res =
-      ResourceBundle.getBundle("org/kse/crypto/privatekey/resources");
-  private String jce;
-  private String friendlyKey;
+    /**
+     * PBE type OID.
+     *
+     * @return OID of PBE algorithm
+     */
+    public ASN1ObjectIdentifier oid() {
+        return oid;
+    }
 
-  Pkcs8PbeType(String jce, String friendlyKey) {
-    this.jce = jce;
-    this.friendlyKey = friendlyKey;
-  }
+    /**
+     * Pseudo random function for PBES2 algorithms
+     * @return
+     */
+    public AlgorithmIdentifier prf() {
+        return prfOid;
+    }
 
-  /**
-   * PBE type JCE name.
-   *
-   * @return JCE name
-   */
-  public String jce() { return jce; }
+    /**
+     * Get type's friendly name.
+     *
+     * @return Friendly name resource key name
+     */
+    @Override
+    public String friendly() {
+        return res.getString(friendlyKey);
+    }
 
-  /**
-   * Get type's friendly name.
-   *
-   * @return Friendly name resource key name
-   */
-  @Override
-  public String friendly() {
-    return res.getString(friendlyKey);
-  }
-
-  /**
-   * Returns friendly name.
-   *
-   * @return Friendly name
-   */
-  @Override
-  public String toString() {
-    return friendly();
-  }
+    /**
+     * Returns friendly name.
+     *
+     * @return Friendly name
+     */
+    @Override
+    public String toString() {
+        return friendly();
+    }
 }

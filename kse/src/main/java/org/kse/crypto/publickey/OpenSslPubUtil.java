@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -31,9 +31,9 @@ import java.util.ResourceBundle;
 
 // @formatter:off
 /**
- * Provides utility methods relating to OpenSSL/SubjectPublicKeyInfo (see RFC
- *5280) encoded public keys. <p> The PKCS#1 RSA public key format is not
- *supported.
+ * Provides utility methods relating to OpenSSL/SubjectPublicKeyInfo (see RFC 5280) encoded public keys.
+ * <p>
+ * The PKCS#1 RSA public key format is not supported.
  *</p>
  * <pre>
  * -----BEGIN PUBLIC KEY-----
@@ -78,66 +78,62 @@ import java.util.ResourceBundle;
  */
 // @formatter:on
 public class OpenSslPubUtil {
-  private static ResourceBundle res =
-      ResourceBundle.getBundle("org/kse/crypto/publickey/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/publickey/resources");
 
-  private static final String OPENSSL_PUB_PEM_TYPE = "PUBLIC KEY";
+    private static final String OPENSSL_PUB_PEM_TYPE = "PUBLIC KEY";
 
-  private OpenSslPubUtil() {}
-
-  /**
-   * OpenSSL encode a public key.
-   *
-   * @param publicKey The public key
-   * @return The encoding
-   */
-  public static byte[] get(PublicKey publicKey) {
-    // The public key encoding is a DER-encoded subjectPublicKeyInfo structure -
-    // the OpenSSL format
-    return publicKey.getEncoded();
-  }
-
-  /**
-   * OpenSSL encode a public key and PEM the encoding.
-   *
-   * @param publicKey The public key
-   * @return The PEM'd encoding
-   */
-  public static String getPem(PublicKey publicKey) {
-    byte[] openSsl = get(publicKey);
-
-    PemInfo pemInfo = new PemInfo(OPENSSL_PUB_PEM_TYPE, null, openSsl);
-
-    return PemUtil.encode(pemInfo);
-  }
-
-  /**
-   * Load an unencrypted OpenSSL/RFC5280 public key from the stream. The
-   * encoding of the public key may be PEM or DER.
-   *
-   * @param pkData BA to load the unencrypted public key from
-   * @return The public key
-   * @throws CryptoException Problem encountered while loading the public key
-   */
-  public static PublicKey load(byte[] pkData) throws CryptoException {
-
-    try {
-      // Check if stream is PEM encoded
-      PemInfo pemInfo = PemUtil.decode(pkData);
-
-      if (pemInfo != null) {
-        // It is - get DER from PEM
-        pkData = pemInfo.getContent();
-      }
-
-      // DER-encoded subjectPublicKeyInfo structure - the OpenSSL/RFC5280 format
-      SubjectPublicKeyInfo publicKeyInfo =
-          SubjectPublicKeyInfo.getInstance(pkData);
-      return new JcaPEMKeyConverter().setProvider(KSE.BC).getPublicKey(
-          publicKeyInfo);
-    } catch (Exception ex) {
-      throw new CryptoException(
-          res.getString("NoLoadOpenSslPublicKey.exception.message"), ex);
+    private OpenSslPubUtil() {
     }
-  }
+
+    /**
+     * OpenSSL encode a public key.
+     *
+     * @param publicKey The public key
+     * @return The encoding
+     */
+    public static byte[] get(PublicKey publicKey) {
+        // The public key encoding is a DER-encoded subjectPublicKeyInfo structure - the OpenSSL format
+        return publicKey.getEncoded();
+    }
+
+    /**
+     * OpenSSL encode a public key and PEM the encoding.
+     *
+     * @param publicKey The public key
+     * @return The PEM'd encoding
+     */
+    public static String getPem(PublicKey publicKey) {
+        byte[] openSsl = get(publicKey);
+
+        PemInfo pemInfo = new PemInfo(OPENSSL_PUB_PEM_TYPE, null, openSsl);
+
+        return PemUtil.encode(pemInfo);
+    }
+
+    /**
+     * Load an unencrypted OpenSSL/RFC5280 public key from the stream. The encoding of
+     * the public key may be PEM or DER.
+     *
+     * @param pkData BA to load the unencrypted public key from
+     * @return The public key
+     * @throws CryptoException Problem encountered while loading the public key
+     */
+    public static PublicKey load(byte[] pkData) throws CryptoException {
+
+        try {
+            // Check if stream is PEM encoded
+            PemInfo pemInfo = PemUtil.decode(pkData);
+
+            if (pemInfo != null) {
+                // It is - get DER from PEM
+                pkData = pemInfo.getContent();
+            }
+
+            // DER-encoded subjectPublicKeyInfo structure - the OpenSSL/RFC5280 format
+            SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(pkData);
+            return new JcaPEMKeyConverter().setProvider(KSE.BC).getPublicKey(publicKeyInfo);
+        } catch (Exception ex) {
+            throw new CryptoException(res.getString("NoLoadOpenSslPublicKey.exception.message"), ex);
+        }
+    }
 }

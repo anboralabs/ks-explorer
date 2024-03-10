@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,98 +28,83 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Helper class that does some conversions with BC's <code>PolicyMappings</code>
- * objects.
+ * Helper class that does some conversions with BC's <code>PolicyMappings</code> objects.
  */
 public class PolicyMappingsUtil {
 
-  private PolicyMappingsUtil() {}
-
-  /**
-   * Creates list of <code>PolicyMapping</code> objects from an
-   * <code>PolicyMappings</code> object.
-   *
-   * @param policyMappings
-   * @return List of PolicyMapping
-   */
-  public static List<PolicyMapping>
-  getListOfPolicyMappings(PolicyMappings policyMappings) {
-
-    ASN1Sequence policyMappingsSeq =
-        (ASN1Sequence)policyMappings.toASN1Primitive();
-    ASN1Encodable[] policyMappingsArray = policyMappingsSeq.toArray();
-
-    List<PolicyMapping> policyMappingsList = new ArrayList<>();
-
-    for (ASN1Encodable asn1Encodable : policyMappingsArray) {
-      policyMappingsList.add(PolicyMapping.getInstance(asn1Encodable));
+    private PolicyMappingsUtil() {
     }
 
-    return policyMappingsList;
-  }
+    /**
+     * Creates list of <code>PolicyMapping</code> objects from an <code>PolicyMappings</code> object.
+     *
+     * @param policyMappings
+     * @return List of PolicyMapping
+     */
+    public static List<PolicyMapping> getListOfPolicyMappings(PolicyMappings policyMappings) {
 
-  /**
-   * Creates <code>PolicyMappings</code> objects from list of
-   * <code>PolicyMapping</code>
-   *
-   * @param listOfPolicyMappings
-   * @return <code>PolicyMappings</code> object
-   */
-  public static PolicyMappings
-  createFromList(List<PolicyMapping> listOfPolicyMappings) {
+        ASN1Sequence policyMappingsSeq = (ASN1Sequence) policyMappings.toASN1Primitive();
+        ASN1Encodable[] policyMappingsArray = policyMappingsSeq.toArray();
 
-    CertPolicyId[] issuerDomainPolicies =
-        new CertPolicyId[listOfPolicyMappings.size()];
-    CertPolicyId[] subjectDomainPolicies =
-        new CertPolicyId[listOfPolicyMappings.size()];
+        List<PolicyMapping> policyMappingsList = new ArrayList<>();
 
-    for (int i = 0; i < listOfPolicyMappings.size(); i++) {
-      PolicyMapping policyMapping = listOfPolicyMappings.get(i);
+        for (ASN1Encodable asn1Encodable : policyMappingsArray) {
+            policyMappingsList.add(PolicyMapping.getInstance(asn1Encodable));
+        }
 
-      issuerDomainPolicies[i] =
-          CertPolicyId.getInstance(policyMapping.getIssuerDomainPolicy());
-      subjectDomainPolicies[i] =
-          CertPolicyId.getInstance(policyMapping.getSubjectDomainPolicy());
+        return policyMappingsList;
     }
 
-    return new PolicyMappings(issuerDomainPolicies, subjectDomainPolicies);
-  }
+    /**
+     * Creates <code>PolicyMappings</code> objects from list of <code>PolicyMapping</code>
+     *
+     * @param listOfPolicyMappings
+     * @return <code>PolicyMappings</code> object
+     */
+    public static PolicyMappings createFromList(List<PolicyMapping> listOfPolicyMappings) {
 
-  /**
-   * Add <code>PolicyMapping</code> to a <code>PolicyMappings</code> object
-   *
-   * @param policyMapping  The policy mapping to be added.
-   * @param policyMappings The policy mappings to add to.
-   * @return New <code>PolicyMappings</code> object with additional
-   *     policyMapping
-   */
-  public static PolicyMappings add(PolicyMapping policyMapping,
-                                   PolicyMappings policyMappings) {
-    List<PolicyMapping> policyMappingsList =
-        PolicyMappingsUtil.getListOfPolicyMappings(policyMappings);
-    policyMappingsList.add(policyMapping);
+        CertPolicyId[] issuerDomainPolicies = new CertPolicyId[listOfPolicyMappings.size()];
+        CertPolicyId[] subjectDomainPolicies = new CertPolicyId[listOfPolicyMappings.size()];
 
-    policyMappings = PolicyMappingsUtil.createFromList(policyMappingsList);
+        for (int i = 0; i < listOfPolicyMappings.size(); i++) {
+            PolicyMapping policyMapping = listOfPolicyMappings.get(i);
 
-    return policyMappings;
-  }
+            issuerDomainPolicies[i] = CertPolicyId.getInstance(policyMapping.getIssuerDomainPolicy());
+            subjectDomainPolicies[i] = CertPolicyId.getInstance(policyMapping.getSubjectDomainPolicy());
+        }
 
-  /**
-   * Removes a <code>PolicyMapping</code> from a <code>PolicyMappings</code>
-   * object
-   *
-   * @param policyMapping  The policy mapping to be removed.
-   * @param policyMappings The policy mappings to remove from.
-   * @return New <code>PolicyMappings</code> object without policyMapping
-   */
-  public static PolicyMappings remove(PolicyMapping policyMapping,
-                                      PolicyMappings policyMappings) {
-    List<PolicyMapping> policyMappingsList =
-        PolicyMappingsUtil.getListOfPolicyMappings(policyMappings);
-    policyMappingsList.remove(policyMapping);
+        return new PolicyMappings(issuerDomainPolicies, subjectDomainPolicies);
+    }
 
-    policyMappings = PolicyMappingsUtil.createFromList(policyMappingsList);
+    /**
+     * Add <code>PolicyMapping</code> to a <code>PolicyMappings</code> object
+     *
+     * @param policyMapping  The policy mapping to be added.
+     * @param policyMappings The policy mappings to add to.
+     * @return New <code>PolicyMappings</code> object with additional policyMapping
+     */
+    public static PolicyMappings add(PolicyMapping policyMapping, PolicyMappings policyMappings) {
+        List<PolicyMapping> policyMappingsList = PolicyMappingsUtil.getListOfPolicyMappings(policyMappings);
+        policyMappingsList.add(policyMapping);
 
-    return policyMappings;
-  }
+        policyMappings = PolicyMappingsUtil.createFromList(policyMappingsList);
+
+        return policyMappings;
+    }
+
+    /**
+     * Removes a <code>PolicyMapping</code> from a <code>PolicyMappings</code> object
+     *
+     * @param policyMapping  The policy mapping to be removed.
+     * @param policyMappings The policy mappings to remove from.
+     * @return New <code>PolicyMappings</code> object without policyMapping
+     */
+    public static PolicyMappings remove(PolicyMapping policyMapping, PolicyMappings policyMappings) {
+        List<PolicyMapping> policyMappingsList = PolicyMappingsUtil.getListOfPolicyMappings(policyMappings);
+        policyMappingsList.remove(policyMapping);
+
+        policyMappings = PolicyMappingsUtil.createFromList(policyMappingsList);
+
+        return policyMappings;
+    }
 }

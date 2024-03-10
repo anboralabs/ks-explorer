@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -25,64 +25,64 @@ import org.kse.crypto.CryptoException;
  * Thrown when a KeyStore load fails.
  */
 public class KeyStoreLoadException extends CryptoException {
-  private static final long serialVersionUID = 1L;
-  private KeyStoreType keyStoreType;
+    private static final long serialVersionUID = 1L;
+    private KeyStoreType keyStoreType;
 
-  /**
-   * Creates a new KeyStoreLoadException.
-   *
-   * @param keyStoreType KeyStore type load was attempted for
-   */
-  public KeyStoreLoadException(KeyStoreType keyStoreType) {
-    super();
+    /**
+     * Creates a new KeyStoreLoadException.
+     *
+     * @param keyStoreType KeyStore type load was attempted for
+     */
+    public KeyStoreLoadException(KeyStoreType keyStoreType) {
+        super();
 
-    this.keyStoreType = keyStoreType;
-  }
+        this.keyStoreType = keyStoreType;
+    }
 
-  /**
-   * Creates a new KeyStoreLoadException with the specified message.
-   *
-   * @param message      Exception message
-   * @param keyStoreType KeyStore type load was attempted for
-   */
-  public KeyStoreLoadException(String message, KeyStoreType keyStoreType) {
-    super(message);
+    /**
+     * Creates a new KeyStoreLoadException with the specified message.
+     *
+     * @param message      Exception message
+     * @param keyStoreType KeyStore type load was attempted for
+     */
+    public KeyStoreLoadException(String message, KeyStoreType keyStoreType) {
+        super(message);
 
-    this.keyStoreType = keyStoreType;
-  }
+        this.keyStoreType = keyStoreType;
+    }
 
-  /**
-   * Creates a new KeyStoreLoadException with the specified message and cause
-   * throwable.
-   *
-   * @param message        Exception message
-   * @param causeThrowable The throwable that caused this exception to be thrown
-   * @param keyStoreType   KeyStore type load was attempted for
-   */
-  public KeyStoreLoadException(String message, Throwable causeThrowable,
-                               KeyStoreType keyStoreType) {
-    super(message, causeThrowable);
+    /**
+     * Creates a new KeyStoreLoadException with the specified message and cause
+     * throwable.
+     *
+     * @param message        Exception message
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     * @param keyStoreType   KeyStore type load was attempted for
+     */
+    public KeyStoreLoadException(String message, Throwable causeThrowable, KeyStoreType keyStoreType) {
+        super(message, causeThrowable);
 
-    this.keyStoreType = keyStoreType;
-  }
+        this.keyStoreType = keyStoreType;
+    }
 
-  /**
-   * Creates a new KeyStoreLoadException with the specified cause throwable.
-   *
-   * @param causeThrowable The throwable that caused this exception to be thrown
-   * @param keyStoreType   KeyStore type load was attempted for
-   */
-  public KeyStoreLoadException(Throwable causeThrowable,
-                               KeyStoreType keyStoreType) {
-    super(causeThrowable);
+    /**
+     * Creates a new KeyStoreLoadException with the specified cause throwable.
+     *
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     * @param keyStoreType   KeyStore type load was attempted for
+     */
+    public KeyStoreLoadException(Throwable causeThrowable, KeyStoreType keyStoreType) {
+        super(causeThrowable);
 
-    this.keyStoreType = keyStoreType;
-  }
+        this.keyStoreType = keyStoreType;
+    }
 
-  /**
-   * Get KeyStore type load was attempted for.
-   *
-   * @return KeyStore type
-   */
-  public KeyStoreType getKeyStoreType() { return keyStoreType; }
+    /**
+     * Get KeyStore type load was attempted for.
+     *
+     * @return KeyStore type
+     */
+    public KeyStoreType getKeyStoreType() {
+        return keyStoreType;
+    }
 }

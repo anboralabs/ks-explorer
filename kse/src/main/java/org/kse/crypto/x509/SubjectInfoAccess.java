@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -26,7 +26,6 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AccessDescription;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -41,50 +40,49 @@ import java.util.Vector;
  */
 public class SubjectInfoAccess extends ASN1Object {
 
-  private List<AccessDescription> accessDescriptions;
+    private List<AccessDescription> accessDescriptions;
 
-  /**
-   * Creates a new instance with the given list of accessDescription.
-   */
-  public SubjectInfoAccess(List<AccessDescription> accessDescriptions) {
-    this.accessDescriptions = accessDescriptions;
-  }
-
-  public static SubjectInfoAccess getInstance(Object obj) {
-    if (obj instanceof SubjectInfoAccess) {
-      return (SubjectInfoAccess)obj;
-    } else if (obj instanceof ASN1Sequence) {
-      return new SubjectInfoAccess((ASN1Sequence)obj);
-    } else if (obj instanceof byte[]) {
-      return new SubjectInfoAccess(ASN1Sequence.getInstance(obj));
+    /**
+     * Creates a new instance with the given list of accessDescription.
+     */
+    public SubjectInfoAccess(List<AccessDescription> accessDescriptions) {
+        this.accessDescriptions = accessDescriptions;
     }
 
-    throw new IllegalArgumentException("unknown object");
-  }
+    public static SubjectInfoAccess getInstance(Object obj) {
+        if (obj instanceof SubjectInfoAccess) {
+            return (SubjectInfoAccess) obj;
+        } else if (obj instanceof ASN1Sequence) {
+            return new SubjectInfoAccess((ASN1Sequence) obj);
+        } else if (obj instanceof byte[]) {
+            return new SubjectInfoAccess(ASN1Sequence.getInstance(obj));
+        }
 
-  private SubjectInfoAccess(ASN1Sequence seq) {
-    accessDescriptions = new Vector<>();
-
-    for (int i = 0; i != seq.size(); i++) {
-      accessDescriptions.add(AccessDescription.getInstance(seq.getObjectAt(i)));
-    }
-  }
-
-  /**
-   * Returns a list with the AccessDescription objects.
-   */
-  public List<AccessDescription> getAccessDescriptionList() {
-    return accessDescriptions;
-  }
-
-  @Override
-  public ASN1Primitive toASN1Primitive() {
-    ASN1EncodableVector vec = new ASN1EncodableVector();
-    Iterator<AccessDescription> it = accessDescriptions.iterator();
-    while (it.hasNext()) {
-      vec.add(it.next().toASN1Primitive());
+        throw new IllegalArgumentException("unknown object");
     }
 
-    return new DERSequence(vec);
-  }
+    private SubjectInfoAccess(ASN1Sequence seq) {
+        accessDescriptions = new Vector<>();
+
+        for (int i = 0; i != seq.size(); i++) {
+            accessDescriptions.add(AccessDescription.getInstance(seq.getObjectAt(i)));
+        }
+    }
+
+    /**
+     * Returns a list with the AccessDescription objects.
+     */
+    public List<AccessDescription> getAccessDescriptionList() {
+        return accessDescriptions;
+    }
+
+    @Override
+    public ASN1Primitive toASN1Primitive() {
+        ASN1EncodableVector vec = new ASN1EncodableVector();
+        for (AccessDescription accessDescription : accessDescriptions) {
+            vec.add(accessDescription.toASN1Primitive());
+        }
+
+        return new DERSequence(vec);
+    }
 }

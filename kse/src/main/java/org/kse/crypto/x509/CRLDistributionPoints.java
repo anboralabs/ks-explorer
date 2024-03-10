@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,7 +19,6 @@
  */
 package org.kse.crypto.x509;
 
-import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -28,7 +27,6 @@ import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -40,50 +38,48 @@ import java.util.List;
  */
 public class CRLDistributionPoints extends ASN1Object {
 
-  List<DistributionPoint> distributionPointList;
+    List<DistributionPoint> distributionPointList;
 
-  /**
-   * Create an new CRLDistributionPoints object from given distribution
-   * points.
-   */
-  public CRLDistributionPoints(List<DistributionPoint> distributionPointList) {
-    this.distributionPointList = distributionPointList;
-  }
-
-  public static CRLDistributionPoints getInstance(Object obj) {
-    if (obj instanceof CRLDistributionPoints) {
-      return (CRLDistributionPoints)obj;
-    } else if (obj instanceof ASN1Sequence) {
-      return new CRLDistributionPoints((ASN1Sequence)obj);
-    } else if (obj instanceof byte[]) {
-      return new CRLDistributionPoints(ASN1Sequence.getInstance(obj));
+    /**
+     * Create a new CRLDistributionPoints object from given distribution
+     * points.
+     */
+    public CRLDistributionPoints(List<DistributionPoint> distributionPointList) {
+        this.distributionPointList = distributionPointList;
     }
 
-    throw new IllegalArgumentException("unknown object type");
-  }
+    public static CRLDistributionPoints getInstance(Object obj) {
+        if (obj instanceof CRLDistributionPoints) {
+            return (CRLDistributionPoints) obj;
+        } else if (obj instanceof ASN1Sequence) {
+            return new CRLDistributionPoints((ASN1Sequence) obj);
+        } else if (obj instanceof byte[]) {
+            return new CRLDistributionPoints(ASN1Sequence.getInstance(obj));
+        }
 
-  private CRLDistributionPoints(ASN1Sequence seq) {
-    distributionPointList = new ArrayList<>();
-    for (int i = 0; i != seq.size(); i++) {
-      distributionPointList.add(
-          DistributionPoint.getInstance(seq.getObjectAt(i)));
+        throw new IllegalArgumentException("unknown object type");
     }
-  }
 
-  /**
-   * Returns the distribution points making up the sequence.
-   */
-  public List<DistributionPoint> getDistributionPointList() {
-    return distributionPointList;
-  }
-
-  @Override
-  public ASN1Primitive toASN1Primitive() {
-    ASN1EncodableVector v = new ASN1EncodableVector();
-    Iterator<DistributionPoint> it = distributionPointList.iterator();
-    while (it.hasNext()) {
-      v.add(it.next().toASN1Primitive());
+    private CRLDistributionPoints(ASN1Sequence seq) {
+        distributionPointList = new ArrayList<>();
+        for (int i = 0; i != seq.size(); i++) {
+            distributionPointList.add(DistributionPoint.getInstance(seq.getObjectAt(i)));
+        }
     }
-    return new DERSequence(v);
-  }
+
+    /**
+     * Returns the distribution points making up the sequence.
+     */
+    public List<DistributionPoint> getDistributionPointList() {
+        return distributionPointList;
+    }
+
+    @Override
+    public ASN1Primitive toASN1Primitive() {
+        ASN1EncodableVector v = new ASN1EncodableVector();
+        for (DistributionPoint distributionPoint : distributionPointList) {
+            v.add(distributionPoint.toASN1Primitive());
+        }
+        return new DERSequence(v);
+    }
 }

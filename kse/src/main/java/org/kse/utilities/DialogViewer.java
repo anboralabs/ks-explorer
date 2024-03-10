@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -22,12 +22,12 @@ package org.kse.utilities;
 // import com.formdev.flatlaf.FlatLightLaf;
 
 /**
- * This is a helper class for quickly viewing KSE dialogs (mainly for testing
- * purposes during development).
+ * This is a helper class for quickly viewing KSE dialogs (mainly for testing purposes during development).
  */
 public class DialogViewer {
 
-  private DialogViewer() {}
+    private DialogViewer() {
+    }
 
   /**
    * Add BC provider and set l&f (only required when BC is needed before calling
@@ -44,18 +44,18 @@ public class DialogViewer {
   /*public static void run(final JEscDialog dialog) throws
   UnsupportedLookAndFeelException {
 
-      prepare();
+        prepare();
 
-      SwingUtilities.updateComponentTreeUI(dialog);
+        SwingUtilities.updateComponentTreeUI(dialog);
 
-      SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(() -> {
 
-          dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-              @Override
-              public void windowClosing(WindowEvent e) {
-                  super.windowClosing(e);
-                  System.exit(0);
-              }
+            dialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    super.windowClosing(e);
+                    System.exit(0);
+                }
 
               @Override
               public void windowDeactivated(WindowEvent e) {

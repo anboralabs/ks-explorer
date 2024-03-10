@@ -2,6 +2,7 @@ package org.kse.gui.statusbar
 
 import com.intellij.openapi.project.Project
 import org.kse.gui.HistoryKeyStore
+import org.kse.gui.error.DError
 import org.kse.utilities.history.KeyStoreHistory
 import java.security.KeyStoreException
 import java.text.MessageFormat

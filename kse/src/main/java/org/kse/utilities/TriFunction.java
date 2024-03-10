@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,6 +21,6 @@
 package org.kse.utilities;
 
 @FunctionalInterface
-public interface TriFunction<A, B, C, R> {
-  R apply(A a, B b, C c);
+public interface TriFunction<A,B,C,R> {
+    R apply(A a, B b, C c);
 }

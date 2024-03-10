@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -36,36 +36,39 @@ import org.bouncycastle.asn1.ASN1Primitive;
  */
 public class InhibitAnyPolicy extends ASN1Object {
 
-  int skipCerts;
+    int skipCerts;
 
-  /**
-   * Creates an new instance with the given skipCerts.
-   */
-  public InhibitAnyPolicy(int skipCerts) { this.skipCerts = skipCerts; }
-
-  /**
-   * Returns the value of skipCerts.
-   */
-  public int getSkipCerts() { return skipCerts; }
-
-  public static InhibitAnyPolicy getInstance(Object obj) {
-    if (obj instanceof InhibitAnyPolicy) {
-      return (InhibitAnyPolicy)obj;
+    /**
+     * Creates a new instance with the given skipCerts.
+     */
+    public InhibitAnyPolicy(int skipCerts) {
+        this.skipCerts = skipCerts;
     }
-    if (obj instanceof ASN1Integer) {
-      int skipCerts = ((ASN1Integer)obj).getValue().intValue();
-      return new InhibitAnyPolicy(skipCerts);
-    }
-    if (obj instanceof byte[]) {
-      int skipCerts = ASN1Integer.getInstance(obj).getValue().intValue();
-      return new InhibitAnyPolicy(skipCerts);
-    }
-    throw new IllegalArgumentException("illegal object in getInstance: " +
-                                       obj.getClass().getName());
-  }
 
-  @Override
-  public ASN1Primitive toASN1Primitive() {
-    return new ASN1Integer(skipCerts);
-  }
+    /**
+     * Returns the value of skipCerts.
+     */
+    public int getSkipCerts() {
+        return skipCerts;
+    }
+
+    public static InhibitAnyPolicy getInstance(Object obj) {
+        if (obj instanceof InhibitAnyPolicy) {
+            return (InhibitAnyPolicy) obj;
+        }
+        if (obj instanceof ASN1Integer) {
+            int skipCerts = ((ASN1Integer) obj).getValue().intValue();
+            return new InhibitAnyPolicy(skipCerts);
+        }
+        if (obj instanceof byte[]) {
+            int skipCerts = ASN1Integer.getInstance(obj).getValue().intValue();
+            return new InhibitAnyPolicy(skipCerts);
+        }
+        throw new IllegalArgumentException("illegal object in getInstance: " + obj.getClass().getName());
+    }
+
+    @Override
+    public ASN1Primitive toASN1Primitive() {
+        return new ASN1Integer(skipCerts);
+    }
 }

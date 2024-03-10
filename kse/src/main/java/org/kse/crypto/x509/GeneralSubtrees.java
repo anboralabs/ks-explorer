@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,11 +19,11 @@
  */
 package org.kse.crypto.x509;
 
-import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.GeneralSubtree;
 
 import java.util.ArrayList;
@@ -38,53 +38,56 @@ import java.util.List;
  */
 public class GeneralSubtrees implements ASN1Encodable {
 
-  private List<GeneralSubtree> subtrees;
+    private List<GeneralSubtree> subtrees;
 
-  /**
-   * Create <code>GeneralSubtrees</code> from list of
-   * <code>GeneralSubtree</code> objects.
-   *
-   * @param subtrees
-   */
-  public GeneralSubtrees(List<GeneralSubtree> subtrees) {
-    this.subtrees = subtrees;
-  }
-
-  /**
-   * Create <code>GeneralSubtrees</code> from array of
-   * <code>GeneralSubtree</code> objects.
-   *
-   * @param subtrees
-   */
-  public GeneralSubtrees(GeneralSubtree[] subtrees) {
-    this.subtrees = new ArrayList<>(Arrays.asList(subtrees));
-  }
-
-  private GeneralSubtrees(ASN1Sequence seq) {
-    subtrees = new ArrayList<>();
-    for (int i = 0; i < seq.size(); i++) {
-      subtrees.add(GeneralSubtree.getInstance(seq.getObjectAt(i)));
+    /**
+     * Create <code>GeneralSubtrees</code> from list of <code>GeneralSubtree</code>
+     * objects.
+     *
+     * @param subtrees
+     */
+    public GeneralSubtrees(List<GeneralSubtree> subtrees) {
+        this.subtrees = subtrees;
     }
-  }
 
-  public static GeneralSubtrees getInstance(Object obj) {
-    if (obj instanceof GeneralSubtrees) {
-      return (GeneralSubtrees)obj;
+    /**
+     * Create <code>GeneralSubtrees</code> from array of <code>GeneralSubtree</code>
+     * objects.
+     *
+     * @param subtrees
+     */
+    public GeneralSubtrees(GeneralSubtree[] subtrees) {
+        this.subtrees = new ArrayList<>(Arrays.asList(subtrees));
     }
-    if (obj instanceof ASN1Sequence) {
-      return new GeneralSubtrees((ASN1Sequence)obj);
-    }
-    throw new IllegalArgumentException("invalid ASN1Sequence");
-  }
 
-  public List<GeneralSubtree> getGeneralSubtrees() { return subtrees; }
-
-  @Override
-  public ASN1Primitive toASN1Primitive() {
-    ASN1EncodableVector vec = new ASN1EncodableVector();
-    for (int i = 0; i < subtrees.size(); i++) {
-      vec.add(subtrees.get(i));
+    private GeneralSubtrees(ASN1Sequence seq) {
+        subtrees = new ArrayList<>();
+        for (int i = 0; i < seq.size(); i++) {
+            subtrees.add(GeneralSubtree.getInstance(seq.getObjectAt(i)));
+        }
     }
-    return new DERSequence(vec);
-  }
+
+    public static GeneralSubtrees getInstance(Object obj) {
+        if (obj instanceof GeneralSubtrees) {
+            return (GeneralSubtrees) obj;
+        }
+        if (obj instanceof ASN1Sequence) {
+            return new GeneralSubtrees((ASN1Sequence) obj);
+        }
+        throw new IllegalArgumentException("invalid ASN1Sequence");
+    }
+
+    public List<GeneralSubtree> getGeneralSubtrees() {
+        return subtrees;
+    }
+
+    @Override
+    public ASN1Primitive toASN1Primitive() {
+        ASN1EncodableVector vec = new ASN1EncodableVector();
+        for (GeneralSubtree subtree : subtrees) {
+            vec.add(subtree);
+        }
+        return new DERSequence(vec);
+    }
+
 }

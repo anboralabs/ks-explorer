@@ -9,6 +9,13 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    all {
+        // Allows using project dependencies instead of IDE dependencies during compilation and test running
+        resolutionStrategy.sortArtifacts(ResolutionStrategy.SortOrder.DEPENDENCY_FIRST)
+    }
+}
+
 dependencies {
     implementation("org.bouncycastle:bcpkix-jdk18on:1.77")
     implementation("net.java.dev.jna:jna:5.13.0")

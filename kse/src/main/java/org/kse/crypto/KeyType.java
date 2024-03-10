@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -22,4 +22,7 @@ package org.kse.crypto;
 /**
  * Enumeration of Key Types.
  */
-public enum KeyType { SYMMETRIC, ASYMMETRIC }
+public enum KeyType {
+    SYMMETRIC,
+    ASYMMETRIC
+}

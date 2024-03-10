@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,8 +19,8 @@
  */
 package org.kse.crypto.x509;
 
-import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERIA5String;
@@ -41,185 +41,173 @@ import static org.kse.crypto.x509.CertificatePolicyQualifierType.PKIX_USER_NOTIC
  * Policy Information utility methods.
  */
 public class PolicyInformationUtil {
-  private static ResourceBundle res =
-      ResourceBundle.getBundle("org/kse/crypto/x509/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
 
-  // @formatter:off
+    // @formatter:off
 
-  /*
-   * PolicyInformation ::= ASN1Sequence { policyIdentifier CertPolicyId,
-   * policyQualifiers ASN1Sequence SIZE (1..MAX) OF PolicyQualifierInfo
-   * OPTIONAL }
-   *
-   * CertPolicyId ::= OBJECT IDENTIFIER
-   *
-   * PolicyQualifierInfo ::= ASN1Sequence { policyQualifierId
-   * PolicyQualifierId, qualifier ANY DEFINED BY policyQualifierId }
-   *
-   * -- policyQualifierIds for Internet policy qualifiers
-   *
-   * id-qt OBJECT IDENTIFIER ::= { id-pkix 2 } id-qt-cps OBJECT IDENTIFIER ::=
-   * { id-qt 1 } id-qt-unotice OBJECT IDENTIFIER ::= { id-qt 2 }
-   *
-   * PolicyQualifierId ::= OBJECT IDENTIFIER ( id-qt-cps | id-qt-unotice )
-   *
-   * Qualifier ::= CHOICE { cPSuri CPSuri, userNotice UserNotice }
-   *
-   * CPSuri ::= DERIA5String
-   *
-   * UserNotice ::= ASN1Sequence { noticeRef NoticeReference OPTIONAL,
-   * explicitText DisplayText OPTIONAL}
-   *
-   * NoticeReference ::= ASN1Sequence { organization DisplayText,
-   * noticeNumbers ASN1Sequence OF ASN1Integer }
-   *
-   * DisplayText ::= CHOICE { ia5String DERIA5String (SIZE (1..200)),
-   * visibleString VisibleString (SIZE (1..200)), bmpString BMPString (SIZE
-   * (1..200)), utf8String UTF8String (SIZE (1..200)) }
-   */
+	/*
+	 * PolicyInformation ::= ASN1Sequence { policyIdentifier CertPolicyId,
+	 * policyQualifiers ASN1Sequence SIZE (1..MAX) OF PolicyQualifierInfo
+	 * OPTIONAL }
+	 *
+	 * CertPolicyId ::= OBJECT IDENTIFIER
+	 *
+	 * PolicyQualifierInfo ::= ASN1Sequence { policyQualifierId
+	 * PolicyQualifierId, qualifier ANY DEFINED BY policyQualifierId }
+	 *
+	 * -- policyQualifierIds for Internet policy qualifiers
+	 *
+	 * id-qt OBJECT IDENTIFIER ::= { id-pkix 2 } id-qt-cps OBJECT IDENTIFIER ::=
+	 * { id-qt 1 } id-qt-unotice OBJECT IDENTIFIER ::= { id-qt 2 }
+	 *
+	 * PolicyQualifierId ::= OBJECT IDENTIFIER ( id-qt-cps | id-qt-unotice )
+	 *
+	 * Qualifier ::= CHOICE { cPSuri CPSuri, userNotice UserNotice }
+	 *
+	 * CPSuri ::= DERIA5String
+	 *
+	 * UserNotice ::= ASN1Sequence { noticeRef NoticeReference OPTIONAL,
+	 * explicitText DisplayText OPTIONAL}
+	 *
+	 * NoticeReference ::= ASN1Sequence { organization DisplayText,
+	 * noticeNumbers ASN1Sequence OF ASN1Integer }
+	 *
+	 * DisplayText ::= CHOICE { ia5String DERIA5String (SIZE (1..200)),
+	 * visibleString VisibleString (SIZE (1..200)), bmpString BMPString (SIZE
+	 * (1..200)), utf8String UTF8String (SIZE (1..200)) }
+	 */
 
-  // @formatter:on
+	// @formatter:on
 
-  private PolicyInformationUtil() {}
-
-  /**
-   * Get string representation of policy information.
-   *
-   * @param policyInformation Policy information
-   * @return String representation of policy information
-   * @throws IOException If policy information is invalid
-   */
-  public static String toString(PolicyInformation policyInformation)
-      throws IOException {
-    StringBuilder sbPolicyInformation = new StringBuilder();
-
-    ASN1ObjectIdentifier policyIdentifier =
-        policyInformation.getPolicyIdentifier();
-
-    sbPolicyInformation.append(MessageFormat.format(
-        res.getString("PolicyInformationUtil.PolicyIdentifier"),
-        policyIdentifier.getId()));
-
-    ASN1Sequence policyQualifiers = policyInformation.getPolicyQualifiers();
-
-    if (policyQualifiers != null) {
-      sbPolicyInformation.append(", ");
-
-      StringBuilder sbPolicyQualifiers = new StringBuilder();
-
-      for (int i = 0; i < policyQualifiers.size(); i++) {
-        PolicyQualifierInfo policyQualifierInfo =
-            PolicyQualifierInfo.getInstance(policyQualifiers.getObjectAt(i));
-
-        sbPolicyQualifiers.append(toString(policyQualifierInfo));
-
-        if ((i + 1) < policyQualifiers.size()) {
-          sbPolicyQualifiers.append(", ");
-        }
-      }
-
-      sbPolicyInformation.append(MessageFormat.format(
-          res.getString("PolicyInformationUtil.PolicyQualifiers"),
-          sbPolicyQualifiers));
+    private PolicyInformationUtil() {
     }
 
-    return sbPolicyInformation.toString();
-  }
+    /**
+     * Get string representation of policy information.
+     *
+     * @param policyInformation Policy information
+     * @return String representation of policy information
+     * @throws IOException If policy information is invalid
+     */
+    public static String toString(PolicyInformation policyInformation) throws IOException {
+        StringBuilder sbPolicyInformation = new StringBuilder();
 
-  /**
-   * Get string representation of policy qualifier info.
-   *
-   * @param policyQualifierInfo Policy qualifier info
-   * @return String representation of policy qualifier info
-   * @throws IOException If policy qualifier info is invalid
-   */
-  public static String toString(PolicyQualifierInfo policyQualifierInfo)
-      throws IOException {
-    StringBuilder sbPolicyQualifier = new StringBuilder();
+        ASN1ObjectIdentifier policyIdentifier = policyInformation.getPolicyIdentifier();
 
-    ASN1ObjectIdentifier policyQualifierId =
-        policyQualifierInfo.getPolicyQualifierId();
+        sbPolicyInformation.append(MessageFormat.format(res.getString("PolicyInformationUtil.PolicyIdentifier"),
+                                                        policyIdentifier.getId()));
 
-    CertificatePolicyQualifierType certificatePolicyQualifierType =
-        CertificatePolicyQualifierType.resolveOid(policyQualifierId.getId());
+        ASN1Sequence policyQualifiers = policyInformation.getPolicyQualifiers();
 
-    if (certificatePolicyQualifierType == PKIX_CPS_POINTER_QUALIFIER) {
-      DERIA5String cpsPointer =
-          ((DERIA5String)policyQualifierInfo.getQualifier());
+        if (policyQualifiers != null) {
+            sbPolicyInformation.append(", ");
 
-      sbPolicyQualifier.append(MessageFormat.format(
-          res.getString("PolicyInformationUtil.CpsPointer"), cpsPointer));
-    } else if (certificatePolicyQualifierType == PKIX_USER_NOTICE_QUALIFIER) {
-      ASN1Encodable userNoticeObj = policyQualifierInfo.getQualifier();
+            StringBuilder sbPolicyQualifiers = new StringBuilder();
 
-      UserNotice userNotice = UserNotice.getInstance(userNoticeObj);
+            for (int i = 0; i < policyQualifiers.size(); i++) {
+                PolicyQualifierInfo policyQualifierInfo = PolicyQualifierInfo.getInstance(
+                        policyQualifiers.getObjectAt(i));
 
-      sbPolicyQualifier.append(MessageFormat.format(
-          res.getString("PolicyInformationUtil.UserNotice"),
-          toString(userNotice)));
-    }
+                sbPolicyQualifiers.append(toString(policyQualifierInfo));
 
-    return sbPolicyQualifier.toString();
-  }
+                if ((i + 1) < policyQualifiers.size()) {
+                    sbPolicyQualifiers.append(", ");
+                }
+            }
 
-  /**
-   * Get string representation of user notice.
-   *
-   * @param userNotice User notice
-   * @return String representation of user notice
-   */
-  public static String toString(UserNotice userNotice) {
-    StringBuilder sbUserNotice = new StringBuilder();
-
-    NoticeReference noticeReference = userNotice.getNoticeRef();
-
-    if (noticeReference != null) {
-      DisplayText organization = noticeReference.getOrganization();
-
-      if (organization != null) {
-        sbUserNotice.append(MessageFormat.format(
-            res.getString("PolicyInformationUtil.Organization"),
-            organization.getString()));
-
-        if ((noticeReference.getNoticeNumbers() != null) ||
-            (userNotice.getExplicitText() != null)) {
-          sbUserNotice.append(", ");
-        }
-      }
-
-      ASN1Integer[] noticeNumbers = noticeReference.getNoticeNumbers();
-
-      StringBuilder sbNoticeNumbers = new StringBuilder();
-
-      if (noticeNumbers != null) {
-        for (int i = 0; i < noticeNumbers.length; i++) {
-          ASN1Integer noticeNumber = noticeNumbers[i];
-
-          sbNoticeNumbers.append(noticeNumber.getValue().intValue());
-
-          if ((i + 1) < noticeNumbers.length) {
-            sbNoticeNumbers.append(" ");
-          }
+            sbPolicyInformation.append(
+                    MessageFormat.format(res.getString("PolicyInformationUtil.PolicyQualifiers"), sbPolicyQualifiers));
         }
 
-        sbUserNotice.append(MessageFormat.format(
-            res.getString("PolicyInformationUtil.NoticeNumbers"),
-            sbNoticeNumbers.toString()));
+        return sbPolicyInformation.toString();
+    }
 
-        if (userNotice.getExplicitText() != null) {
-          sbUserNotice.append(", ");
+    /**
+     * Get string representation of policy qualifier info.
+     *
+     * @param policyQualifierInfo Policy qualifier info
+     * @return String representation of policy qualifier info
+     * @throws IOException If policy qualifier info is invalid
+     */
+    public static String toString(PolicyQualifierInfo policyQualifierInfo) throws IOException {
+        StringBuilder sbPolicyQualifier = new StringBuilder();
+
+        ASN1ObjectIdentifier policyQualifierId = policyQualifierInfo.getPolicyQualifierId();
+
+        CertificatePolicyQualifierType certificatePolicyQualifierType = CertificatePolicyQualifierType.resolveOid(
+                policyQualifierId.getId());
+
+        if (certificatePolicyQualifierType == PKIX_CPS_POINTER_QUALIFIER) {
+            DERIA5String cpsPointer = ((DERIA5String) policyQualifierInfo.getQualifier());
+
+            sbPolicyQualifier.append(
+                    MessageFormat.format(res.getString("PolicyInformationUtil.CpsPointer"), cpsPointer));
+        } else if (certificatePolicyQualifierType == PKIX_USER_NOTICE_QUALIFIER) {
+            ASN1Encodable userNoticeObj = policyQualifierInfo.getQualifier();
+
+            UserNotice userNotice = UserNotice.getInstance(userNoticeObj);
+
+            sbPolicyQualifier.append(
+                    MessageFormat.format(res.getString("PolicyInformationUtil.UserNotice"), toString(userNotice)));
         }
-      }
+
+        return sbPolicyQualifier.toString();
     }
 
-    DisplayText explicitText = userNotice.getExplicitText();
+    /**
+     * Get string representation of user notice.
+     *
+     * @param userNotice User notice
+     * @return String representation of user notice
+     */
+    public static String toString(UserNotice userNotice) {
+        StringBuilder sbUserNotice = new StringBuilder();
 
-    if (explicitText != null) {
-      sbUserNotice.append(MessageFormat.format(
-          res.getString("PolicyInformationUtil.ExplicitText"),
-          explicitText.getString()));
+        NoticeReference noticeReference = userNotice.getNoticeRef();
+
+        if (noticeReference != null) {
+            DisplayText organization = noticeReference.getOrganization();
+
+            if (organization != null) {
+                sbUserNotice.append(MessageFormat.format(res.getString("PolicyInformationUtil.Organization"),
+                                                         organization.getString()));
+
+                if ((noticeReference.getNoticeNumbers() != null) || (userNotice.getExplicitText() != null)) {
+                    sbUserNotice.append(", ");
+                }
+            }
+
+            ASN1Integer[] noticeNumbers = noticeReference.getNoticeNumbers();
+
+            StringBuilder sbNoticeNumbers = new StringBuilder();
+
+            if (noticeNumbers != null) {
+                for (int i = 0; i < noticeNumbers.length; i++) {
+                    ASN1Integer noticeNumber = noticeNumbers[i];
+
+                    sbNoticeNumbers.append(noticeNumber.getValue().intValue());
+
+                    if ((i + 1) < noticeNumbers.length) {
+                        sbNoticeNumbers.append(" ");
+                    }
+                }
+
+                sbUserNotice.append(MessageFormat.format(res.getString("PolicyInformationUtil.NoticeNumbers"),
+                                                         sbNoticeNumbers.toString()));
+
+                if (userNotice.getExplicitText() != null) {
+                    sbUserNotice.append(", ");
+                }
+            }
+        }
+
+        DisplayText explicitText = userNotice.getExplicitText();
+
+        if (explicitText != null) {
+            sbUserNotice.append(MessageFormat.format(res.getString("PolicyInformationUtil.ExplicitText"),
+                                                     explicitText.getString()));
+        }
+
+        return sbUserNotice.toString();
     }
-
-    return sbUserNotice.toString();
-  }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -27,45 +27,39 @@ import org.kse.crypto.publickey.OpenSslPubUtil;
 import java.security.PublicKey;
 
 /**
- * Helper class for calculating different fingerprint algorithms for public
- * keys.
+ * Helper class for calculating different fingerprint algorithms for public keys.
  */
 public class PublicKeyFingerprintUtil {
 
-  private PublicKeyFingerprintUtil() {}
-
-  /**
-   * Calculates the fingerprint of the given public key with the given
-   * algorithm.
-   *
-   * @param publicKey Public key for fingerprint calculation
-   * @param algorithm How to calculate the fingerprint value
-   * @return The fingerprint of the key
-   */
-  public static byte[] calculateFingerprint(
-      PublicKey publicKey, PublicKeyFingerprintAlgorithm algorithm)
-      throws CryptoException {
-
-    // workaround for encoding bug in older Java versions
-    PublicKey convertedPublicKey = OpenSslPubUtil.load(publicKey.getEncoded());
-
-    KeyIdentifierGenerator keyIdentifierGenerator =
-        new KeyIdentifierGenerator(convertedPublicKey);
-
-    switch (algorithm) {
-    case SKI_METHOD1:
-      return keyIdentifierGenerator.generate160BitHashId();
-    case SKI_METHOD2:
-      return keyIdentifierGenerator.generate64BitHashId();
-    case SHA1_OVER_SPKI:
-      return DigestUtil.getMessageDigest(convertedPublicKey.getEncoded(),
-                                         DigestType.SHA1);
-    case SHA256_OVER_SPKI:
-      return DigestUtil.getMessageDigest(convertedPublicKey.getEncoded(),
-                                         DigestType.SHA256);
-    default:
-      throw new UnsupportedOperationException(
-          "Fingerprint algorithm not supported: " + algorithm.friendly());
+    private PublicKeyFingerprintUtil() {
     }
-  }
+
+    /**
+     * Calculates the fingerprint of the given public key with the given algorithm.
+     *
+     * @param publicKey Public key for fingerprint calculation
+     * @param algorithm How to calculate the fingerprint value
+     * @return The fingerprint of the key
+     */
+    public static byte[] calculateFingerprint(PublicKey publicKey, PublicKeyFingerprintAlgorithm algorithm)
+            throws CryptoException {
+
+        // workaround for encoding bug in older Java versions
+        PublicKey convertedPublicKey = OpenSslPubUtil.load(publicKey.getEncoded());
+
+        KeyIdentifierGenerator keyIdentifierGenerator = new KeyIdentifierGenerator(convertedPublicKey);
+
+        switch (algorithm) {
+        case SKI_METHOD1:
+            return keyIdentifierGenerator.generate160BitHashId();
+        case SKI_METHOD2:
+            return keyIdentifierGenerator.generate64BitHashId();
+        case SHA1_OVER_SPKI:
+            return DigestUtil.getMessageDigest(convertedPublicKey.getEncoded(), DigestType.SHA1);
+        case SHA256_OVER_SPKI:
+            return DigestUtil.getMessageDigest(convertedPublicKey.getEncoded(), DigestType.SHA256);
+        default:
+            throw new UnsupportedOperationException("Fingerprint algorithm not supported: " + algorithm.friendly());
+        }
+    }
 }

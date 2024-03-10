@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -25,42 +25,48 @@ import java.util.ArrayList;
  * PEM header attributes.
  */
 public class PemAttributes {
-  private ArrayList<PemAttribute> attributes = new ArrayList<>();
+    private ArrayList<PemAttribute> attributes = new ArrayList<>();
 
-  /**
-   * Add an attribute.
-   *
-   * @param attribute Attribute
-   */
-  public void add(PemAttribute attribute) { attributes.add(attribute); }
-
-  /**
-   * Get attributes.
-   *
-   * @return Attributes in addition order
-   */
-  public Iterable<PemAttribute> values() { return attributes; }
-
-  /**
-   * Get the named attribute.
-   *
-   * @param name Attribute name
-   * @return named attribute or null if none
-   */
-  public PemAttribute get(String name) {
-    for (PemAttribute attribute : attributes) {
-      if (attribute.getName().equals(name)) {
-        return attribute;
-      }
+    /**
+     * Add an attribute.
+     *
+     * @param attribute Attribute
+     */
+    public void add(PemAttribute attribute) {
+        attributes.add(attribute);
     }
 
-    return null;
-  }
+    /**
+     * Get attributes.
+     *
+     * @return Attributes in addition order
+     */
+    public Iterable<PemAttribute> values() {
+        return attributes;
+    }
 
-  /**
-   * How many attributes or contained in object?
-   *
-   * @return Size
-   */
-  public int size() { return attributes.size(); }
+    /**
+     * Get the named attribute.
+     *
+     * @param name Attribute name
+     * @return named attribute or null if none
+     */
+    public PemAttribute get(String name) {
+        for (PemAttribute attribute : attributes) {
+            if (attribute.getName().equals(name)) {
+                return attribute;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * How many attributes or contained in object?
+     *
+     * @return Size
+     */
+    public int size() {
+        return attributes.size();
+    }
 }

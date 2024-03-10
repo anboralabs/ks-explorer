@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -22,91 +22,92 @@ package org.kse.utilities;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class StringUtils {
 
-  private StringUtils() {}
-
-  /**
-   * Trims passed string and converts it to null if the resulting string has
-   * length zero.
-   *
-   * @param str String to process
-   * @return Trimmed string or null
-   */
-  public static String trimAndConvertEmptyToNull(String str) {
-
-    if (str == null) {
-      return null;
+    private StringUtils() {
     }
 
-    String newStr = str.trim();
+    /**
+     * Trims passed string and converts it to null if the resulting string has length zero.
+     *
+     * @param str String to process
+     * @return Trimmed string or null
+     */
+    public static String trimAndConvertEmptyToNull(String str) {
 
-    if (newStr.length() < 1) {
-      return null;
+        if (str == null) {
+            return null;
+        }
+
+        String newStr = str.trim();
+
+        if (newStr.isEmpty()) {
+            return null;
+        }
+
+        return newStr;
     }
 
-    return newStr;
-  }
+    /**
+     * Checks if a String is null, empty or whitespace-only.
+     *
+     * @param str the String to check
+     * @return true if the String is null, empty or whitespace-only
+     */
+    public static boolean isBlank(String str) {
 
-  /**
-   * Checks if a String is null, empty or whitespace-only.
-   *
-   * @param str the String to check
-   * @return true if the String is null, empty or whitespace-only
-   */
-  public static boolean isBlank(String str) {
+        return trimAndConvertEmptyToNull(str) == null;
 
-    return trimAndConvertEmptyToNull(str) == null;
-  }
-
-  /**
-   * Add a new item to a semicolon separated list of strings.
-   *
-   * @param newItem          The new item to be added.
-   * @param semicolonSepList Current semicolon separated list of strings.
-   * @param maxItems         Maximum number of items to keep in list.
-   * @return New semicolon separated list of strings with new item at the first
-   *     position.
-   */
-  public static String addToList(String newItem, String semicolonSepList,
-                                 int maxItems) {
-
-    // add new item at first position of the list
-    StringBuilder sb = new StringBuilder(newItem);
-    String[] items = semicolonSepList.split(";");
-    for (int i = 0; i < items.length && i < maxItems; i++) {
-
-      String port = items[i];
-
-      // if saved list already contains new item, bring it to first position
-      if (port.equals(newItem)) {
-        continue;
-      }
-
-      sb.append(";");
-      sb.append(port);
     }
 
-    return sb.toString();
-  }
+    /**
+     * Add given string to list. The string is put at the first position of the new list. If the list already
+     * contains this value, it is moved to the first position instead. If maxSize is exceeded after adding the value,
+     * the last item in the list is removed.
+     * <p>
+     *     Note: This does not modify the input list (as it is probably immutable), but returns a new list instead.
+     * </p>
+     *
+     * @param value   The new item to be added.
+     * @param list    Current list of strings.
+     * @param maxSize Maximum number of items to keep in list.
+     * @return New list of strings with new item at the first position.
+     */
+    public static List<String> addToList(String value, List<String> list, int maxSize) {
+        LinkedList<String> newList = new LinkedList<>(list);
 
-  /**
-   * Returns a localized short/medium date time string.
-   *
-   * @param date The date to convert into a string
-   * @return localized short/medium date time string
-   */
-  public static String formatDate(Date date) {
-    DateFormat dateFormat =
-        DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
+        if (newList.contains(value)) {
+            newList.remove(value);
+            newList.addFirst(value);
+            return newList;
+        }
 
-    if (dateFormat instanceof SimpleDateFormat) {
-      SimpleDateFormat sdf = (SimpleDateFormat)dateFormat;
-      // we want short date format but with 4 digit year
-      sdf.applyPattern(sdf.toPattern().replaceAll("y+", "yyyy").concat(" z"));
+        newList.addFirst(value);
+
+        if (newList.size() > maxSize) {
+            newList.removeLast();
+        }
+        return newList;
     }
 
-    return dateFormat.format(date);
-  }
+    /**
+     * Returns a localized short/medium date time string.
+     *
+     * @param date The date to convert into a string
+     * @return localized short/medium date time string
+     */
+    public static String formatDate(Date date) {
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
+
+        if (dateFormat instanceof SimpleDateFormat) {
+            SimpleDateFormat sdf = (SimpleDateFormat) dateFormat;
+            // we want short date format but with 4 digit year
+            sdf.applyPattern(sdf.toPattern().replaceAll("y+", "yyyy").concat(" z"));
+        }
+
+        return dateFormat.format(date);
+    }
 }

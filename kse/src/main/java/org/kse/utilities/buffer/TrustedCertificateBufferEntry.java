@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -25,29 +25,31 @@ import java.security.cert.Certificate;
  * Trusted certificate buffer entry.
  */
 public class TrustedCertificateBufferEntry extends BufferEntry {
-  private Certificate trustedCertificate;
+    private Certificate trustedCertificate;
 
-  /**
-   * Construct.
-   *
-   * @param name               Entry name
-   * @param cut                Is entry to be cut?
-   * @param trustedCertificate Trusted certificate
-   */
-  public TrustedCertificateBufferEntry(String name, boolean cut,
-                                       Certificate trustedCertificate) {
-    super(name, cut);
+    /**
+     * Construct.
+     *
+     * @param name               Entry name
+     * @param cut                Is entry to be cut?
+     * @param trustedCertificate Trusted certificate
+     */
+    public TrustedCertificateBufferEntry(String name, boolean cut, Certificate trustedCertificate) {
+        super(name, cut);
 
-    this.trustedCertificate = trustedCertificate;
-  }
+        this.trustedCertificate = trustedCertificate;
+    }
 
-  /**
-   * Get trusted certificate.
-   *
-   * @return Trusted certificate
-   */
-  public Certificate getTrustedCertificate() { return trustedCertificate; }
+    /**
+     * Get trusted certificate.
+     *
+     * @return Trusted certificate
+     */
+    public Certificate getTrustedCertificate() {
+        return trustedCertificate;
+    }
 
-  @Override
-  void clear() {}
+    @Override
+    void clear() {
+    }
 }
