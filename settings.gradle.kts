@@ -5,4 +5,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = "kse"
+rootProject.name = "ks-explorer"
+include("kse")

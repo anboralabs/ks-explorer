@@ -23,11 +23,6 @@ import co.anbora.labs.kse.ide.gui.CertEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.cert.X509CRL;
 import java.security.cert.X509CRLEntry;
@@ -44,15 +39,12 @@ import org.jetbrains.annotations.Nullable;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.dialogs.RevokedCertsTableCellRend;
 import org.kse.gui.dialogs.RevokedCertsTableHeadRend;
 import org.kse.gui.dialogs.RevokedCertsTableModel;
-import org.kse.gui.error.DError;
 import org.kse.utilities.StringUtils;
-import org.kse.utilities.asn1.Asn1Exception;
 
 /**
  * Displays the details of a Certificate Revocation List (CRL).

@@ -19,8 +19,7 @@ configurations {
 }
 
 dependencies {
-    implementation("org.bouncycastle:bcpkix-jdk18on:1.72")
-    implementation("com.nimbusds:nimbus-jose-jwt:9.25.6")
+    implementation(project(":kse"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
 }
 

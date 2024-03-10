@@ -32,7 +32,6 @@ import org.kse.gui.actions.OpenAction;
 import org.kse.gui.actions.PressEnterAction;
 import org.kse.gui.actions.behavior.ActionBehavior;
 import org.kse.gui.actions.behavior.OpenKeyStoreImpl;
-import org.kse.gui.error.DError;
 import org.kse.gui.statusbar.StatusBar;
 import org.kse.gui.statusbar.StatusBarImpl;
 import org.kse.utilities.history.KeyStoreHistory;
