@@ -536,7 +536,7 @@ public class OpenSslPvkUtil {
         //   ECPrivateKey ::= SEQUENCE {
         //	     version        INTEGER { ecPrivkeyVer1(1) }
         //(ecPrivkeyVer1), 	     privateKey     OCTET STRING,
-        //parameters [0] ECParameters {{ NamedCurve }} OPTIONAL,
+        // parameters [0] ECParameters {{ NamedCurve }} OPTIONAL,
         // publicKey  [1] BIT STRING OPTIONAL
         //	   }
         if ((seq.size() >= 2) && (seq.size() <= 4) &&
