@@ -755,4 +755,32 @@ public final class X509CertUtil {
         int snLength = PreferencesManager.getPreferences().getSerialNumberLengthInBytes();
         return HexUtil.getHexString(SerialNumbers.generate(snLength), "0x", 0, 0);
     }*/
+
+    public static boolean isPemCertificate(byte[] certsBytes)
+            throws CryptoException {
+        try {
+            CertificateFactory cf =
+                    CertificateFactory.getInstance(X509_CERT_TYPE, KSE.BC);
+
+            // try to parse data as PEM encoded
+            List<X509Certificate> loadedCerts = loadAsPEM(certsBytes, cf);
+            return !loadedCerts.isEmpty();
+        } catch (CertificateException ex) {
+            return false;
+        }
+    }
+
+    public static boolean isBase64Certificate(byte[] certsBytes)
+            throws CryptoException {
+        try {
+            CertificateFactory cf =
+                    CertificateFactory.getInstance(X509_CERT_TYPE, KSE.BC);
+
+            // try to parse data as PEM encoded
+            List<X509Certificate> loadedCerts = loadAsBase64(certsBytes, cf);
+            return !loadedCerts.isEmpty();
+        } catch (CertificateException ex) {
+            return false;
+        }
+    }
 }

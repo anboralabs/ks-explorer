@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "co.anbora.labs.core.kse"
-version = "2024.2.1"
+version = "2024.3.1"
 
 repositories {
     mavenCentral()

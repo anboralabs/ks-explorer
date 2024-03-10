@@ -1,6 +1,5 @@
 package co.anbora.labs.kse.ide.editor
 
-import com.intellij.diff.editor.DiffVirtualFile
 import com.intellij.openapi.fileEditor.FileEditorPolicy
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -24,7 +23,6 @@ class PemCertEditorProvider: CertEditorProvider() {
     override fun accept(project: Project, file: VirtualFile): Boolean {
         return isFileType(file)
                 && !SingleRootFileViewProvider.isTooLargeForContentLoading(file)
-                && file !is DiffVirtualFile
                 && (isPemCertificate(file.contentsToByteArray()) || isBase64Certificate(file.contentsToByteArray()))
     }
 }

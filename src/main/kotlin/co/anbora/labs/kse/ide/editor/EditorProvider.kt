@@ -2,7 +2,6 @@ package co.anbora.labs.kse.ide.editor
 
 import co.anbora.labs.kse.ide.gui.view.DViewError
 import co.anbora.labs.kse.license.CheckLicense
-import com.intellij.diff.editor.DiffVirtualFile
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorPolicy
@@ -27,7 +26,6 @@ abstract class EditorProvider: AsyncFileEditorProvider, DumbAware {
     override fun accept(project: Project, file: VirtualFile): Boolean {
         return isFileType(file)
                 && !SingleRootFileViewProvider.isTooLargeForContentLoading(file)
-                && file !is DiffVirtualFile
     }
 
     override fun createEditor(project: Project, file: VirtualFile): FileEditor {
