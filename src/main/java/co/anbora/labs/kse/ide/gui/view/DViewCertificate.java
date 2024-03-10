@@ -15,7 +15,6 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.tree.*;
 import net.miginfocom.swing.MigLayout;

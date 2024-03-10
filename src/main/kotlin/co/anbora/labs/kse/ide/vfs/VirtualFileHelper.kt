@@ -1,5 +1,6 @@
 package co.anbora.labs.kse.ide.vfs
 
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
@@ -22,6 +23,7 @@ import java.security.PublicKey
 import java.security.cert.X509Certificate
 import java.text.MessageFormat
 import java.util.*
+import java.util.concurrent.CompletableFuture
 import javax.crypto.SecretKey
 
 object VirtualFileHelper {
@@ -81,12 +83,17 @@ object VirtualFileHelper {
     }
 
     private fun openInEditor(project: Project, file: Path){
-        val vfs = LocalFileSystem.getInstance().findFileByNioFile(file)
-        if (vfs != null) {
-            FileEditorManager.getInstance(project).openFileEditor(
-                OpenFileDescriptor(project, vfs),
-                false
-            )
+        CompletableFuture.supplyAsync {
+            LocalFileSystem.getInstance().findFileByNioFile(file)
+        }.whenComplete { vfs, u ->
+            if (vfs != null) {
+                invokeLater {
+                    FileEditorManager.getInstance(project).openFileEditor(
+                        OpenFileDescriptor(project, vfs),
+                        false
+                    )
+                }
+            }
         }
     }
 
