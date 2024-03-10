@@ -19,14 +19,13 @@
  */
 package org.kse.gui.dialogs;
 
-import org.kse.utilities.StringUtils;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.math.BigInteger;
 import java.util.Date;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import org.kse.utilities.StringUtils;
 
 /**
  * Custom cell renderer for the cells of the RevokedCerts table of DViewCrl.

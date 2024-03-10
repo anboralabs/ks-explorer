@@ -1,11 +1,10 @@
 package org.kse.gui.actions;
 
-import org.apache.commons.io.FileUtils;
-import org.kse.crypto.x509.X509CertUtil;
-
 import java.io.File;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
+import org.apache.commons.io.FileUtils;
+import org.kse.crypto.x509.X509CertUtil;
 
 public class KeyStoreExploreActionUtils {
 

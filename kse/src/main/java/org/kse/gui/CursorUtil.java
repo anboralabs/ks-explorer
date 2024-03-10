@@ -19,9 +19,9 @@
  */
 package org.kse.gui;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
+import javax.swing.*;
 
 /**
  * Cursor utility methods.

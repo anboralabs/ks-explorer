@@ -26,16 +26,16 @@ package org.kse.gui.statusbar;
  *
  */
 public interface StatusBar {
-	/**
-	 * Display the supplied text in the status bar.
-	 *
-	 * @param status
-	 *            Text to display
-	 */
-	void setStatusBarText(String status);
+  /**
+   * Display the supplied text in the status bar.
+   *
+   * @param status
+   *            Text to display
+   */
+  void setStatusBarText(String status);
 
-	/**
-	 * Set the status bar text to its default message.
-	 */
-	void setDefaultStatusBarText();
+  /**
+   * Set the status bar text to its default message.
+   */
+  void setDefaultStatusBarText();
 }

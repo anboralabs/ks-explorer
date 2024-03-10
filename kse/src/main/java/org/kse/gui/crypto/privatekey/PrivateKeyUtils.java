@@ -1,16 +1,15 @@
 package org.kse.gui.crypto.privatekey;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.PrivateKey;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.privatekey.OpenSslPbeType;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8PbeType;
 import org.kse.crypto.privatekey.Pkcs8Util;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.security.PrivateKey;
 
 public class PrivateKeyUtils {
 
@@ -74,10 +73,9 @@ public class PrivateKeyUtils {
       }
   }*/
 
-  private static byte[] getPkcs8EncodedPrivateKey(PrivateKey privateKey,
-                                                  boolean pemEncode,
-                                                  Pkcs8PbeType pbeAlgorithm,
-                                                  Password password)
+  private static byte[]
+  getPkcs8EncodedPrivateKey(PrivateKey privateKey, boolean pemEncode,
+                            Pkcs8PbeType pbeAlgorithm, Password password)
       throws CryptoException, IOException {
     byte[] encoded = null;
 
@@ -248,10 +246,9 @@ public class PrivateKeyUtils {
       }
   }*/
 
-  public static byte[] getOpenSslEncodedPrivateKey(PrivateKey privateKey,
-                                                   boolean pemEncoded,
-                                                   OpenSslPbeType pbeAlgorithm,
-                                                   Password password)
+  public static byte[]
+  getOpenSslEncodedPrivateKey(PrivateKey privateKey, boolean pemEncoded,
+                              OpenSslPbeType pbeAlgorithm, Password password)
       throws CryptoException, IOException {
     byte[] encoded = null;
 

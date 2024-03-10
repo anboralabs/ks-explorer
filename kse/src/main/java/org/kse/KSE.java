@@ -1,8 +1,7 @@
 package org.kse;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 import java.security.Provider;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class KSE {
 

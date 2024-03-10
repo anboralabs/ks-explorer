@@ -19,36 +19,35 @@
  */
 package org.kse.utilities.io;
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Class of utility methods to copy data between I/O streams.
  */
 public class CopyUtil {
-    private CopyUtil() {
-    }
+  private CopyUtil() {}
 
-    /**
-     * Copy data from one stream to another and close I/O.
-     *
-     * @param in  Input stream
-     * @param out Output stream
-     * @throws IOException If an I/O problem occurred
-     */
-    public static void copyClose(InputStream in, OutputStream out) throws IOException {
-        try {
-            IOUtils.copy(in, out);
-        } finally {
-            IOUtils.closeQuietly(in);
-            IOUtils.closeQuietly(out);
-        }
+  /**
+   * Copy data from one stream to another and close I/O.
+   *
+   * @param in  Input stream
+   * @param out Output stream
+   * @throws IOException If an I/O problem occurred
+   */
+  public static void copyClose(InputStream in, OutputStream out)
+      throws IOException {
+    try {
+      IOUtils.copy(in, out);
+    } finally {
+      IOUtils.closeQuietly(in);
+      IOUtils.closeQuietly(out);
     }
+  }
 
   /**
    * Copy data from a reader to a writer and do not close I/O.

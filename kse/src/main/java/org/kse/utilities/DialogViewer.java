@@ -22,12 +22,12 @@ package org.kse.utilities;
 // import com.formdev.flatlaf.FlatLightLaf;
 
 /**
- * This is a helper class for quickly viewing KSE dialogs (mainly for testing purposes during development).
+ * This is a helper class for quickly viewing KSE dialogs (mainly for testing
+ * purposes during development).
  */
 public class DialogViewer {
 
-    private DialogViewer() {
-    }
+  private DialogViewer() {}
 
   /**
    * Add BC provider and set l&f (only required when BC is needed before calling

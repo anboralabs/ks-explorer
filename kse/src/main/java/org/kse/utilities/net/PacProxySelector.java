@@ -19,14 +19,8 @@
  */
 package org.kse.utilities.net;
 
-import org.kse.utilities.TriFunction;
-import org.kse.utilities.VarFunction;
-import org.kse.utilities.io.CopyUtil;
-import org.kse.version.JavaVersion;
+import static java.util.Collections.singletonList;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
@@ -39,8 +33,13 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import static java.util.Collections.singletonList;
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
+import org.kse.utilities.TriFunction;
+import org.kse.utilities.VarFunction;
+import org.kse.utilities.io.CopyUtil;
+import org.kse.version.JavaVersion;
 
 /**
  * Proxy Selector for Proxy Automatic Configuration (PAC).

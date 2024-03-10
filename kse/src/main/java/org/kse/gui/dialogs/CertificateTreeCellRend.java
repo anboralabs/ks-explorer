@@ -19,14 +19,13 @@
  */
 package org.kse.gui.dialogs;
 
-import org.kse.crypto.x509.X500NameUtils;
-import org.kse.crypto.x509.X509CertUtil;
-
+import java.awt.*;
+import java.security.cert.X509Certificate;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import java.awt.*;
-import java.security.cert.X509Certificate;
+import org.kse.crypto.x509.X500NameUtils;
+import org.kse.crypto.x509.X509CertUtil;
 
 /**
  * Custom cell renderer for the cells of the DViewCertificate tree.
