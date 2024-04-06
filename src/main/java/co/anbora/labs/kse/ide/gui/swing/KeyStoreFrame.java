@@ -5,6 +5,15 @@ import co.anbora.labs.kse.ide.gui.render.ColumnRender;
 import co.anbora.labs.kse.ide.vfs.VirtualFileHelper;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.util.ResourceBundle;
+import javax.swing.*;
+import javax.swing.table.TableRowSorter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kse.crypto.CryptoException;
@@ -23,16 +32,6 @@ import org.kse.gui.error.DError;
 import org.kse.gui.statusbar.StatusBar;
 import org.kse.gui.statusbar.StatusBarImpl;
 import org.kse.utilities.history.KeyStoreHistory;
-
-import javax.swing.*;
-import javax.swing.table.TableRowSorter;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.util.ResourceBundle;
 
 public class KeyStoreFrame
     extends TableEditor implements AddKeyStore, HistoryKeyStore {
@@ -276,7 +275,8 @@ public class KeyStoreFrame
             getProjectArg(), getFile(), alias, keyStore);
       } else if (KeyStoreUtil.isKeyEntry(alias, keyStore)) {
         VirtualFileHelper.INSTANCE.showKeySelectedEntry(
-            getProjectArg(), getFile(), alias, keyStore, history.getCurrentState());
+            getProjectArg(), getFile(), alias, keyStore,
+            history.getCurrentState());
       }
     } catch (Exception ex) {
       DError.displayError(getProjectArg(), ex);
