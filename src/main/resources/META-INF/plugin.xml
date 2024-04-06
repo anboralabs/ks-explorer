@@ -36,6 +36,12 @@
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.EncPrivateKeyEditorProvider"/>
         <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.PublicKeyEditorProvider"/>
 
+        <fileEditorProvider implementation="co.anbora.labs.kse.ide.editor.virtual.VirtualFileEditorProvider"/>
+        <virtualFileSystem
+                implementationClass="co.anbora.labs.kse.ide.vfs.KSExplorerVirtualFileSystem"
+                key="ks-explorer"
+                physical="false"/>
+
     </extensions>
 
     <actions>

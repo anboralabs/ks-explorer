@@ -5,28 +5,15 @@ import co.anbora.labs.kse.ide.gui.render.ColumnRender;
 import co.anbora.labs.kse.ide.vfs.VirtualFileHelper;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.newvfs.BulkFileListener;
-import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import com.intellij.util.messages.MessageBus;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.function.Consumer;
-import javax.swing.*;
-import javax.swing.table.TableRowSorter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.keystore.KeyStoreUtil;
-import org.kse.gui.*;
+import org.kse.gui.AddKeyStore;
+import org.kse.gui.HistoryKeyStore;
+import org.kse.gui.KeyStoreTableColumns;
+import org.kse.gui.KeyStoreTableModel;
 import org.kse.gui.actions.NewAction;
 import org.kse.gui.actions.OpenAction;
 import org.kse.gui.actions.PressEnterAction;
@@ -36,6 +23,16 @@ import org.kse.gui.error.DError;
 import org.kse.gui.statusbar.StatusBar;
 import org.kse.gui.statusbar.StatusBarImpl;
 import org.kse.utilities.history.KeyStoreHistory;
+
+import javax.swing.*;
+import javax.swing.table.TableRowSorter;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.util.ResourceBundle;
 
 public class KeyStoreFrame
     extends TableEditor implements AddKeyStore, HistoryKeyStore {
@@ -96,8 +93,6 @@ public class KeyStoreFrame
     initToolbar();
 
     statusBar.setDefaultStatusBarText();
-
-    addFileListener(projectArg.getMessageBus());
   }
 
   private void initActions(Project projectArg, StatusBar statusBar) {
@@ -113,20 +108,6 @@ public class KeyStoreFrame
     customUnlockPanel.addActionListener(openAction);
     customUnlockPanel.addKeyListener(
         new PressEnterAction(projectArg, statusBar, actionBehavior));
-  }
-
-  private void addFileListener(MessageBus messageBus) {
-    messageBus.connect().subscribe(
-        VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
-          @Override
-          public void after(@NotNull List<? extends VFileEvent> events) {
-            events.forEach((Consumer<VFileEvent>)vFileEvent -> {
-              if (vFileEvent instanceof VFileContentChangeEvent) {
-                openAction.doAction();
-              }
-            });
-          }
-        });
   }
 
   private void initToolbar() {
@@ -289,13 +270,13 @@ public class KeyStoreFrame
 
       if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
         VirtualFileHelper.INSTANCE.showCertificateSelectedEntry(
-            getProjectArg(), alias, keyStore);
+            getProjectArg(), getFile(), alias, keyStore);
       } else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
         VirtualFileHelper.INSTANCE.showCertificateSelectedEntry(
-            getProjectArg(), alias, keyStore);
+            getProjectArg(), getFile(), alias, keyStore);
       } else if (KeyStoreUtil.isKeyEntry(alias, keyStore)) {
         VirtualFileHelper.INSTANCE.showKeySelectedEntry(
-            getProjectArg(), alias, keyStore, history.getCurrentState());
+            getProjectArg(), getFile(), alias, keyStore, history.getCurrentState());
       }
     } catch (Exception ex) {
       DError.displayError(getProjectArg(), ex);

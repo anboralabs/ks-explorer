@@ -1,21 +1,16 @@
 package co.anbora.labs.kse.ide.vfs
 
-import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import org.kse.crypto.Password
 import org.kse.crypto.keystore.KeyStoreType
-import org.kse.crypto.publickey.OpenSslPubUtil
 import org.kse.crypto.x509.X509CertUtil
-import org.kse.gui.crypto.privatekey.PrivateKeyUtils
 import org.kse.gui.error.DProblem
 import org.kse.gui.error.Problem
 import org.kse.gui.password.DGetPassword
 import org.kse.utilities.history.KeyStoreState
-import java.nio.file.Files
-import java.nio.file.Path
 import java.security.GeneralSecurityException
 import java.security.KeyStore
 import java.security.PrivateKey
@@ -23,26 +18,21 @@ import java.security.PublicKey
 import java.security.cert.X509Certificate
 import java.text.MessageFormat
 import java.util.*
-import java.util.concurrent.CompletableFuture
 import javax.crypto.SecretKey
 
 object VirtualFileHelper {
 
     private val res = ResourceBundle.getBundle("org/kse/gui/actions/resources")
-    private const val CERT_EXTENSION = ".cer"
-    private const val PUBLIC_KEY_EXTENSION = ".pub"
-    private const val PRIVATE_KEY_EXTENSION = ".pvk"
 
-    fun showCertificateSelectedEntry(project: Project, alias: String, keyStore: KeyStore) {
+    fun showCertificateSelectedEntry(project: Project, parent: VirtualFile, alias: String, keyStore: KeyStore) {
         val certificate = keyStore.getCertificateChain(alias) ?: arrayOf(keyStore.getCertificate(alias))
         val certs: Array<X509Certificate> = X509CertUtil.convertCertificates(certificate)
-        val pem = X509CertUtil.getCertsEncodedX509Pem(certs)
 
-        val certPath = generateTempFile(alias, pem.toByteArray(), CERT_EXTENSION)
-        openInEditor(project, certPath)
+        val virtualFile = CertVirtualFile(alias, parent, certs)
+        openInEditor(project, virtualFile)
     }
 
-    fun showKeySelectedEntry(project: Project, alias: String, keyStore: KeyStore, state: KeyStoreState) {
+    fun showKeySelectedEntry(project: Project, parent: VirtualFile, alias: String, keyStore: KeyStore, state: KeyStoreState) {
         val password = getEntryPassword(project, alias, state) ?: return
 
         val keyStore: KeyStore = state.getKeyStore()
@@ -53,48 +43,29 @@ object VirtualFileHelper {
 
             }
             is PrivateKey -> {
-                showKeySelectedPrivateEntry(project, alias, key)
+                showKeySelectedPrivateEntry(project, parent, alias, key)
             }
             is PublicKey -> {
-                showKeySelectedPublicEntry(project, alias, key)
+                showKeySelectedPublicEntry(project, parent, alias, key)
             }
         }
     }
 
-    private fun showKeySelectedPrivateEntry(project: Project, alias: String, privateKey: PrivateKey) {
-        val encoded = PrivateKeyUtils.getOpenSslEncodedPrivateKey(privateKey, true, null, null)
-        val certPath = generateTempFile(alias, encoded, PRIVATE_KEY_EXTENSION)
-        openInEditor(project, certPath)
+    private fun showKeySelectedPrivateEntry(project: Project, parent: VirtualFile, alias: String, privateKey: PrivateKey) {
+        val virtualFile = PrivateKeyVirtualFile(alias, parent, privateKey)
+        openInEditor(project, virtualFile)
     }
 
-    private fun showKeySelectedPublicEntry(project: Project, alias: String, publicKey: PublicKey) {
-        val encoded = OpenSslPubUtil.getPem(publicKey).toByteArray()
-        val certPath = generateTempFile(alias, encoded, PUBLIC_KEY_EXTENSION)
-        openInEditor(project, certPath)
+    private fun showKeySelectedPublicEntry(project: Project, parent: VirtualFile, alias: String, publicKey: PublicKey) {
+        val virtualFile = PublicKeyVirtualFile(alias, parent, publicKey)
+        openInEditor(project, virtualFile)
     }
 
-    private fun generateTempFile(alias: String, data: ByteArray, ext: String): Path {
-        // create a temporary file
-        val tempFile: Path = Files.createTempFile(alias, ext)
-        val generatedPath = tempFile.resolveSibling(alias + ext)
-        // Writes a string to the above temporary file
-        Files.write(generatedPath, data)
-        return generatedPath
-    }
-
-    private fun openInEditor(project: Project, file: Path){
-        CompletableFuture.supplyAsync {
-            LocalFileSystem.getInstance().findFileByNioFile(file)
-        }.whenComplete { vfs, u ->
-            if (vfs != null) {
-                invokeLater {
-                    FileEditorManager.getInstance(project).openFileEditor(
-                        OpenFileDescriptor(project, vfs),
-                        false
-                    )
-                }
-            }
-        }
+    private fun openInEditor(project: Project, virtualFile: KSVirtualFile) {
+        FileEditorManager.getInstance(project).openFileEditor(
+            OpenFileDescriptor(project, virtualFile),
+            false
+        )
     }
 
     private fun getEntryPassword(project: Project, alias: String?, state: KeyStoreState): Password? {
