@@ -90,7 +90,7 @@ abstract class CertEditor(): Container(), FileEditor, FileEditorLocation {
 
     override fun isValid(): Boolean = this.fileArg.isValid
 
-    override fun getFile(): VirtualFile = this.fileArg
+    override fun getFile(): VirtualFile? = this.fileArg
 
     override fun getState(level: FileEditorStateLevel): FileEditorState = viewerState
 
