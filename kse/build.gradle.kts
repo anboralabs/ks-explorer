@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("org.jetbrains.kotlin.jvm")
 }
 
 group = "co.anbora.labs.core.kse"
