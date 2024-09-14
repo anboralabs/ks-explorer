@@ -322,7 +322,7 @@ public class CheckLicense {
     } catch (Exception e) {
       // debug the reason here
     }
-    throw new Exception("Certificate used to sign the license is not signed " +
-                        "by JetBrains root certificate");
+    throw new Exception("Certificate used to sign the license is not signed "
+                        + "by JetBrains root certificate");
   }
 }
