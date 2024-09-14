@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.ui.LicensingFacade;
-
 import java.awt.event.InputEvent;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -146,15 +145,9 @@ public class CheckLicense {
       registerAction = actionManager.getAction("Register");
     }
     if (registerAction != null) {
-      registerAction.actionPerformed(
-              AnActionEvent.createEvent(
-                    asDataContext(productCode, message),
-                    new Presentation(),
-              "",
-                    ActionUiKind.NONE,
-            null
-              )
-      );
+      registerAction.actionPerformed(AnActionEvent.createEvent(
+          asDataContext(productCode, message), new Presentation(), "",
+          ActionUiKind.NONE, null));
     }
   }
 
@@ -329,7 +322,7 @@ public class CheckLicense {
     } catch (Exception e) {
       // debug the reason here
     }
-    throw new Exception(
-        "Certificate used to sign the license is not signed by JetBrains root certificate");
+    throw new Exception("Certificate used to sign the license is not signed " +
+                        "by JetBrains root certificate");
   }
 }
