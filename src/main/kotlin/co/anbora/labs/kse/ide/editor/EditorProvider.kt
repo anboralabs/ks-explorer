@@ -1,5 +1,8 @@
 package co.anbora.labs.kse.ide.editor
 
+import co.anbora.labs.kse.fileTypes.CertFileType
+import co.anbora.labs.kse.fileTypes.KeystoreFileType
+import co.anbora.labs.kse.fileTypes.PemFileType
 import co.anbora.labs.kse.ide.gui.view.DViewError
 import co.anbora.labs.kse.license.CheckLicense
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
@@ -12,19 +15,37 @@ import com.intellij.psi.SingleRootFileViewProvider
 import org.kse.crypto.filetype.CryptoFileType
 import org.kse.crypto.filetype.CryptoFileUtil
 
+private val extensions = setOf(
+    "pem", "cer", "crt", //pem
+    "pub", "key", "p7", "p7b", "pkipath", "spc", "p10", "spkac", "pkcs8", "pvk", "crl", //certs
+    "jks", "jceks", "bks", "p12", "uber", "bcfks", "pfx" //keystore
+)
+
 abstract class EditorProvider: AsyncFileEditorProvider, DumbAware {
 
     abstract fun fileTypes(): Set<CryptoFileType>
 
-    fun isFileType(file: VirtualFile): Boolean = try {
-        val fileType = CryptoFileUtil.detectFileType(file.toNioPath().toFile())
-        fileType in fileTypes()
-    } catch (ex: Exception) {
-        false
+    fun isFileType(file: VirtualFile): Boolean {
+        return try {
+            val isCompatibleExtension = isValidFileType(file)
+            if (!isCompatibleExtension) {
+                return false
+            }
+            val fileType = CryptoFileUtil.detectFileType(file.toNioPath().toFile())
+            fileType in fileTypes()
+        } catch (ex: Exception) {
+            false
+        }
+    }
+
+    private fun isValidFileType(file: VirtualFile): Boolean {
+        return file.fileType is KeystoreFileType
+                || file.fileType is CertFileType
+                || file.fileType is PemFileType
     }
 
     override fun accept(project: Project, file: VirtualFile): Boolean {
-        return isFileType(file)
+        return  isFileType(file)
                 && !SingleRootFileViewProvider.isTooLargeForContentLoading(file)
     }
 
