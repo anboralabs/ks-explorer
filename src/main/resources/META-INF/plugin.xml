@@ -1,9 +1,9 @@
 <idea-plugin>
     <id>co.anbora.labs.kse</id>
     <name>KS-Explorer</name>
-    <vendor email="anboralabs@gmail.com" url="https://labs.anbora.co">Anbora-labs</vendor>
+    <vendor email="support@anbora.co" url="https://labs.anbora.co">Anbora-labs</vendor>
 
-    <product-descriptor code="PKSEXPLORER" release-date="20240406" release-version="20244"/>
+    <product-descriptor code="PKSEXPLORER" release-date="20250116" release-version="20251"/>
 
     <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
          on how to target different products -->
@@ -42,6 +42,7 @@
                 key="ks-explorer"
                 physical="false"/>
 
+        <postStartupActivity implementation="co.anbora.labs.kse.ide.startup.InitStartup" />
     </extensions>
 
     <actions>
