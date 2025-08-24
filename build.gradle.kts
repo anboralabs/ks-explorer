@@ -3,8 +3,8 @@ fun environment(key: String) = providers.environmentVariable(key)
 
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "2.0.0"
-    id("org.jetbrains.intellij.platform") version "2.6.0"
+    id("org.jetbrains.kotlin.jvm") version "2.2.0"
+    id("org.jetbrains.intellij.platform") version "2.7.2"
 }
 
 group = properties("pluginGroup").get()
@@ -63,6 +63,12 @@ intellijPlatform {
         }
     }
 
+    signing {
+        certificateChain = environment("CERTIFICATE_CHAIN")
+        privateKey = environment("PRIVATE_KEY")
+        password = environment("PRIVATE_KEY_PASSWORD")
+    }
+
     publishing {
         token = environment("PUBLISH_TOKEN")
         // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
@@ -80,7 +86,24 @@ intellijPlatform {
     buildSearchableOptions = false
 }
 
+// Ensure signing is not silently skipped when publishing
+val hasSigningCreds = listOf("CERTIFICATE_CHAIN", "PRIVATE_KEY", "PRIVATE_KEY_PASSWORD")
+    .all { environment(it).isPresent }
+
 tasks {
+
+    // Fail early if trying to publish without signing credentials
+    named("publishPlugin") {
+        dependsOn("signPlugin")
+        doFirst {
+            if (!hasSigningCreds) {
+                throw GradleException(
+                    "Missing signing credentials. Set CERTIFICATE_CHAIN, PRIVATE_KEY, and PRIVATE_KEY_PASSWORD in the environment to sign before publishing."
+                )
+            }
+        }
+    }
+
     wrapper {
         gradleVersion = properties("gradleVersion").get()
     }
