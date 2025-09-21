@@ -1,10 +1,12 @@
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
+
 fun properties(key: String) = providers.gradleProperty(key)
 fun environment(key: String) = providers.environmentVariable(key)
 
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "2.2.0"
-    id("org.jetbrains.intellij.platform") version "2.7.2"
+    id("org.jetbrains.intellij.platform") version "2.9.0"
 }
 
 group = properties("pluginGroup").get()
@@ -79,6 +81,7 @@ intellijPlatform {
 
     pluginVerification {
         ides {
+            create(IntelliJPlatformType.IntellijIdeaUltimate, properties("platformVersion").get())
             recommended()
         }
     }
