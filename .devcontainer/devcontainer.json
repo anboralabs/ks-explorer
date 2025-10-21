@@ -8,7 +8,7 @@
   "features": {
     "ghcr.io/devcontainers/features/java:1": {
       "jdkDistro": "jbr",
-      "version": "17.0.10"
+      "version": "21.0.6"
     },
     "ghcr.io/devcontainers/features/desktop-lite:1": {},
     "ghcr.io/devcontainers/features/sshd:1": {
