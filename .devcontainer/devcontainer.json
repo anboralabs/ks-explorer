@@ -5,10 +5,12 @@
     "memory": "16gb",
     "storage": "80gb"
   },
-  "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
+  "image": "mcr.microsoft.com/devcontainers/java:21",
   "features": {
     "ghcr.io/devcontainers/features/java:1.6.3": {
-      "version": "21.0.6"
+      "version": "none",
+      "installGradle": "true",
+      "installMaven": "true"
     },
     "ghcr.io/devcontainers/features/desktop-lite:1.2.8": {},
     "ghcr.io/devcontainers/features/sshd:1.1.0": {
