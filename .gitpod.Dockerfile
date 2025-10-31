@@ -1,4 +1,4 @@
-FROM gitpod/workspace-full
+FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
 RUN cd /tmp \
 && curl -LO https://github.com/kasmtech/KasmVNC/releases/download/v1.4.0/kasmvncserver_noble_1.4.0_amd64.deb \
@@ -66,11 +66,11 @@ RUN cd /tmp && glink="https://dl.google.com/linux/direct/google-chrome-stable_cu
 	fonts-noto fonts-noto-cjk ./"${glink##*/}" \
 	\
 	# OLD: && ln -srf /usr/bin/chromium /usr/bin/google-chrome \
-	# OLD: To make ungoogled_chromium discoverable by tools like flutter
+	# OLD: To make ungoogled_chromium discoverable by tools like flutter \
 	&& ln -srf /usr/bin/google-chrome /usr/bin/chromium \
 	\
-	# Extra chrome tweaks
-	## Disables welcome screen
+	# Extra chrome tweaks \
+	## Disables welcome screen \
 	&& t="$HOMEPATH/.config/google-chrome/First Run" && sudo -u $USERNAME mkdir -p "${t%/*}" && sudo -u $USERNAME touch "$t" \
 	## Disables default browser prompt \
 	&& t="/etc/opt/chrome/policies/managed/managed_policies.json" && mkdir -p "${t%/*}" && printf '{ "%s": %s }\n' DefaultBrowserSettingEnabled false > "$t"
@@ -78,6 +78,7 @@ RUN cd /tmp && glink="https://dl.google.com/linux/direct/google-chrome-stable_cu
 # For Qt WebEngine on docker
 ENV QTWEBENGINE_DISABLE_SANDBOX 1
 
-RUN bash -c ". /home/gitpod/.sdkman/bin/sdkman-init.sh && \
-    sdk install java 21.0.6-jbr && \
-    sdk default java 21.0.6-jbr"
+RUN curl -s "https://get.sdkman.io?ci=true" | bash
+
+RUN sdk install gradle 8.13 && sdk default gradle 8.13
+RUN sdk install java 21.0.6-jbr && sdk default java 21.0.6-jbr
