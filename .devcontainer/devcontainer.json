@@ -1,5 +1,5 @@
 {
-  "name": "ks-explorer Plugin",
+  "name": "KS-Explorer Plugin",
   "hostRequirements": {
     "cpus": 4,
     "memory": "16gb",
@@ -9,6 +9,22 @@
     "context": "..",
     "dockerfile": "../.gitpod.Dockerfile"
   },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "runArgs": [ "--shm-size=2gb" ], // Increase /dev/shm size for GUI applications that need it
+  "privileged": true,
+  "postStartCommand": {
+    "vnc": "sudo service dbus start && cd $HOME && vncserver -disableBasicAuth -alwaysshared"
+  },
+  // Mount the Docker socket from the host to enable Docker-in-Docker functionality
+  "mounts": [
+    {
+      "source": "/var/run/docker.sock",
+      "target": "/var/run/docker.sock",
+      "type": "bind"
+    }
+  ],
   "customizations": {
     "jetbrains": {
       "plugins": [
@@ -17,11 +33,11 @@
     }
   },
   "forwardPorts": [
-    6080
+    5901
   ],
   "portsAttributes": {
-    "6080": {
-      "label": "desktop"
+    "5901": {
+      "label": "KasmVNC"
     }
   }
 }
