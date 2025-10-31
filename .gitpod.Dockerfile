@@ -78,7 +78,11 @@ RUN cd /tmp && glink="https://dl.google.com/linux/direct/google-chrome-stable_cu
 # For Qt WebEngine on docker
 ENV QTWEBENGINE_DISABLE_SANDBOX 1
 
+USER $USERNAME
 RUN curl -s "https://get.sdkman.io?ci=true" | bash
+
+RUN echo 'source "$HOME/.sdkman/bin/sdkman-init.sh"' >> $HOME/.bashrc && \
+    echo 'source "$HOME/.sdkman/bin/sdkman-init.sh"' >> $HOME/.zshrc
 
 RUN sdk install gradle 8.13 && sdk default gradle 8.13
 RUN sdk install java 21.0.6-jbr && sdk default java 21.0.6-jbr
