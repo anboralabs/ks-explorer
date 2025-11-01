@@ -1,0 +1,6 @@
+services:
+  preview:
+    triggeredBy: ['postDevcontainerStart']
+    commands:
+      start: echo "Preview started"
+      ready: gitpod ports open 5901 --name "vnc"
