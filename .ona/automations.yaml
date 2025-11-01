@@ -1,5 +1,6 @@
 services:
   preview:
+    name: Start Preview
     triggeredBy: ['postDevcontainerStart']
     commands:
       start: echo "Preview started"
