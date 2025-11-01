@@ -28,7 +28,8 @@
   "customizations": {
     "jetbrains": {
       "plugins": [
-        "DevKit"
+        "DevKit",
+        "org.jetbrains.junie"
       ]
     }
   },
