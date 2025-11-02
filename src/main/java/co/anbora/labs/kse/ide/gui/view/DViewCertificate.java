@@ -98,7 +98,7 @@ public class DViewCertificate extends CertEditor {
         public void documentChanged(@NotNull DocumentEvent event) {
           consumer.accept(DViewCertificate.this, document.getText());
         }
-      });
+      }, this);
     }
     initComponents(certs);
   }
