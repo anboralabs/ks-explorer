@@ -3,7 +3,7 @@
     <name>KS-Explorer</name>
     <vendor email="support@anbora.co" url="https://labs.anbora.co">Anbora-labs</vendor>
 
-    <product-descriptor code="PKSEXPLORER" release-date="20250515" release-version="20252"/>
+    <product-descriptor code="PKSEXPLORER" release-date="20251102" release-version="20253"/>
 
     <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
          on how to target different products -->
@@ -44,6 +44,11 @@
 
         <postStartupActivity implementation="co.anbora.labs.kse.ide.startup.InitStartup" />
     </extensions>
+
+    <applicationListeners>
+        <listener class="co.anbora.labs.kse.ide.startup.LicenseAppLifecycleListener"
+                  topic="com.intellij.ide.AppLifecycleListener"/>
+    </applicationListeners>
 
     <actions>
         <!-- Add your actions here -->
