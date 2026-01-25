@@ -18,7 +18,7 @@ configurations {
 }
 
 dependencies {
-    implementation("org.bouncycastle:bcpkix-jdk18on:1.77")
+    implementation("org.bouncycastle:bcpkix-jdk18on:1.83")
     implementation("net.java.dev.jna:jna:5.18.1")
     implementation("commons-io:commons-io:2.21.0")
     implementation("com.miglayout:miglayout-swing:11.3")
