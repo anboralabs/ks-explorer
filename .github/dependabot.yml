@@ -1,0 +1,8 @@
+version: 2
+updates:
+  # Para plugins de Gradle (incluye org.jetbrains.intellij.platform)
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "daily"  # o "weekly"
+    open-pull-requests-limit: 5
