@@ -21,7 +21,7 @@ dependencies {
     implementation("org.bouncycastle:bcpkix-jdk18on:1.83")
     implementation("net.java.dev.jna:jna:5.18.1")
     implementation("commons-io:commons-io:2.21.0")
-    implementation("com.miglayout:miglayout-swing:11.3")
+    implementation("com.miglayout:miglayout-swing:11.4.2")
     implementation("com.nimbusds:nimbus-jose-jwt:10.7")
 }
 
