@@ -2,7 +2,6 @@ pull_request_rules:
   - name: Automatic merge on approval
     conditions:
       - check-success=WIP
-      - "#approved-reviews-by>=1"
       - author!=dependabot[bot]
     actions:
       merge:
