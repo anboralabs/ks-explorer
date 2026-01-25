@@ -22,7 +22,7 @@ dependencies {
     implementation("net.java.dev.jna:jna:5.18.1")
     implementation("commons-io:commons-io:2.21.0")
     implementation("com.miglayout:miglayout-swing:11.3")
-    implementation("com.nimbusds:nimbus-jose-jwt:9.25.6")
+    implementation("com.nimbusds:nimbus-jose-jwt:10.7")
 }
 
 tasks.test {
