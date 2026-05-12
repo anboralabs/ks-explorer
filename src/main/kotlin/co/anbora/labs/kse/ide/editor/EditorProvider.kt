@@ -5,9 +5,9 @@ import co.anbora.labs.kse.fileTypes.KeystoreFileType
 import co.anbora.labs.kse.fileTypes.PemFileType
 import co.anbora.labs.kse.ide.gui.view.DViewError
 import co.anbora.labs.kse.license.CheckLicense
-import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorPolicy
+import com.intellij.openapi.fileEditor.FileEditorProvider
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -21,7 +21,7 @@ private val extensions = setOf(
     "jks", "jceks", "bks", "p12", "uber", "bcfks", "pfx" //keystore
 )
 
-abstract class EditorProvider: AsyncFileEditorProvider, DumbAware {
+abstract class EditorProvider: FileEditorProvider, DumbAware {
 
     abstract fun fileTypes(): Set<CryptoFileType>
 
@@ -58,18 +58,6 @@ abstract class EditorProvider: AsyncFileEditorProvider, DumbAware {
     }
 
     override fun getPolicy(): FileEditorPolicy = FileEditorPolicy.HIDE_DEFAULT_EDITOR
-
-    override fun createEditorAsync(project: Project, file: VirtualFile): AsyncFileEditorProvider.Builder {
-        return object : AsyncFileEditorProvider.Builder() {
-            override fun build(): FileEditor {
-                val licensed = CheckLicense.isLicensed() ?: true
-                if (!licensed) {
-                    return DViewError(project, file, "If you want to support my work, please buy a license only 5 USD per year for plugin maintaining.")
-                }
-                return createLicensedEditorAsync(project, file)
-            }
-        }
-    }
 
     abstract fun createLicensedEditorAsync(project: Project, file: VirtualFile): FileEditor
 
