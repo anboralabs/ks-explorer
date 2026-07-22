@@ -84,5 +84,6 @@ RUN curl -s "https://get.sdkman.io?ci=true" | bash
 RUN echo 'source "$HOME/.sdkman/bin/sdkman-init.sh"' >> $HOME/.bashrc && \
     echo 'source "$HOME/.sdkman/bin/sdkman-init.sh"' >> $HOME/.zshrc
 
+RUN sdk install java 21.0.6-jbr
 RUN sdk install gradle 8.13 && sdk default gradle 8.13
-RUN sdk install java 21.0.6-jbr && sdk default java 21.0.6-jbr
+RUN sdk install java 25.0.3-jbr && sdk default java 25.0.3-jbr
