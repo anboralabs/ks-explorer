@@ -3,7 +3,7 @@ package org.kse.gui.actions.behavior
 import co.anbora.labs.kse.fileTypes.core.CertUtils
 import com.intellij.openapi.fileEditor.FileEditor
 import org.kse.crypto.CryptoException
-import org.kse.crypto.Password
+import org.kse.gui.passwordmanager.Password
 import org.kse.gui.AddPrivateKey
 import java.io.File
 import java.io.FileNotFoundException

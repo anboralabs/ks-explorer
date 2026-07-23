@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2024 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,46 +19,53 @@
  */
 package org.kse.crypto.digest;
 
-import java.util.ResourceBundle;
+import org.kse.gui.util.ResourceBundleCache;
 
 /**
- * Enumeration of hash algorithms supported by the {@link
- * PublicKeyFingerprintAlgorithm} class.
+ * Enumeration of hash algorithms supported by the {@link PublicKeyFingerprintAlgorithm} class.
  */
 public enum PublicKeyFingerprintAlgorithm {
 
-  // @formatter:off
+    // @formatter:off
 
-  SKI_METHOD1("PublicKeyFingerprintAlgorithm.SkiMethod1"),
-  SKI_METHOD2("PublicKeyFingerprintAlgorithm.SkiMethod2"),
-  SHA1_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha1overSpki"),
-  SHA256_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha256overSpki");
+    SKI_METHOD1("PublicKeyFingerprintAlgorithm.SkiMethod1.text"),
+    SKI_METHOD2("PublicKeyFingerprintAlgorithm.SkiMethod2.text"),
+    SKI_SHA256("PublicKeyFingerprintAlgorithm.SkiSha256.text"),
+    SKI_SHA384("PublicKeyFingerprintAlgorithm.SkiSha384.text"),
+    SKI_SHA512("PublicKeyFingerprintAlgorithm.SkiSha512.text"),
+    SHA1_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha1overSpki.text"),
+    SHA256_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha256overSpki.text");
 
-  // @formatter:on
+    // @formatter:on
 
-  private static ResourceBundle res =
-      ResourceBundle.getBundle("org/kse/crypto/digest/resources");
+    // This enumeration is referenced by KsePreferences so its static fields
+    // are initialized before the language setting is populated. Use the
+    // ResourceBundleCache singleton for accessing the resource bundle.
+    private static final String RESOURCE_PATH = "org/kse/crypto/digest/resources";
+    private static ResourceBundleCache res = ResourceBundleCache.INSTANCE;
 
-  private String resBundleKey;
+    private final String resBundleKey;
 
-  PublicKeyFingerprintAlgorithm(String resBundleKey) {
-    this.resBundleKey = resBundleKey;
-  }
+    PublicKeyFingerprintAlgorithm(String resBundleKey) {
+        this.resBundleKey = resBundleKey;
+    }
 
-  /**
-   * Get fingerprint algorithm's friendly name.
-   *
-   * @return Friendly name
-   */
-  public String friendly() { return res.getString(resBundleKey); }
+    /**
+     * Get fingerprint algorithm's friendly name.
+     *
+     * @return Friendly name
+     */
+    public String friendly() {
+        return res.getString(RESOURCE_PATH, resBundleKey);
+    }
 
-  /**
-   * Returns friendly name.
-   *
-   * @return Friendly name
-   */
-  @Override
-  public String toString() {
-    return friendly();
-  }
+    /**
+     * Returns friendly name.
+     *
+     * @return Friendly name
+     */
+    @Override
+    public String toString() {
+        return friendly();
+    }
 }

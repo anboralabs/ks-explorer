@@ -1,7 +1,7 @@
 package co.anbora.labs.kse.fileTypes.core
 
 import org.apache.commons.io.FileUtils
-import org.kse.crypto.Password
+import org.kse.gui.passwordmanager.Password
 import org.kse.crypto.filetype.CryptoFileType
 import org.kse.crypto.filetype.CryptoFileUtil
 import org.kse.crypto.privatekey.MsPvkUtil

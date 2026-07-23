@@ -6,7 +6,7 @@ fun environment(key: String) = providers.environmentVariable(key)
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "2.3.0"
-    id("org.jetbrains.intellij.platform") version "2.18.0"
+    id("org.jetbrains.intellij.platform") version "2.18.1"
 }
 
 group = properties("pluginGroup").get()
@@ -92,6 +92,10 @@ intellijPlatform {
 // Ensure signing is not silently skipped when publishing
 val hasSigningCreds = listOf("CERTIFICATE_CHAIN", "PRIVATE_KEY", "PRIVATE_KEY_PASSWORD")
     .all { environment(it).isPresent }
+
+configurations.all {
+    exclude(group = "org.bouncycastle")
+}
 
 tasks {
 

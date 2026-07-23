@@ -12,6 +12,7 @@ import org.kse.crypto.KeyInfo
 import org.kse.crypto.KeyType
 import org.kse.crypto.keypair.KeyPairUtil
 import org.kse.crypto.keystore.KeyStoreUtil
+import org.kse.crypto.keystore.KseKeyStore
 import org.kse.crypto.secretkey.SecretKeyType
 import org.kse.crypto.secretkey.SecretKeyUtil
 import org.kse.crypto.x509.KseX500NameStyle
@@ -28,7 +29,7 @@ import javax.crypto.SecretKey
 object Certificate {
 
     @Throws(KeyStoreException::class, CryptoException::class)
-    private fun getCertificate(alias: String, keyStore: KeyStore): X509Certificate? {
+    private fun getCertificate(alias: String, keyStore: KseKeyStore): X509Certificate? {
         var x509Cert: X509Certificate? = if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
             X509CertUtil.convertCertificate(keyStore.getCertificate(alias))
         } else {
@@ -41,45 +42,45 @@ object Certificate {
     }
 
     @Throws(CryptoException::class, KeyStoreException::class)
-    fun getCertificateSubjectDN(alias: String, keyStore: KeyStore): String? {
+    fun getCertificateSubjectDN(alias: String, keyStore: KseKeyStore): String? {
         val x509Cert: X509Certificate? = getCertificate(alias, keyStore)
         return X500NameUtils.x500PrincipalToX500Name(x509Cert?.subjectX500Principal)?.toString()
     }
 
     @Throws(CryptoException::class, KeyStoreException::class)
-    fun getCertificateSubjectCN(alias: String, keyStore: KeyStore): String? {
+    fun getCertificateSubjectCN(alias: String, keyStore: KseKeyStore): String? {
         val x509Cert = getCertificate(alias, keyStore)
         return X500NameUtils.extractCN(x509Cert?.subjectX500Principal)
     }
 
     @Throws(CryptoException::class, KeyStoreException::class)
-    fun getCertificateSubjectO(alias: String, keyStore: KeyStore): String? {
+    fun getCertificateSubjectO(alias: String, keyStore: KseKeyStore): String? {
         val x509Cert = getCertificate(alias, keyStore)
         val subject = X500NameUtils.x500PrincipalToX500Name(x509Cert?.subjectX500Principal)
         return X500NameUtils.getRdn(subject, KseX500NameStyle.O)
     }
 
     @Throws(CryptoException::class, KeyStoreException::class)
-    fun getCertificateIssuerDN(alias: String, keyStore: KeyStore): String? {
+    fun getCertificateIssuerDN(alias: String, keyStore: KseKeyStore): String? {
         val x509Cert = getCertificate(alias, keyStore)
         return X500NameUtils.x500PrincipalToX500Name(x509Cert?.issuerX500Principal)?.toString()
     }
 
     @Throws(CryptoException::class, KeyStoreException::class)
-    fun getCertificateIssuerCN(alias: String, keyStore: KeyStore): String? {
+    fun getCertificateIssuerCN(alias: String, keyStore: KseKeyStore): String? {
         val x509Cert = getCertificate(alias, keyStore)
         return X500NameUtils.extractCN(x509Cert?.issuerX500Principal)
     }
 
     @Throws(CryptoException::class, KeyStoreException::class)
-    fun getCertificateIssuerO(alias: String, keyStore: KeyStore): String? {
+    fun getCertificateIssuerO(alias: String, keyStore: KseKeyStore): String? {
         val x509Cert = getCertificate(alias, keyStore)
         val issuer = X500NameUtils.x500PrincipalToX500Name(x509Cert?.issuerX500Principal)
         return X500NameUtils.getRdn(issuer, KseX500NameStyle.O)
     }
 
     @Throws(CryptoException::class, KeyStoreException::class)
-    fun getCertificateAKI(alias: String, keyStore: KeyStore): String? {
+    fun getCertificateAKI(alias: String, keyStore: KseKeyStore): String? {
         val x509Cert = getCertificate(alias, keyStore)
         return try {
             val akiValue = x509Cert!!.getExtensionValue(Extension.authorityKeyIdentifier.id)
@@ -92,7 +93,7 @@ object Certificate {
     }
 
     @Throws(CryptoException::class, KeyStoreException::class)
-    fun getCertificateSKI(alias: String, keyStore: KeyStore): String? {
+    fun getCertificateSKI(alias: String, keyStore: KseKeyStore): String? {
         val x509Cert = getCertificate(alias, keyStore)
         return try {
             val skiValue = x509Cert!!.getExtensionValue(Extension.subjectKeyIdentifier.id)
@@ -130,7 +131,7 @@ object Certificate {
     }
 
     @Throws(CryptoException::class, KeyStoreException::class)
-    fun getCertificateExpiry(alias: String, keyStore: KeyStore): Date? {
+    fun getCertificateExpiry(alias: String, keyStore: KseKeyStore): Date? {
         return if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
             X509CertUtil.convertCertificate(keyStore.getCertificate(alias)).notAfter
         } else {
@@ -157,7 +158,7 @@ object Certificate {
     }
 
     @Throws(CryptoException::class, GeneralSecurityException::class)
-    fun getKeyInfo(alias: String, keyStore: KeyStore, currentState: KeyStoreState): KeyInfo? {
+    fun getKeyInfo(alias: String, keyStore: KseKeyStore, currentState: KeyStoreState): KeyInfo? {
         if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
             // Get key info from certificate
             val cert = X509CertUtil.convertCertificate(keyStore.getCertificate(alias))

@@ -24,14 +24,12 @@ import com.intellij.openapi.ui.DialogWrapper;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ResourceBundle;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 

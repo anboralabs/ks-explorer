@@ -4,8 +4,9 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.kse.crypto.Password
+import org.kse.gui.passwordmanager.Password
 import org.kse.crypto.keystore.KeyStoreType
+import org.kse.crypto.keystore.KseKeyStore
 import org.kse.crypto.x509.X509CertUtil
 import org.kse.gui.error.DProblem
 import org.kse.gui.error.Problem
@@ -24,7 +25,7 @@ object VirtualFileHelper {
 
     private val res = ResourceBundle.getBundle("org/kse/gui/actions/resources")
 
-    fun showCertificateSelectedEntry(project: Project, parent: VirtualFile, alias: String, keyStore: KeyStore) {
+    fun showCertificateSelectedEntry(project: Project, parent: VirtualFile, alias: String, keyStore: KseKeyStore) {
         val certificate = keyStore.getCertificateChain(alias) ?: arrayOf(keyStore.getCertificate(alias))
         val certs: Array<X509Certificate> = X509CertUtil.convertCertificates(certificate)
 
@@ -32,10 +33,10 @@ object VirtualFileHelper {
         openInEditor(project, virtualFile)
     }
 
-    fun showKeySelectedEntry(project: Project, parent: VirtualFile, alias: String, keyStore: KeyStore, state: KeyStoreState) {
+    fun showKeySelectedEntry(project: Project, parent: VirtualFile, alias: String, keyStore: KseKeyStore, state: KeyStoreState) {
         val password = getEntryPassword(project, alias, state) ?: return
 
-        val keyStore: KeyStore = state.getKeyStore()
+        val keyStore = state.getKeyStore()
         val key = keyStore.getKey(alias, password.toCharArray())
 
         when (key) {

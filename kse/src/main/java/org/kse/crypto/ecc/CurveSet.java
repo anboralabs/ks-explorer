@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2024 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,152 +19,140 @@
  */
 package org.kse.crypto.ecc;
 
-import static org.kse.version.JavaVersion.JRE_VERSION_15;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
+import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
+import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.nist.NISTNamedCurves;
 import org.bouncycastle.asn1.sec.SECNamedCurves;
 import org.bouncycastle.asn1.teletrust.TeleTrusTNamedCurves;
 import org.bouncycastle.asn1.x9.X962NamedCurves;
 import org.kse.crypto.keystore.KeyStoreType;
-import org.kse.version.JavaVersion;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 
 /**
  * Enumeration for all currently available ECC named curve sets.
  */
 public enum CurveSet {
 
-  ANSI_X9_62("ANSI X9.62"),
-  NIST("NIST"),
-  SEC("SEC"),
-  TELETRUST("Brainpool"),
-  ED("Edwards");
+    ANSI_X9_62("ANSI X9.62", X962NamedCurves.getNames()),
+    NIST("NIST", NISTNamedCurves.getNames()),
+    SEC("SEC", SECNamedCurves.getNames()),
+    TELETRUST("Brainpool", TeleTrusTNamedCurves.getNames()),
+    SM2("SM2", GMNamedCurves.getNames()),
+    ECGOST("ECGOST", ECGOST3410NamedCurves.getNames()),
+    ED("Edwards", EdDSACurves.getNames());
 
-  private String visibleName;
+    private final String visibleName;
+    private final List<String> curveNames;
 
-  CurveSet(String visibleName) { this.visibleName = visibleName; }
-
-  /**
-   * Return list with all curve set name that are available for the given
-   * KeyStoreType.
-   *
-   * @return All available sets of named curves
-   */
-  public static String[] getAvailableSetNames(KeyStoreType keyStoreType) {
-    List<String> sets = new ArrayList<>();
-    sets.add(ANSI_X9_62.visibleName);
-    sets.add(NIST.visibleName);
-    sets.add(SEC.visibleName);
-    if (EccUtil.isBouncyCastleKeyStore(keyStoreType)) {
-      sets.add(TELETRUST.visibleName);
-    }
-    sets.add(ED.visibleName);
-    return sets.toArray(new String[0]);
-  }
-
-  /**
-   * Return list with all curve sets that are available for the given
-   * KeyStoreType.
-   *
-   * @return All available sets of named curves
-   */
-  public static List<CurveSet> getAvailableSets(KeyStoreType keyStoreType) {
-    List<CurveSet> sets = new ArrayList<>();
-    sets.add(ANSI_X9_62);
-    sets.add(NIST);
-    sets.add(SEC);
-    if (EccUtil.isBouncyCastleKeyStore(keyStoreType)) {
-      sets.add(TELETRUST);
-    }
-    if (EccUtil.isBouncyCastleKeyStore(keyStoreType) ||
-        JavaVersion.getJreVersion().isAtLeast(JRE_VERSION_15)) {
-      sets.add(ED);
-    }
-    return sets;
-  }
-
-  /**
-   * Return the list of available curve names for this set.
-   *
-   * @return The named curves that belong to this set
-   */
-  public List<String> getAvailableCurveNames(KeyStoreType keyStoreType) {
-
-    // filter out unsupported curves
-    List<String> curveNames = getAllCurveNames();
-    curveNames.removeIf(
-        curveName -> !EccUtil.isCurveAvailable(curveName, keyStoreType));
-
-    return curveNames;
-  }
-
-  /**
-   * Return the list of all curve names for this set.
-   *
-   * @return The named curves that belong to this set
-   */
-  @SuppressWarnings("unchecked")
-  public List<String> getAllCurveNames() {
-    Enumeration<String> en = null;
-
-    switch (this) {
-    case ANSI_X9_62:
-      en = X962NamedCurves.getNames();
-      break;
-    case TELETRUST:
-      en = TeleTrusTNamedCurves.getNames();
-      break;
-    case NIST:
-      en = NISTNamedCurves.getNames();
-      break;
-    case SEC:
-      en = SECNamedCurves.getNames();
-      break;
-    case ED:
-      en = EdDSACurves.getNames();
-      break;
+    CurveSet(String visibleName, Enumeration<String> curveNames) {
+        this.visibleName = visibleName;
+        this.curveNames = Collections.list(curveNames);
     }
 
-    if (en == null) {
-      return new ArrayList<>();
+    /**
+     * Return list with all curve set name that are available for the given KeyStoreType.
+     *
+     * @param keyStoreType The key store type
+     * @return All available sets of named curves
+     */
+    public static String[] getAvailableSetNames(KeyStoreType keyStoreType) {
+        List<String> sets = new ArrayList<>();
+        sets.add(ANSI_X9_62.visibleName);
+        sets.add(NIST.visibleName);
+        sets.add(SEC.visibleName);
+        sets.add(ED.visibleName);
+        sets.add(ECGOST.visibleName);
+        sets.add(TELETRUST.visibleName);
+        if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
+            sets.add(SM2.visibleName);
+        }
+        return sets.toArray(String[]::new);
     }
 
-    return Collections.list(en);
-  }
-
-  /**
-   * Resolve curve set name to a CurveSet instance.
-   *
-   * @param curveSetName Name of the curve set
-   * @return CurveSet instance or null if no match found
-   */
-  public static CurveSet resolveName(String curveSetName) {
-    if (curveSetName == null) {
-      return null;
+    /**
+     * Return list with all curve sets that are available for the given KeyStoreType.
+     *
+     * @param keyStoreType The key store type
+     * @return All available sets of named curves
+     */
+    public static List<CurveSet> getAvailableSets(KeyStoreType keyStoreType) {
+        List<CurveSet> sets = new ArrayList<>();
+        sets.add(ANSI_X9_62);
+        sets.add(NIST);
+        sets.add(SEC);
+        sets.add(ED);
+        sets.add(ECGOST);
+        sets.add(TELETRUST);
+        if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
+            sets.add(SM2);
+        }
+        return sets;
     }
 
-    if (curveSetName.equals(SEC.visibleName)) {
-      return SEC;
-    } else if (curveSetName.equals(NIST.visibleName)) {
-      return NIST;
-    } else if (curveSetName.equals(ANSI_X9_62.visibleName)) {
-      return ANSI_X9_62;
-    } else if (curveSetName.equals(TELETRUST.visibleName)) {
-      return TELETRUST;
-    } else if (curveSetName.equals(ED.visibleName)) {
-      return ED;
+    /**
+     * Return the list of available curve names for this set supported by the KeyStoreType.
+     *
+     * @param keyStoreType The key store type
+     * @return The named curves that belong to this set
+     */
+    public List<String> getAvailableCurveNames(KeyStoreType keyStoreType) {
+
+        // filter out unsupported curves
+        List<String> curveNames = getAllCurveNames();
+        curveNames.removeIf(curveName -> !EccUtil.isCurveAvailable(curveName, keyStoreType));
+
+        return curveNames;
     }
 
-    return null;
-  }
+    /**
+     * Return the list of all curve names for this set.
+     *
+     * @return The named curves that belong to this set
+     */
+    public List<String> getAllCurveNames() {
+        return curveNames;
+    }
 
-  /**
-   * Get set name for use in GUI elements
-   *
-   * @return Set name
-   */
-  public String getVisibleName() { return visibleName; }
+    /**
+     * Resolve curve set name to a CurveSet instance.
+     *
+     * @param curveSetName Name of the curve set
+     * @return CurveSet instance or null if no match found
+     */
+    public static CurveSet resolveName(String curveSetName) {
+        if (curveSetName == null) {
+            return null;
+        }
+
+        if (curveSetName.equals(SEC.visibleName)) {
+            return SEC;
+        } else if (curveSetName.equals(NIST.visibleName)) {
+            return NIST;
+        } else if (curveSetName.equals(ANSI_X9_62.visibleName)) {
+            return ANSI_X9_62;
+        } else if (curveSetName.equals(TELETRUST.visibleName)) {
+            return TELETRUST;
+        } else if (curveSetName.equals(ED.visibleName)) {
+            return ED;
+        } else if (curveSetName.equals(SM2.visibleName)) {
+            return SM2;
+        } else if (curveSetName.equals(ECGOST.visibleName)) {
+            return ECGOST;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get set name for use in GUI elements
+     *
+     * @return Set name
+     */
+    public String getVisibleName() {
+        return visibleName;
+    }
 }

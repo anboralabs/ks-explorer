@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2024 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,49 +19,51 @@
  */
 package org.kse.utilities.oid;
 
-import java.util.Comparator;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+
+import java.math.BigInteger;
+import java.util.Comparator;
+
+import static java.math.BigInteger.ZERO;
 
 /**
  * Comparator for Object Identifiers.
  */
 public class ObjectIdComparator implements Comparator<ASN1ObjectIdentifier> {
-  @Override
-  public int compare(ASN1ObjectIdentifier oid1, ASN1ObjectIdentifier oid2) {
-    int[] arcs1;
-    int[] arcs2;
+    @Override
+    public int compare(ASN1ObjectIdentifier oid1, ASN1ObjectIdentifier oid2) {
+        String[] arcs1 = oid1.getId().split("\\.");
+        String[] arcs2 = oid2.getId().split("\\.");
 
-    try {
-      arcs1 = ObjectIdUtil.extractArcs(oid1);
-      arcs2 = ObjectIdUtil.extractArcs(oid2);
-    } catch (InvalidObjectIdException ex) {
-      throw new RuntimeException(ex);
-    }
+        // first try to find differences in the common number of arcs
+        for (int i = 0; (i < arcs1.length) && (i < arcs2.length); i++) {
+            BigInteger i1 = new BigInteger(arcs1[i]);
+            BigInteger i2 = new BigInteger(arcs2[i]);
 
-    for (int i = 0; ((i < arcs1.length) && (i < arcs2.length)); i++) {
-      if (arcs1[i] > arcs2[i]) {
-        return 1;
-      } else if (arcs1[i] < arcs2[i]) {
-        return -1;
-      }
-    }
-
-    if (arcs2.length > arcs1.length) {
-      for (int i = arcs1.length; i < arcs2.length; i++) {
-        if (arcs2[i] != 0) {
-          return -1;
+            int comparisonResult = i1.compareTo(i2);
+            if (comparisonResult != 0) {
+                return comparisonResult;
+            }
         }
-      }
-    }
 
-    if (arcs1.length > arcs2.length) {
-      for (int i = arcs2.length; i < arcs1.length; i++) {
-        if (arcs1[i] != 0) {
-          return 1;
+        if (arcs2.length > arcs1.length) {
+            // check for the case where all additional arcs are 0
+            for (int i = arcs1.length; i < arcs2.length; i++) {
+                if (!new BigInteger(arcs2[i]).equals(ZERO)) {
+                    return -1;
+                }
+            }
         }
-      }
-    }
 
-    return 0;
-  }
+        if (arcs1.length > arcs2.length) {
+            // check for the case where all additional arcs are 0
+            for (int i = arcs2.length; i < arcs1.length; i++) {
+                if (!new BigInteger(arcs1[i]).equals(ZERO)) {
+                    return 1;
+                }
+            }
+        }
+
+        return 0;
+    }
 }

@@ -10,6 +10,7 @@ object PemFileType: LanguageFileType(PemLanguage) {
 
     init {
         Security.addProvider(KSE.BC)
+        Security.addProvider(KSE.KSE)
     }
 
     private const val FILETYPE_NAME = "Pem"

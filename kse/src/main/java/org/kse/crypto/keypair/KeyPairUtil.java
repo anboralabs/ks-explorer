@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2024 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,359 +19,458 @@
  */
 package org.kse.crypto.keypair;
 
-import static org.kse.crypto.KeyType.ASYMMETRIC;
-import static org.kse.crypto.ecc.EdDSACurves.ED25519;
-import static org.kse.crypto.ecc.EdDSACurves.ED448;
-import static org.kse.crypto.keypair.KeyPairType.DSA;
-import static org.kse.crypto.keypair.KeyPairType.EC;
-import static org.kse.crypto.keypair.KeyPairType.ECDSA;
-import static org.kse.crypto.keypair.KeyPairType.EDDSA;
-import static org.kse.crypto.keypair.KeyPairType.RSA;
-
-import java.math.BigInteger;
-import java.security.GeneralSecurityException;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.Provider;
-import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.security.Signature;
-import java.security.interfaces.ECPrivateKey;
-import java.security.interfaces.ECPublicKey;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.spec.DSAPrivateKeySpec;
-import java.security.spec.DSAPublicKeySpec;
-import java.security.spec.ECGenParameterSpec;
-import java.security.spec.ECParameterSpec;
-import java.security.spec.RSAPrivateKeySpec;
-import java.security.spec.RSAPublicKeySpec;
-import java.text.MessageFormat;
-import java.util.ResourceBundle;
+import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.MLKEMPrivateKey;
+import org.bouncycastle.jcajce.interfaces.SLHDSAPrivateKey;
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+import org.bouncycastle.jce.spec.ECPublicKeySpec;
+import org.bouncycastle.math.ec.ECPoint;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.ecc.CurveSet;
 import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.ecc.EdDSACurves;
+import org.kse.utilities.rng.RNG;
+
+import java.math.BigInteger;
+import java.security.*;
+import java.security.interfaces.*;
+import java.security.spec.*;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
+
+import static org.kse.crypto.KeyType.ASYMMETRIC;
+import static org.kse.crypto.ecc.EdDSACurves.ED25519;
+import static org.kse.crypto.ecc.EdDSACurves.ED448;
+import static org.kse.crypto.keypair.KeyPairType.*;
 
 /**
  * Provides utility methods relating to asymmetric key pairs.
  */
 public final class KeyPairUtil {
-  private static ResourceBundle res =
-      ResourceBundle.getBundle("org/kse/crypto/keypair/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/keypair/resources");
 
-  private KeyPairUtil() {}
+    private KeyPairUtil() {
+    }
 
-  /**
-   * Generate a key pair.
-   *
-   * @param keyPairType Key pair type to generate
-   * @param keySize     Key size of key pair
-   * @param provider    Crypto provider used for key generation
-   * @return A keypair
-   * @throws CryptoException If there was a problem generating the key pair
-   */
-  public static KeyPair generateKeyPair(KeyPairType keyPairType, int keySize,
-                                        Provider provider)
-      throws CryptoException {
-    try {
-      // Get a key pair generator
-      KeyPairGenerator keyPairGen = null;
+    /**
+     * Generate a key pair.
+     *
+     * @param keyPairType Key pair type to generate
+     * @param keySize     Key size of key pair
+     * @param provider    Crypto provider used for key generation
+     * @return A keypair
+     * @throws CryptoException If there was a problem generating the key pair
+     */
+    public static KeyPair generateKeyPair(KeyPairType keyPairType, int keySize, Provider provider)
+            throws CryptoException {
+        try {
+            // Get a key pair generator
+            KeyPairGenerator keyPairGen = null;
 
-      if (provider != null) {
-        keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), provider);
-      } else {
-        // Always use BC provider for RSA
-        if (keyPairType == RSA) {
-          keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), KSE.BC);
-        } else {
-          // Use default provider for DSA
-          keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
+            if (provider != null) {
+                keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), provider);
+            } else {
+                // Always use BC provider for RSA
+                if (keyPairType == RSA) {
+                    keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), KSE.BC);
+                } else {
+                    // Use default provider for DSA
+                    keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
+                }
+            }
+
+            // Initialise key pair generator with key strength and randomness
+            keyPairGen.initialize(keySize, RNG.newInstanceForLongLivedSecrets());
+
+            // Generate and return the key pair
+            return keyPairGen.generateKeyPair();
+        } catch (GeneralSecurityException ex) {
+            throw new CryptoException(
+                    MessageFormat.format(res.getString("NoGenerateKeypair.exception.message"), keyPairType), ex);
         }
-      }
-
-      // Create a SecureRandom
-      SecureRandom rand = SecureRandom.getInstance("SHA1PRNG");
-
-      // Initialise key pair generator with key strength and randomness
-      keyPairGen.initialize(keySize, rand);
-
-      // Generate and return the key pair
-      return keyPairGen.generateKeyPair();
-    } catch (GeneralSecurityException ex) {
-      throw new CryptoException(
-          MessageFormat.format(
-              res.getString("NoGenerateKeypair.exception.message"),
-              keyPairType),
-          ex);
-    }
-  }
-
-  /**
-   * Generate an EC key pair.
-   *
-   * @param curveName Name of the ECC curve
-   * @param provider  A JCE provider.
-   * @return A key pair
-   * @throws CryptoException If there was a problem generating the key pair
-   */
-  public static KeyPair generateECKeyPair(String curveName, Provider provider)
-      throws CryptoException {
-    try {
-      // Get a key pair generator
-      KeyPairGenerator keyPairGen;
-
-      if (EdDSACurves.ED25519.jce().equals(curveName) ||
-          EdDSACurves.ED448.jce().equals(curveName)) {
-        keyPairGen = KeyPairGenerator.getInstance(curveName, KSE.BC);
-      } else if (provider != null) {
-        keyPairGen =
-            KeyPairGenerator.getInstance(KeyPairType.EC.jce(), provider);
-        keyPairGen.initialize(new ECGenParameterSpec(curveName),
-                              SecureRandom.getInstance("SHA1PRNG"));
-      } else {
-        keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), KSE.BC);
-        keyPairGen.initialize(new ECGenParameterSpec(curveName),
-                              SecureRandom.getInstance("SHA1PRNG"));
-      }
-
-      // Generate and return the key pair
-      return keyPairGen.generateKeyPair();
-
-    } catch (GeneralSecurityException ex) {
-      throw new CryptoException(
-          MessageFormat.format(
-              res.getString("NoGenerateKeypair.exception.message"),
-              KeyPairType.EC),
-          ex);
-    }
-  }
-
-  /**
-   * Checks if the passed provider is an instance of
-   * "sun.security.mscapi.SunMSCAPI".
-   *
-   * @param provider A JCE provider.
-   * @return True, if instance of SunMSCAPI
-   */
-  public static boolean isSunMSCAPI(Provider provider) {
-
-    Class<?> sunMSCAPI = null;
-    try {
-      sunMSCAPI = Class.forName("sun.security.mscapi.SunMSCAPI");
-    } catch (Exception e) {
-      return false;
     }
 
-    if (sunMSCAPI == null) {
-      return false;
-    }
+    /**
+     * Generate an EC key pair.
+     *
+     * @param curveName Name of the ECC curve
+     * @param provider  A JCE provider.
+     * @return A key pair
+     * @throws CryptoException If there was a problem generating the key pair
+     */
+    public static KeyPair generateECKeyPair(String curveName, Provider provider) throws CryptoException {
+        try {
+            // Get a key pair generator
+            KeyPairGenerator keyPairGen;
 
-    return sunMSCAPI.isInstance(provider);
-  }
+            if (provider == null) {
+                provider = KSE.BC;
+            }
 
-  /**
-   * Checks if the passed provider is an instance of
-   * "sun.security.mscapi.SunMSCAPI".
-   *
-   * @param provider A JCE provider.
-   * @return True, if instance of SunMSCAPI
-   */
-  public static boolean isSunJCE(Provider provider) {
+            if (EdDSACurves.ED25519.jce().equals(curveName) || EdDSACurves.ED448.jce().equals(curveName)) {
+                keyPairGen = KeyPairGenerator.getInstance(curveName, provider);
+                keyPairGen.initialize(new ECGenParameterSpec(curveName), RNG.newInstanceForLongLivedSecrets());
+            } else if (CurveSet.ECGOST.getAllCurveNames().contains(curveName)) {
+                KeyPairType keyPairType = KeyPairType.getGostTypeFromCurve(curveName);
+                keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), KSE.BC);
+                keyPairGen.initialize(new ECGenParameterSpec(curveName), RNG.newInstanceForLongLivedSecrets());
+            } else {
+                keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), provider);
+                keyPairGen.initialize(new ECGenParameterSpec(curveName), RNG.newInstanceForLongLivedSecrets());
+            }
 
-    Class<?> sunJCE = null;
-    try {
-      sunJCE = Class.forName("com.sun.crypto.provider.SunJCE");
-    } catch (Exception e) {
-      return false;
-    }
+            // Generate and return the key pair
+            return keyPairGen.generateKeyPair();
 
-    if (sunJCE == null) {
-      return false;
-    }
-
-    return sunJCE.isInstance(provider);
-  }
-
-  /**
-   * Get the information about the supplied public key.
-   *
-   * @param publicKey The public key
-   * @return Key information
-   * @throws CryptoException If there is a problem getting the information
-   */
-  public static KeyInfo getKeyInfo(PublicKey publicKey) throws CryptoException {
-    try {
-      String algorithm = publicKey.getAlgorithm();
-
-      if (algorithm.equals(RSA.jce())) {
-        KeyFactory keyFact = KeyFactory.getInstance(algorithm, KSE.BC);
-        RSAPublicKeySpec keySpec =
-            keyFact.getKeySpec(publicKey, RSAPublicKeySpec.class);
-        BigInteger modulus = keySpec.getModulus();
-        return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length());
-      } else if (algorithm.equals(DSA.jce())) {
-        KeyFactory keyFact = KeyFactory.getInstance(algorithm);
-        DSAPublicKeySpec keySpec =
-            keyFact.getKeySpec(publicKey, DSAPublicKeySpec.class);
-        BigInteger prime = keySpec.getP();
-        return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
-      } else if (algorithm.equals(EC.jce()) || algorithm.equals(ECDSA.jce())) {
-        ECPublicKey pubk = (ECPublicKey)publicKey;
-        int size = pubk.getParams().getOrder().bitLength();
-        return new KeyInfo(ASYMMETRIC, algorithm, size,
-                           EccUtil.getNamedCurve(publicKey));
-      } else if (ED25519.jce().equalsIgnoreCase(algorithm)) {
-        return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
-      } else if (ED448.jce().equalsIgnoreCase(algorithm)) {
-        return new KeyInfo(ASYMMETRIC, algorithm, ED448.bitLength());
-      } else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
-        EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(publicKey);
-        return new KeyInfo(ASYMMETRIC, edDSACurve.jce(),
-                           edDSACurve.bitLength());
-      }
-
-      return new KeyInfo(ASYMMETRIC, algorithm); // size unknown
-    } catch (GeneralSecurityException ex) {
-      throw new CryptoException(
-          res.getString("NoPublicKeysize.exception.message"), ex);
-    }
-  }
-
-  /**
-   * Get the information about the supplied private key.
-   *
-   * @param privateKey The private key
-   * @return Key information
-   * @throws CryptoException If there is a problem getting the information
-   */
-  public static KeyInfo getKeyInfo(PrivateKey privateKey)
-      throws CryptoException {
-    try {
-      String algorithm = privateKey.getAlgorithm();
-
-      if (RSA.jce().equals(algorithm)) {
-        if (privateKey instanceof RSAPrivateKey) {
-          // Using default provider does not work for BKS and UBER resident
-          // private keys
-          KeyFactory keyFact = KeyFactory.getInstance(algorithm, KSE.BC);
-          RSAPrivateKeySpec keySpec =
-              keyFact.getKeySpec(privateKey, RSAPrivateKeySpec.class);
-          BigInteger modulus = keySpec.getModulus();
-          return new KeyInfo(ASYMMETRIC, algorithm,
-                             modulus.toString(2).length());
-        } else {
-          return new KeyInfo(ASYMMETRIC, algorithm, 0);
+        } catch (GeneralSecurityException ex) {
+            throw new CryptoException(
+                    MessageFormat.format(res.getString("NoGenerateKeypair.exception.message"), KeyPairType.EC), ex);
         }
-      } else if (DSA.jce().equals(algorithm)) {
-        // Use SUN (DSA key spec not implemented for BC)
-        KeyFactory keyFact = KeyFactory.getInstance(algorithm);
-        DSAPrivateKeySpec keySpec =
-            keyFact.getKeySpec(privateKey, DSAPrivateKeySpec.class);
-        BigInteger prime = keySpec.getP();
-        return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
-      } else if (EC.jce().equals(algorithm) || ECDSA.jce().equals(algorithm)) {
-        ECPrivateKey privk = (ECPrivateKey)privateKey;
-        ECParameterSpec spec = privk.getParams();
-        int size = spec.getOrder().bitLength();
-        return new KeyInfo(ASYMMETRIC, algorithm, size,
-                           EccUtil.getNamedCurve(privateKey));
-      } else if (ED25519.jce().equalsIgnoreCase(algorithm)) {
-        return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
-      } else if (ED448.jce().equalsIgnoreCase(algorithm)) {
-        return new KeyInfo(ASYMMETRIC, algorithm, ED448.bitLength());
-      } else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
-        EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(privateKey);
-        return new KeyInfo(ASYMMETRIC, edDSACurve.jce(),
-                           edDSACurve.bitLength());
-      }
-
-      return new KeyInfo(ASYMMETRIC, algorithm); // size unknown
-    } catch (GeneralSecurityException ex) {
-      throw new CryptoException(
-          res.getString("NoPrivateKeysize.exception.message"), ex);
     }
-  }
 
-  /**
-   * Determine the key pair type (algorithm).
-   *
-   * @param privateKey The private key
-   * @return KeyPairType type
-   */
-  public static KeyPairType getKeyPairType(PrivateKey privateKey) {
-    return KeyPairType.resolveJce(privateKey.getAlgorithm());
-  }
+    /**
+     * Generates a key pair for types that encode the parameter set into the key pair type.
+     *
+     * @param keyPairType The key pair type including the parameter set.
+     * @param provider Crypto provider used for key generation. If null, BC is used.
+     * @return A key pair
+     * @throws CryptoException If there was a problem generating the key pair
+     */
+    public static KeyPair generateKeyPair(KeyPairType keyPairType, Provider provider)
+            throws CryptoException {
+        try {
+            if (provider == null) {
+                provider = KSE.BC;
+            }
 
-  /**
-   * Check that the supplied private and public keys actually comprise a valid
-   * key pair.
-   *
-   * @param privateKey Private key
-   * @param publicKey  Public key
-   * @return True if the private and public keys comprise a valid key pair,
-   *         false otherwise.
-   * @throws CryptoException If there is a problem validating the key pair
-   */
-  public static boolean validKeyPair(PrivateKey privateKey, PublicKey publicKey)
-      throws CryptoException {
-    try {
-      String privateAlgorithm = privateKey.getAlgorithm();
+            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), provider);
+            keyPairGen.initialize(new NamedParameterSpec(keyPairType.jce()), RNG.newInstanceForLongLivedSecrets());
 
-      // Match private and public keys by signing some data and verifying the
-      // signature with the public key
-      byte[] toSign = "Some random text".getBytes();
-      if (privateAlgorithm.equals(RSA.jce())) {
-        String signatureAlgorithm = "SHA256withRSA";
-        byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
-        return verify(toSign, signature, publicKey, signatureAlgorithm);
-      } else if (privateAlgorithm.equals(DSA.jce())) {
-        String signatureAlgorithm = "SHA1withDSA";
-        byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
-        return verify(toSign, signature, publicKey, signatureAlgorithm);
-      } else if (privateAlgorithm.equals(EC.jce()) ||
-                 privateAlgorithm.equals(ECDSA.jce())) {
-        String signatureAlgorithm = "SHA256withECDSA";
-        byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
-        return verify(toSign, signature, publicKey, signatureAlgorithm);
-      } else if (privateAlgorithm.equals(ED25519.jce())) {
-        byte[] signature = sign(toSign, privateKey, ED25519.jce());
-        return verify(toSign, signature, publicKey, ED25519.jce());
-      } else if (privateAlgorithm.equals(ED448.jce())) {
-        byte[] signature = sign(toSign, privateKey, ED448.jce());
-        return verify(toSign, signature, publicKey, ED448.jce());
-      } else if (privateAlgorithm.equals(EDDSA.jce())) {
-        EdDSACurves detectedEdDSACurve = EccUtil.detectEdDSACurve(privateKey);
-        byte[] signature = sign(toSign, privateKey, detectedEdDSACurve.jce());
-        return verify(toSign, signature, publicKey, detectedEdDSACurve.jce());
-      } else {
-        throw new CryptoException(MessageFormat.format(
-            res.getString("NoCheckCompriseValidKeypairAlg.exception.message"),
-            privateAlgorithm));
-      }
-    } catch (GeneralSecurityException ex) {
-      throw new CryptoException(
-          res.getString("NoCheckCompriseValidKeypair.exception.message"), ex);
+            return keyPairGen.generateKeyPair();
+        } catch (GeneralSecurityException ex) {
+            throw new CryptoException(
+                    MessageFormat.format(res.getString("NoGenerateKeypair.exception.message"), keyPairType.jce()), ex);
+        }
     }
-  }
 
-  private static byte[] sign(byte[] toSign, PrivateKey privateKey,
-                             String signatureAlgorithm)
-      throws GeneralSecurityException {
-    Signature signature = Signature.getInstance(signatureAlgorithm, KSE.BC);
-    signature.initSign(privateKey);
-    signature.update(toSign);
-    return signature.sign();
-  }
+    /**
+     * Checks if the passed provider is an instance of "sun.security.mscapi.SunMSCAPI".
+     *
+     * @param provider A JCE provider.
+     * @return True, if instance of SunMSCAPI
+     */
+    public static boolean isSunMSCAPI(Provider provider) {
 
-  private static boolean verify(byte[] signed, byte[] signatureToVerify,
-                                PublicKey publicKey, String signatureAlgorithm)
-      throws GeneralSecurityException {
-    Signature signature = Signature.getInstance(signatureAlgorithm, KSE.BC);
-    signature.initVerify(publicKey);
-    signature.update(signed);
-    return signature.verify(signatureToVerify);
-  }
+        Class<?> sunMSCAPI = null;
+        try {
+            sunMSCAPI = Class.forName("sun.security.mscapi.SunMSCAPI");
+        } catch (Exception e) {
+            return false;
+        }
+
+        if (sunMSCAPI == null) {
+            return false;
+        }
+
+        return sunMSCAPI.isInstance(provider);
+    }
+
+    /**
+     * Checks if the passed provider is an instance of "com.sun.crypto.provider.SunJCE".
+     *
+     * @param provider A JCE provider.
+     * @return True, if instance of SunJCE
+     */
+    public static boolean isSunJCE(Provider provider) {
+
+        Class<?> sunJCE = null;
+        try {
+            sunJCE = Class.forName("com.sun.crypto.provider.SunJCE");
+        } catch (Exception e) {
+            return false;
+        }
+
+        if (sunJCE == null) {
+            return false;
+        }
+
+        return sunJCE.isInstance(provider);
+    }
+
+    /**
+     * Get the information about the supplied public key.
+     *
+     * @param publicKey The public key
+     * @return Key information
+     * @throws CryptoException If there is a problem getting the information
+     */
+    public static KeyInfo getKeyInfo(PublicKey publicKey) throws CryptoException {
+        if (publicKey == null) {
+            return new KeyInfo(ASYMMETRIC, "");
+        }
+        try {
+            String algorithm = publicKey.getAlgorithm();
+
+            if (RSA.jce().equals(algorithm)) {
+                KeyFactory keyFact = KeyFactory.getInstance(algorithm, KSE.BC);
+                RSAPublicKeySpec keySpec = keyFact.getKeySpec(publicKey, RSAPublicKeySpec.class);
+                BigInteger modulus = keySpec.getModulus();
+                return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length());
+            } else if (DSA.jce().equals(algorithm)) {
+                KeyFactory keyFact = KeyFactory.getInstance(algorithm);
+                DSAPublicKeySpec keySpec = keyFact.getKeySpec(publicKey, DSAPublicKeySpec.class);
+                BigInteger prime = keySpec.getP();
+                return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
+            } else if (EC.jce().equals(algorithm) || ECDSA.jce().equals(algorithm)) {
+                ECPublicKey pubk = (ECPublicKey) publicKey;
+                int size = pubk.getParams().getOrder().bitLength();
+                return new KeyInfo(ASYMMETRIC, algorithm, size, EccUtil.getNamedCurve(publicKey));
+            } else if (ED25519.jce().equalsIgnoreCase(algorithm)) {
+                return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
+            } else if (ED448.jce().equalsIgnoreCase(algorithm)) {
+                return new KeyInfo(ASYMMETRIC, algorithm, ED448.bitLength());
+            } else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
+                EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(publicKey);
+                return new KeyInfo(ASYMMETRIC, edDSACurve.jce(), edDSACurve.bitLength());
+            } else if (ECGOST3410.jce().equalsIgnoreCase(algorithm) || ECGOST3410_2012.jce().equalsIgnoreCase(algorithm)) {
+                // ECGOST parameters are ASN1Sequence so use ECNamedCurveSpec to get the curve name
+                ECPublicKey pubk = (ECPublicKey) publicKey;
+                ECParameterSpec spec = pubk.getParams();
+                int size = spec.getOrder().bitLength();
+                String curveName = ((ECNamedCurveSpec) spec).getName();
+                return new KeyInfo(ASYMMETRIC, algorithm, size, curveName);
+            } else if (isMlDSA(getKeyPairType(publicKey)) || isMlKEM(getKeyPairType(publicKey))
+                    || isSlhDsa(getKeyPairType(publicKey))) {
+                KeyPairType keyPairType = getKeyPairType(publicKey);
+                return new KeyInfo(ASYMMETRIC, algorithm, keyPairType.maxSize());
+            }
+
+            return new KeyInfo(ASYMMETRIC, algorithm); // size unknown
+        } catch (GeneralSecurityException ex) {
+            throw new CryptoException(res.getString("NoPublicKeysize.exception.message"), ex);
+        }
+    }
+
+    /**
+     * Get the information about the supplied private key.
+     *
+     * @param privateKey The private key
+     * @return Key information
+     * @throws CryptoException If there is a problem getting the information
+     */
+    public static KeyInfo getKeyInfo(PrivateKey privateKey) throws CryptoException {
+        if (privateKey == null) {
+            return new KeyInfo(ASYMMETRIC, "");
+        }
+        try {
+            String algorithm = privateKey.getAlgorithm();
+
+            if (RSA.jce().equals(algorithm)) {
+                if (privateKey instanceof RSAPrivateKey) {
+                    // Using default provider does not work for BKS and UBER resident private keys
+                    KeyFactory keyFact = KeyFactory.getInstance(algorithm, KSE.BC);
+                    RSAPrivateKeySpec keySpec = keyFact.getKeySpec(privateKey, RSAPrivateKeySpec.class);
+                    BigInteger modulus = keySpec.getModulus();
+                    return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length());
+                } else {
+                    return new KeyInfo(ASYMMETRIC, algorithm, 0);
+                }
+            } else if (DSA.jce().equals(algorithm)) {
+                // Use SUN (DSA key spec not implemented for BC)
+                KeyFactory keyFact = KeyFactory.getInstance(algorithm);
+                DSAPrivateKeySpec keySpec = keyFact.getKeySpec(privateKey, DSAPrivateKeySpec.class);
+                BigInteger prime = keySpec.getP();
+                return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
+            } else if (EC.jce().equals(algorithm) || ECDSA.jce().equals(algorithm)
+                    || ECGOST3410.jce().equalsIgnoreCase(algorithm) || ECGOST3410_2012.jce().equalsIgnoreCase(algorithm)) {
+                ECPrivateKey privk = (ECPrivateKey) privateKey;
+                ECParameterSpec spec = privk.getParams();
+                int size = spec.getOrder().bitLength();
+                return new KeyInfo(ASYMMETRIC, algorithm, size, EccUtil.getNamedCurve(privateKey));
+            } else if (ED25519.jce().equalsIgnoreCase(algorithm)) {
+                return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
+            } else if (ED448.jce().equalsIgnoreCase(algorithm)) {
+                return new KeyInfo(ASYMMETRIC, algorithm, ED448.bitLength());
+            } else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
+                EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(privateKey);
+                return new KeyInfo(ASYMMETRIC, edDSACurve.jce(), edDSACurve.bitLength());
+            } else if (isMlDSA(getKeyPairType(privateKey)) || isMlKEM(getKeyPairType(privateKey))
+                    || isSlhDsa(getKeyPairType(privateKey))) {
+                KeyPairType keyPairType = getKeyPairType(privateKey);
+                return new KeyInfo(ASYMMETRIC, algorithm, keyPairType.maxSize());
+            }
+
+            return new KeyInfo(ASYMMETRIC, algorithm); // size unknown
+        } catch (GeneralSecurityException ex) {
+            throw new CryptoException(res.getString("NoPrivateKeysize.exception.message"), ex);
+        }
+    }
+
+    /**
+     * Determine the key pair type (algorithm).
+     *
+     * @param privateKey The private key
+     * @return KeyPairType type
+     */
+    public static KeyPairType getKeyPairType(PrivateKey privateKey) {
+        return KeyPairType.resolveJce(privateKey.getAlgorithm());
+    }
+
+    /**
+     * Determine the key pair type (algorithm).
+     *
+     * @param publicKey The private key
+     * @return KeyPairType type
+     */
+    public static KeyPairType getKeyPairType(PublicKey publicKey) {
+        return KeyPairType.resolveJce(publicKey.getAlgorithm());
+    }
+
+    /**
+     * Check that the supplied private and public keys actually comprise a valid
+     * key pair.
+     *
+     * @param privateKey Private key
+     * @param publicKey  Public key
+     * @return True if the private and public keys comprise a valid key pair,
+     *         false otherwise.
+     * @throws CryptoException If there is a problem validating the key pair
+     */
+    public static boolean validKeyPair(PrivateKey privateKey, PublicKey publicKey) throws CryptoException {
+        try {
+            String privateAlgorithm = privateKey.getAlgorithm();
+
+            // Match private and public keys by signing some data and verifying the signature with the public key
+            byte[] toSign = "Some random text".getBytes();
+            if (privateAlgorithm.equals(RSA.jce())) {
+                String signatureAlgorithm = "SHA256withRSA";
+                byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
+                return verify(toSign, signature, publicKey, signatureAlgorithm);
+            } else if (privateAlgorithm.equals(DSA.jce())) {
+                String signatureAlgorithm = "SHA1withDSA";
+                byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
+                return verify(toSign, signature, publicKey, signatureAlgorithm);
+            } else if (privateAlgorithm.equals(EC.jce()) || privateAlgorithm.equals(ECDSA.jce())
+                    || privateAlgorithm.equals(ECGOST3410.jce()) || privateAlgorithm.equals(ECGOST3410_2012.jce())) {
+                String signatureAlgorithm = "SHA256withECDSA";
+                byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
+                return verify(toSign, signature, publicKey, signatureAlgorithm);
+            } else if (privateAlgorithm.equals(ED25519.jce())) {
+                byte[] signature = sign(toSign, privateKey, ED25519.jce());
+                return verify(toSign, signature, publicKey, ED25519.jce());
+            } else if (privateAlgorithm.equals(ED448.jce())) {
+                byte[] signature = sign(toSign, privateKey, ED448.jce());
+                return verify(toSign, signature, publicKey, ED448.jce());
+            } else if (privateAlgorithm.equals(EDDSA.jce())) {
+                EdDSACurves detectedEdDSACurve = EccUtil.detectEdDSACurve(privateKey);
+                byte[] signature = sign(toSign, privateKey, detectedEdDSACurve.jce());
+                return verify(toSign, signature, publicKey, detectedEdDSACurve.jce());
+            } else if (isMlDSA(getKeyPairType(privateKey)) || isSlhDsa(getKeyPairType(privateKey))) {
+                KeyPairType keyPairType = getKeyPairType(privateKey);
+                byte[] signature = sign(toSign, privateKey, keyPairType.jce());
+                return verify(toSign, signature, publicKey, keyPairType.jce());
+            } else if (isMlKEM(getKeyPairType(publicKey))) {
+                // ML-KEM keys cannot be used for signing. Derive the public key
+                // and compare with the certificate public key.
+                MLKEMPrivateKey privKey = (MLKEMPrivateKey) privateKey;
+                return privKey.getPublicKey().equals(publicKey);
+            } else {
+                throw new CryptoException(
+                        MessageFormat.format(res.getString("NoCheckCompriseValidKeypairAlg.exception.message"),
+                                             privateAlgorithm));
+            }
+        } catch (GeneralSecurityException ex) {
+            throw new CryptoException(res.getString("NoCheckCompriseValidKeypair.exception.message"), ex);
+        }
+    }
+
+    private static byte[] sign(byte[] toSign, PrivateKey privateKey, String signatureAlgorithm)
+            throws GeneralSecurityException {
+        Signature signature = Signature.getInstance(signatureAlgorithm, KSE.BC);
+        signature.initSign(privateKey);
+        signature.update(toSign);
+        return signature.sign();
+    }
+
+    private static boolean verify(byte[] signed, byte[] signatureToVerify, PublicKey publicKey,
+                                  String signatureAlgorithm) throws GeneralSecurityException {
+        Signature signature = Signature.getInstance(signatureAlgorithm, KSE.BC);
+        signature.initVerify(publicKey);
+        signature.update(signed);
+        return signature.verify(signatureToVerify);
+    }
+
+    /**
+     * The function generates a key pair (public-private) from a given private key
+     * @param privateKey Private key
+     * @return Key Pair or null if the private key is not of a supported type
+     * @throws CryptoException If there was an error constructing the key pair
+     */
+    public static KeyPair generateKeyPair(PrivateKey privateKey) throws CryptoException {
+        KeyPair keyPair = null;
+
+        try {
+            if (privateKey instanceof RSAPrivateKey) {
+                RSAPrivateCrtKey rsaPrivate = (RSAPrivateCrtKey) privateKey;
+                RSAPublicKeySpec publicSpec = new RSAPublicKeySpec(rsaPrivate.getModulus(),
+                        rsaPrivate.getPublicExponent());
+                KeyFactory kf = KeyFactory.getInstance(RSA.jce(), KSE.BC);
+                PublicKey publicKey = kf.generatePublic(publicSpec);
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+            if (privateKey instanceof ECPrivateKey) {
+                KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
+                ECPrivateKey ecPrivate = (ECPrivateKey) privateKey;
+                BigInteger d = ecPrivate.getS();
+                org.bouncycastle.jce.spec.ECParameterSpec ecSpec = ECNamedCurveTable
+                        .getParameterSpec(keyInfo.getDetailedAlgorithm());
+                ECPoint Q = ecSpec.getG().multiply(d).normalize();
+                ECPublicKeySpec pubKeySpec = new ECPublicKeySpec(Q, ecSpec);
+                // Use the pk algorithm since ECGOST, while being an instance of ECPrivateKey,
+                // needs to use the ECGOST3410 key factory.
+                KeyFactory keyFactory = KeyFactory.getInstance(privateKey.getAlgorithm(), KSE.BC);
+                PublicKey publicKey = keyFactory.generatePublic(pubKeySpec);
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+            if (privateKey instanceof DSAPrivateKey) {
+                DSAPrivateKey dsaPrivate = (DSAPrivateKey) privateKey;
+                DSAParams params = dsaPrivate.getParams();
+                BigInteger y = params.getG().modPow(dsaPrivate.getX(), params.getP());
+                DSAPublicKeySpec publicSpec = new DSAPublicKeySpec(y, params.getP(), params.getQ(), params.getG());
+                KeyFactory kf = KeyFactory.getInstance(DSA.jce(), KSE.BC);
+                PublicKey publicKey = kf.generatePublic(publicSpec);
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+            if (privateKey instanceof EdECPrivateKey) {
+                EdDSAPrivateKey edPrivate = EccUtil.getEdPrivateKey(privateKey);
+                byte[] pubKeyBytes = edPrivate.getPublicKey().getEncoded();
+                KeyFactory kf = KeyFactory.getInstance(edPrivate.getAlgorithm(), KSE.BC);
+                PublicKey publicKey = kf.generatePublic(new X509EncodedKeySpec(pubKeyBytes));
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+            if (privateKey instanceof MLDSAPrivateKey) {
+                MLDSAPrivateKey mldsaPrivate = (MLDSAPrivateKey) privateKey;
+                PublicKey publicKey = mldsaPrivate.getPublicKey();
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+            if (privateKey instanceof MLKEMPrivateKey) {
+                MLKEMPrivateKey mlkemPrivate = (MLKEMPrivateKey) privateKey;
+                PublicKey publicKey = mlkemPrivate.getPublicKey();
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+            if (privateKey instanceof SLHDSAPrivateKey) {
+                SLHDSAPrivateKey slhDsaPrivate = (SLHDSAPrivateKey) privateKey;
+                PublicKey publicKey = slhDsaPrivate.getPublicKey();
+                keyPair = new KeyPair(publicKey, privateKey);
+            }
+            return keyPair;
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+            throw new CryptoException(MessageFormat.format(
+                    res.getString("NoGenerateKeyPairFromPrivateKey.exception.message"), privateKey.getAlgorithm()));
+        }
+    }
 }

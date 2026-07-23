@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2024 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -17,40 +17,32 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kse.crypto.jcepolicy;
+package org.kse.crypto.signing;
 
 import java.util.ResourceBundle;
 
 /**
- * Enumeration of JCE cryptography strengths.
+ * Enumeration of signature statuses for verifying a CMS signature.
  */
-public enum CryptoStrength {
-  LIMITED("limited"),
-  UNLIMITED("unlimited");
+public enum CmsSignatureStatus {
 
-  private static ResourceBundle res =
-      ResourceBundle.getBundle("org/kse/crypto/jcepolicy/resources");
-  private final String manifestValue;
+    // @formatter:off
 
-  CryptoStrength(String manifestValue) { this.manifestValue = manifestValue; }
+    NOT_VERIFIED,
+    INVALID,
+    VALID_NOT_TRUSTED,
+    VALID_TRUSTED;
 
-  /**
-   * Get friendly name
-   *
-   * @return Friendly name
-   */
-  public String friendly() {
-    if (this == LIMITED) {
-      return res.getString("CryptoStrength.Limited");
-    } else {
-      return res.getString("CryptoStrength.Unlimited");
+    // @formatter:on
+
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/signing/resources");
+
+    public String getText() {
+        return res.getString("CmsSignatureStatus." + name() + ".text");
     }
-  }
 
-  /**
-   * Get manifest value.
-   *
-   * @return Manifest value
-   */
-  public String manifestValue() { return manifestValue; }
+    public String getToolTip() {
+        return res.getString("CmsSignatureStatus." + name() + ".tooltip");
+    }
+
 }

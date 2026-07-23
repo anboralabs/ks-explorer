@@ -10,6 +10,7 @@ object CertFileType: UserBinaryFileType() {
 
     init {
         Security.addProvider(KSE.BC)
+        Security.addProvider(KSE.KSE)
     }
 
     private const val FILETYPE_NAME = "Cert"

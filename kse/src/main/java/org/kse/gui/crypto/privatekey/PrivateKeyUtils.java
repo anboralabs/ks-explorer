@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.privatekey.OpenSslPbeType;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8PbeType;
