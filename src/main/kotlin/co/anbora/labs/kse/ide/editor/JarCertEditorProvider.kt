@@ -32,6 +32,6 @@ class JarCertEditorProvider: EditorProvider() {
 
     private fun jarCertificates(file: VirtualFile): Array<X509Certificate> {
         val jarParser = JarParser(file.toNioPath().toFile())
-        return jarParser.signerCerificates
+        return jarParser.signerCertificates
     }
 }
