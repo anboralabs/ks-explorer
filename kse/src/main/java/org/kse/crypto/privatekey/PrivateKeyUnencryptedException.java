@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2024 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -26,39 +26,42 @@ import org.kse.crypto.CryptoException;
  * unencrypted.
  */
 public class PrivateKeyUnencryptedException extends CryptoException {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  /**
-   * Creates a new PrivateKeyUnencryptedException.
-   */
-  public PrivateKeyUnencryptedException() { super(); }
+    /**
+     * Creates a new PrivateKeyUnencryptedException.
+     */
+    public PrivateKeyUnencryptedException() {
+        super();
+    }
 
-  /**
-   * Creates a new PrivateKeyUnencryptedException with the specified message.
-   *
-   * @param message Exception message
-   */
-  public PrivateKeyUnencryptedException(String message) { super(message); }
+    /**
+     * Creates a new PrivateKeyUnencryptedException with the specified message.
+     *
+     * @param message Exception message
+     */
+    public PrivateKeyUnencryptedException(String message) {
+        super(message);
+    }
 
-  /**
-   * Creates a new PrivateKeyUnencryptedException with the specified message
-   * and cause throwable.
-   *
-   * @param message        Exception message
-   * @param causeThrowable The throwable that caused this exception to be thrown
-   */
-  public PrivateKeyUnencryptedException(String message,
-                                        Throwable causeThrowable) {
-    super(message, causeThrowable);
-  }
+    /**
+     * Creates a new PrivateKeyUnencryptedException with the specified message
+     * and cause throwable.
+     *
+     * @param message        Exception message
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     */
+    public PrivateKeyUnencryptedException(String message, Throwable causeThrowable) {
+        super(message, causeThrowable);
+    }
 
-  /**
-   * Creates a new PrivateKeyUnencryptedException with the specified cause
-   * throwable.
-   *
-   * @param causeThrowable The throwable that caused this exception to be thrown
-   */
-  public PrivateKeyUnencryptedException(Throwable causeThrowable) {
-    super(causeThrowable);
-  }
+    /**
+     * Creates a new PrivateKeyUnencryptedException with the specified cause
+     * throwable.
+     *
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     */
+    public PrivateKeyUnencryptedException(Throwable causeThrowable) {
+        super(causeThrowable);
+    }
 }

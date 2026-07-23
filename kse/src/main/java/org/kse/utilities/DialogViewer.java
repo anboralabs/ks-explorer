@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2024 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,36 +19,35 @@
  */
 package org.kse.utilities;
 
-// import com.formdev.flatlaf.FlatLightLaf;
+import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.security.Security;
 
 /**
- * This is a helper class for quickly viewing KSE dialogs (mainly for testing
- * purposes during development).
+ * This is a helper class for quickly viewing KSE dialogs (mainly for testing purposes during development).
  */
 public class DialogViewer {
 
-  private DialogViewer() {}
+    private DialogViewer() {}
 
-  /**
-   * Add BC provider and set l&f (only required when BC is needed before calling
-   * the run() method)
-   */
-  /*public static void prepare() throws UnsupportedLookAndFeelException {
-      UIManager.setLookAndFeel(new FlatLightLaf());
-      Security.addProvider(KSE.BC);
-  }*/
+    /**
+     * Add BC provider and set l&f (only required when BC is needed before calling the run() method)
+     */
+    /*public static void prepare() throws UnsupportedLookAndFeelException {
+        UIManager.setLookAndFeel(new FlatDarkLaf());
+        Security.addProvider(KSE.BC);
+    }*/
 
-  /**
-   * Create environment for showing the given dialog
-   */
-  /*public static void run(final JEscDialog dialog) throws
-  UnsupportedLookAndFeelException {
+    /**
+     * Create environment for showing the given dialog
+     */
+    /*public static void run(final JEscDialog dialog) throws UnsupportedLookAndFeelException {
 
         prepare();
 
-        SwingUtilities.updateComponentTreeUI(dialog);
-
         SwingUtilities.invokeLater(() -> {
+            SwingUtilities.updateComponentTreeUI(dialog);
 
             dialog.addWindowListener(new WindowAdapter() {
                 @Override
@@ -57,14 +56,14 @@ public class DialogViewer {
                     System.exit(0);
                 }
 
-              @Override
-              public void windowDeactivated(WindowEvent e) {
-                  super.windowDeactivated(e);
-                  System.exit(0);
-              }
-          });
-          dialog.setLocationRelativeTo(null);
-          dialog.setVisible(true);
-      });
-  }*/
+                @Override
+                public void windowDeactivated(WindowEvent e) {
+                    super.windowDeactivated(e);
+                    System.exit(0);
+                }
+            });
+            dialog.setLocationRelativeTo(null);
+            dialog.setVisible(true);
+        });
+    }*/
 }

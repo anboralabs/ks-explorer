@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -20,17 +20,17 @@
 package org.kse.utilities.net;
 
 public enum ProxyConfigurationType {
-  NONE,
-  SYSTEM,
-  MANUAL,
-  PAC;
+    NONE,
+    SYSTEM,
+    MANUAL,
+    PAC;
 
-  public static ProxyConfigurationType resolve(String proxyTypeStr) {
-    for (ProxyConfigurationType proxyType : values()) {
-      if (proxyType.name().equals(proxyTypeStr)) {
-        return proxyType;
-      }
+    public static ProxyConfigurationType resolve(String proxyTypeStr) {
+        for (ProxyConfigurationType proxyType : values()) {
+            if (proxyType.name().equals(proxyTypeStr)) {
+                return proxyType;
+            }
+        }
+        return null;
     }
-    return null;
-  }
 }

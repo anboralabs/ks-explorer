@@ -16,7 +16,6 @@ class KSEditorProvider: EditorProvider() {
         CryptoFileType.JKS_KS,
         CryptoFileType.PKCS12_KS,
         CryptoFileType.BKS_KS,
-        CryptoFileType.BKS_V1_KS,
         CryptoFileType.BCFKS_KS,
         CryptoFileType.UBER_KS
     )

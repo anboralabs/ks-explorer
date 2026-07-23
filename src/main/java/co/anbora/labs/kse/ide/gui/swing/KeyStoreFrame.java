@@ -17,7 +17,8 @@ import javax.swing.table.TableRowSorter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
+import org.kse.crypto.keystore.KseKeyStore;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.AddKeyStore;
 import org.kse.gui.HistoryKeyStore;
@@ -166,7 +167,7 @@ public class KeyStoreFrame
   }
 
   @Override
-  public void addKeyStore(KeyStore keyStore, File keyStoreFile,
+  public void addKeyStore(KseKeyStore keyStore, File keyStoreFile,
                           Password password)
       throws GeneralSecurityException, CryptoException {
     KeyStoreHistory history =
@@ -264,7 +265,7 @@ public class KeyStoreFrame
     try {
 
       KeyStoreHistory history = getActiveKeyStoreHistory();
-      KeyStore keyStore = history.getCurrentState().getKeyStore();
+      KseKeyStore keyStore = history.getCurrentState().getKeyStore();
       String alias = getSelectedEntryAlias();
 
       if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {

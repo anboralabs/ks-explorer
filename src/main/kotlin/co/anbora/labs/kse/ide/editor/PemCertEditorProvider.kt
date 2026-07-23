@@ -13,7 +13,8 @@ private const val CERT_EDITOR_TYPE_ID = "co.anbora.labs.kse.pem.cert.editor"
 class PemCertEditorProvider: CertEditorProvider() {
 
     override fun fileTypes(): Set<CryptoFileType> = setOf(
-        CryptoFileType.CERT
+        CryptoFileType.CERT,
+        CryptoFileType.PEM_KS
     )
 
     override fun getEditorTypeId(): String = CERT_EDITOR_TYPE_ID

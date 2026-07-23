@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2024 Kai Kramer
+ *           2013 - 2026 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,145 +19,274 @@
  */
 package org.kse.crypto.keystore;
 
-import static org.kse.crypto.filetype.CryptoFileType.BCFKS_KS;
-import static org.kse.crypto.filetype.CryptoFileType.BKS_KS;
-import static org.kse.crypto.filetype.CryptoFileType.JCEKS_KS;
-import static org.kse.crypto.filetype.CryptoFileType.JKS_KS;
-import static org.kse.crypto.filetype.CryptoFileType.PKCS12_KS;
-import static org.kse.crypto.filetype.CryptoFileType.UBER_KS;
-
-import java.util.ResourceBundle;
 import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.filetype.CryptoFileType;
+import org.kse.crypto.secretkey.PasswordType;
+import org.kse.crypto.secretkey.SecretKeyType;
+
+import java.util.Comparator;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.function.Function;
+
+import static org.kse.crypto.filetype.CryptoFileType.*;
 
 /**
  * Enumeration of KeyStore Types supported by the KeyStoreUtil class.
  */
 public enum KeyStoreType {
 
-  JKS("JKS", "KeyStoreType.Jks", true, JKS_KS),
-  JCEKS("JCEKS", "KeyStoreType.Jceks", true, JCEKS_KS),
-  PKCS12("PKCS12", "KeyStoreType.Pkcs12", true, PKCS12_KS),
-  BKS("BKS", "KeyStoreType.Bks", true, BKS_KS),
-  UBER("UBER", "KeyStoreType.Uber", true, UBER_KS),
-  KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, null),
-  MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false,
-                   null),
-  MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null),
-  PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null),
-  BCFKS("BCFKS", "KeyStoreType.Bcfks", true, BCFKS_KS),
-  UNKNOWN("UNKNOWN", "KeyStoreType.Unknown", false, null);
+    JKS("JKS", "KeyStoreType.Jks", true, false, JKS_KS),
+    JCEKS("JCEKS", "KeyStoreType.Jceks", true, false, JCEKS_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
+    PKCS12("PKCS12", "KeyStoreType.Pkcs12", true, false, PKCS12_KS, SecretKeyType.SECRET_KEY_PKCS12, PasswordType.PASSWORD_PKCS12),
+    BKS("BKS", "KeyStoreType.Bks", true, true, BKS_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
+    UBER("UBER", "KeyStoreType.Uber", true, true, UBER_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
+    KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, false, null),
+    MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, true, null),
+    MS_CAPI_ROOT("Windows-ROOT", "KeyStoreType.MscapiRootCerts", false, true, null),
+    PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, true, null),
+    BCFKS("BCFKS", "KeyStoreType.Bcfks", true, true, BCFKS_KS, SecretKeyType.SECRET_KEY_BCFKS, PasswordType.PASSWORD_BCFKS),
+    PEM("PEM", "KeyStoreType.Pem", true, true, PEM_KS),
+    KDB("KDB", "KeyStoreType.Kdb", true, true, KDB_KS),
+    UNKNOWN("UNKNOWN", "KeyStoreType.Unknown", false, false, null);
 
-  private static ResourceBundle res =
-      ResourceBundle.getBundle("org/kse/crypto/keystore/resources");
-  private String jce;
-  private String friendlyKey;
-  private boolean fileBased;
-  private CryptoFileType cryptoFileType;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/keystore/resources");
+    private String jce;
+    private String friendlyKey;
+    private boolean fileBased;
+    private CryptoFileType cryptoFileType;
+    private Set<SecretKeyType> supportedKeyTypes;
+    private Set<PasswordType> supportedPasswordTypes;
 
-  KeyStoreType(String jce, String friendlyKey, boolean fileBased,
-               CryptoFileType cryptoFileType) {
-    this.jce = jce;
-    this.friendlyKey = friendlyKey;
-    this.fileBased = fileBased;
-    this.cryptoFileType = cryptoFileType;
-  }
+    private Comparator<String> aliasComparator;
+    private Function<String, String> normalizer;
 
-  /**
-   * Get KeyStore type JCE name.
-   *
-   * @return JCE name
-   */
-  public String jce() { return jce; }
-
-  /**
-   * KeyStore type friendly name.
-   *
-   * @return Friendly name
-   */
-  public String friendly() { return res.getString(friendlyKey); }
-
-  /**
-   * Is KeyStore type file based?
-   *
-   * @return True if it is, false otherwise
-   */
-  public boolean isFileBased() { return fileBased; }
-
-  /**
-   * Are key store entries password protected?
-   *
-   * @return True if it has, false otherwise
-   */
-  public boolean hasEntryPasswords() {
-    return this != PKCS11 && this != MS_CAPI_PERSONAL;
-  }
-
-  /*
-   * Are private keys exportable for this keystore type?
-   *
-   * @return True if private keys are exportable, false otherwise
-   */
-  public boolean hasExportablePrivateKeys() {
-    return this != PKCS11 && this != MS_CAPI_PERSONAL;
-  }
-
-  /**
-   * Does this KeyStore type support secret key entries?
-   *
-   * @return True, if secret key entries are supported by this KeyStore type
-   */
-  public boolean supportsKeyEntries() {
-    return this == JCEKS || this == BKS || this == UBER || this == BCFKS ||
-        this == PKCS12;
-  }
-
-  /**
-   * Does this KeyStore type support ECC key pair entries?
-   *
-   * @return True, if ECC supported
-   */
-  public boolean supportsECC() { return EccUtil.isECAvailable(this); }
-
-  /**
-   * Does this KeyStore type support a certain named curve?
-   *
-   * @return True, if curve is supported
-   */
-  public boolean supportsNamedCurve(String curveName) {
-    return EccUtil.isCurveAvailable(curveName, this);
-  }
-
-  /**
-   * Resolve the supplied JCE name to a matching KeyStore type.
-   *
-   * @param jce JCE name
-   * @return KeyStore type or null if none
-   */
-  public static KeyStoreType resolveJce(String jce) {
-    for (KeyStoreType keyStoreType : values()) {
-      if (jce.equals(keyStoreType.jce())) {
-        return keyStoreType;
-      }
+    KeyStoreType(String jce, String friendlyKey, boolean fileBased, boolean caseSensitive, CryptoFileType cryptoFileType) {
+        this(jce, friendlyKey, fileBased, caseSensitive, cryptoFileType, SecretKeyType.SECRET_KEY_NONE, PasswordType.PASSWORD_NONE);
     }
 
-    return UNKNOWN;
-  }
+    KeyStoreType(String jce, String friendlyKey, boolean fileBased, boolean caseSensitive, CryptoFileType cryptoFileType,
+            Set<SecretKeyType> supportedKeyTypes, Set<PasswordType> supportedPasswordTypes) {
+        this.jce = jce;
+        this.friendlyKey = friendlyKey;
+        this.fileBased = fileBased;
+        this.cryptoFileType = cryptoFileType;
+        this.supportedKeyTypes = supportedKeyTypes;
+        this.supportedPasswordTypes = supportedPasswordTypes;
 
-  /**
-   * Get crypto file type.
-   *
-   * @return Crypto file type or null if KeyStore type is not file based
-   */
-  public CryptoFileType getCryptoFileType() { return cryptoFileType; }
+        if (caseSensitive) {
+            aliasComparator = KeyStoreType::compareCaseSensitive;
+            normalizer = KeyStoreType::noop;
+        } else {
+            aliasComparator = KeyStoreType::compareCaseInsensitive;
+            normalizer = KeyStoreType::toLowerCase;
+        }
+    }
 
-  /**
-   * Returns JCE name.
-   *
-   * @return JCE name
-   */
-  @Override
-  public String toString() {
-    return jce();
-  }
+    /**
+     * Is the given KeyStoreType backed by the BC provider?
+     *
+     * @param keyStoreType KeyStoreType to check
+     * @return True, if KeyStoreType is backed by the BC provider
+     */
+    public static boolean isBouncyCastleKeyStore(KeyStoreType keyStoreType) {
+        return (keyStoreType == BKS || keyStoreType == UBER ||
+                keyStoreType == BCFKS);
+    }
+
+    /**
+     * Get KeyStore type JCE name.
+     *
+     * @return JCE name
+     */
+    public String jce() {
+        return jce;
+    }
+
+    /**
+     * KeyStore type friendly name.
+     *
+     * @return Friendly name
+     */
+    public String friendly() {
+        return res.getString(friendlyKey);
+    }
+
+    /**
+     * Is KeyStore type file based?
+     *
+     * @return True if it is, false otherwise
+     */
+    public boolean isFileBased() {
+        return fileBased;
+    }
+
+    /**
+     * Does the key store support user defined aliases?
+     *
+     * @return True if it does, false otherwise
+     */
+    public boolean supportsAliases() {
+        return this != PEM;
+    }
+
+    /**
+     * Are key store entries password protected?
+     *
+     * @return True if it has, false otherwise
+     */
+    public boolean hasEntryPasswords() {
+        return this != PKCS11 && this != MS_CAPI_PERSONAL && this != MS_CAPI_ROOT;
+    }
+
+    /**
+     * Are key store entries using the same password as the key store?
+     *
+     * For PKCS #12 key stores, the entry password is always going to be the same as the key store
+     * password.
+     * For KeyChainStore key stores, a password is needed by the provider, but the password
+     * is not used.
+     * For PEM key stores, there isn't a key store password, but all entries will use the same
+     * password so it's treated like a key store with a password.
+     * For CMS key databases (KDB), the database header is signed with the key store password and
+     * all private keys are encrypted with it.
+     *
+     * @return True if so, false otherwise
+     */
+    public boolean entrySameAsKeyStorePassword() {
+        // FIXME PKCS#12 files CAN have per-entry passwords; check usages of this method
+        return this == PKCS12 || this == KEYCHAIN || this == PEM || this == KDB;
+    }
+
+    /**
+     * Are private keys exportable for this keystore type?
+     *
+     * @return True if private keys are exportable, false otherwise
+     */
+    public boolean hasExportablePrivateKeys() {
+        return this != PKCS11 && this != MS_CAPI_PERSONAL && this != MS_CAPI_ROOT;
+    }
+
+    /**
+     * Are certificate chains built when loading the key store?
+     *
+     * For PKCS #12 key stores, a collection of certificates are stored and then
+     * linked to the private key entries. The certificate is chain is built when
+     * loading the key store.
+     * For PEM key stores, the file contains a collection of certificates, and the
+     * certificate is chain is built when loading the key store.
+     * For all other key store types, the chain is stored with the private key entry.
+     *
+     * @return
+     */
+    public boolean hasDynamicCertificateChains() {
+        return this == PKCS12 || this == PEM;
+    }
+
+    /**
+     * Does this KeyStore type support secret key entries?
+     *
+     * @return True, if secret key entries are supported by this KeyStore type
+     */
+    public boolean supportsKeyEntries() {
+        return !supportedKeyTypes.isEmpty();
+    }
+
+    /**
+     * Does this KeyStore type support the secret key type?
+     *
+     * @param secretKeyType The secret key type to check for support.
+     * @return True, if secret key type is supported by this KeyStore type
+     */
+    public boolean supportsKeyType(SecretKeyType secretKeyType) {
+        return supportedKeyTypes.contains(secretKeyType);
+    }
+
+    /**
+     * Does this KeyStore type support the password type?
+     *
+     * @param passwordType The password type to check for support.
+     * @return True, if password type is supported by this KeyStore type
+     */
+    public boolean supportsPasswordType(PasswordType passwordType) {
+        return supportedPasswordTypes.contains(passwordType);
+    }
+
+    /**
+     * Does this KeyStore type support a certain named curve?
+     *
+     * @param curveName The curve name to check for support.
+     * @return True, if curve is supported
+     */
+    public boolean supportsNamedCurve(String curveName) {
+        return EccUtil.isCurveAvailable(curveName, this);
+    }
+
+    /**
+     * Resolve the supplied JCE name to a matching KeyStore type.
+     *
+     * @param jce JCE name
+     * @return KeyStore type or null if none
+     */
+    public static KeyStoreType resolveJce(String jce) {
+        for (KeyStoreType keyStoreType : values()) {
+            if (jce.equals(keyStoreType.jce())) {
+                return keyStoreType;
+            }
+        }
+
+        return UNKNOWN;
+    }
+
+    /**
+     * Get crypto file type.
+     *
+     * @return Crypto file type or null if KeyStore type is not file based
+     */
+    public CryptoFileType getCryptoFileType() {
+        return cryptoFileType;
+    }
+
+    /**
+     * @return the alias comparator
+     */
+    public Comparator<String> getAliasComparator() {
+        return aliasComparator;
+    }
+
+    /**
+     * Normalizes an alias for the key store type.
+     *
+     * @param alias The alias to normalize.
+     * @return The normalized alias.
+     */
+    public String normalizeAlias(String alias) {
+        return normalizer.apply(alias);
+    }
+
+    /**
+     * Returns JCE name.
+     *
+     * @return JCE name
+     */
+    @Override
+    public String toString() {
+        return jce();
+    }
+
+    private static int compareCaseSensitive(String s1, String s2) {
+        return s1.compareTo(s2);
+    }
+
+    private static int compareCaseInsensitive(String s1, String s2) {
+        return s1.compareToIgnoreCase(s2);
+    }
+
+    private static String noop(String s) {
+        return s;
+    }
+
+    private static String toLowerCase(String s) {
+        return s != null ? s.toLowerCase() : null;
+    }
 }
