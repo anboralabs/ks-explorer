@@ -40,9 +40,9 @@ class KeyStoreTableHeadRend(
 
     private fun renderHead(header: JLabel, value: Any?, column: Int) {
         when (column) {
-            ENTRY_TYPE -> renderStatusColumn(header, "images/table/type_heading.png", "KeyStoreTableHeadRend.TypeColumn.tooltip")
-            LOCK_STATUS -> renderStatusColumn(header, "images/table/lock_status_heading.png", "KeyStoreTableHeadRend.LockStatusColumn.tooltip")
-            EXPIRY_STATUS -> renderStatusColumn(header, "images/table/cert_expiry_status_heading.png", "KeyStoreTableHeadRend.CertExpiryStatusColumn.tooltip")
+            ENTRY_TYPE -> renderStatusColumn(header, "images/table/type_heading.png", "KeyStoreTableModel.TypeColumn.tooltip")
+            LOCK_STATUS -> renderStatusColumn(header, "images/table/lock_status_heading.png", "KeyStoreTableModel.LockStatusColumn.tooltip")
+            EXPIRY_STATUS -> renderStatusColumn(header, "images/table/cert_expiry_status_heading.png", "KeyStoreTableModel.CertExpiryStatusColumn.tooltip")
             else -> renderConfiguredColumns(header, value, column)
         }
     }

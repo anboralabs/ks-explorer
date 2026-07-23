@@ -8,7 +8,7 @@ import co.anbora.labs.kse.fileTypes.settings.Settings.LOCK_STATUS
 
 data class SettingOptionSet(
     var type: Option = Option(
-        "KeyStoreTableHeadRend.NameColumn.tooltip",
+        "KeyStoreTableModel.NameColumn.tooltip",
         "KeyStoreTableModel.NameColumn",
         TypeClass.STRING,
         optionType = OptionType.CERT_TYPE,
@@ -17,7 +17,7 @@ data class SettingOptionSet(
         index = ENTRY_TYPE
     ),
     var lockStatus: Option = Option(
-        "KeyStoreTableHeadRend.NameColumn.tooltip",
+        "KeyStoreTableModel.NameColumn.tooltip",
         "KeyStoreTableModel.NameColumn",
         TypeClass.BOOLEAN,
         optionType = OptionType.LOCK_STATUS,
@@ -26,7 +26,7 @@ data class SettingOptionSet(
         index = LOCK_STATUS
     ),
     var certStatus: Option = Option(
-        "KeyStoreTableHeadRend.NameColumn.tooltip",
+        "KeyStoreTableModel.NameColumn.tooltip",
         "KeyStoreTableModel.NameColumn",
         TypeClass.INTEGER,
         optionType = OptionType.CERT_STATUS,
@@ -35,21 +35,21 @@ data class SettingOptionSet(
         index = EXPIRY_STATUS
     ),
     var entryName: Option = Option(
-        "KeyStoreTableHeadRend.NameColumn.tooltip",
+        "KeyStoreTableModel.NameColumn.tooltip",
         "KeyStoreTableModel.NameColumn",
         TypeClass.STRING,
         optionType = OptionType.ENTRY_NAME,
         active = true
     ),
     var keySize: Option = Option(
-        "KeyStoreTableHeadRend.KeySizeColumn.tooltip",
+        "KeyStoreTableModel.KeySizeColumn.tooltip",
         "KeyStoreTableModel.KeySizeColumn",
         TypeClass.INTEGER,
         optionType = OptionType.KEY_SIZE,
         active = true
     ),
     var certificateExpiry: Option = Option(
-        "KeyStoreTableHeadRend.CertExpiryColumn.tooltip",
+        "KeyStoreTableModel.CertExpiryColumn.tooltip",
         "KeyStoreTableModel.CertExpiryColumn",
         TypeClass.DATE,
         optionType = OptionType.CERTIFICATE_EXPIRY,
@@ -57,44 +57,44 @@ data class SettingOptionSet(
         active = true
     ),
     var subjectKeyIdentifier: Option = Option(
-        "KeyStoreTableHeadRend.SKIColumn.tooltip",
+        "KeyStoreTableModel.SKIColumn.tooltip",
         "KeyStoreTableModel.SKIColumn",
         TypeClass.STRING,
         optionType = OptionType.SKI,
     ),
     var issuerDistinguishedName: Option = Option(
-        "KeyStoreTableHeadRend.IssuerDNColumn.tooltip",
+        "KeyStoreTableModel.IssuerDNColumn.tooltip",
         "KeyStoreTableModel.IssuerDNColumn",
         TypeClass.STRING,
         optionType = OptionType.ISSUER_DN,
     ),
     var issuerCommonName: Option = Option(
-        "KeyStoreTableHeadRend.IssuerCNColumn.tooltip",
+        "KeyStoreTableModel.IssuerCNColumn.tooltip",
         "KeyStoreTableModel.IssuerCNColumn",
         TypeClass.STRING,
         optionType = OptionType.ISSUER_CN,
     ),
     var issuerOrganizationName: Option = Option(
-        "KeyStoreTableHeadRend.IssuerOColumn.tooltip",
+        "KeyStoreTableModel.IssuerOColumn.tooltip",
         "KeyStoreTableModel.IssuerOColumn",
         TypeClass.STRING,
         optionType = OptionType.ISSUER_O,
     ),
     var algorithm: Option = Option(
-        "KeyStoreTableHeadRend.AlgorithmColumn.tooltip",
+        "KeyStoreTableModel.AlgorithmColumn.tooltip",
         "KeyStoreTableModel.AlgorithmColumn",
         TypeClass.STRING,
         optionType = OptionType.ALGORITHM,
         active = true
     ),
     var curve: Option = Option(
-        "KeyStoreTableHeadRend.CurveColumn.tooltip",
+        "KeyStoreTableModel.CurveColumn.tooltip",
         "KeyStoreTableModel.CurveColumn",
         TypeClass.STRING,
         optionType = OptionType.CURVE,
     ),
     var lastModified: Option = Option(
-        "KeyStoreTableHeadRend.LastModifiedColumn.tooltip",
+        "KeyStoreTableModel.LastModifiedColumn.tooltip",
         "KeyStoreTableModel.LastModifiedColumn",
         TypeClass.DATE,
         optionType = OptionType.LAST_MODIFIED,
@@ -102,25 +102,25 @@ data class SettingOptionSet(
         active = true
     ),
     var authorityKeyIdentifier: Option = Option(
-        "KeyStoreTableHeadRend.AKIColumn.tooltip",
+        "KeyStoreTableModel.AKIColumn.tooltip",
         "KeyStoreTableModel.AKIColumn",
         TypeClass.STRING,
         optionType = OptionType.AKI,
     ),
     var subjectDistinguishedName: Option = Option(
-        "KeyStoreTableHeadRend.SubjectDNColumn.tooltip",
+        "KeyStoreTableModel.SubjectDNColumn.tooltip",
         "KeyStoreTableModel.SubjectDNColumn",
         TypeClass.STRING,
         optionType = OptionType.SUBJECT_DN,
     ),
     var subjectCommonName: Option = Option(
-        "KeyStoreTableHeadRend.SubjectCNColumn.tooltip",
+        "KeyStoreTableModel.SubjectCNColumn.tooltip",
         "KeyStoreTableModel.SubjectCNColumn",
         TypeClass.STRING,
         optionType = OptionType.SUBJECT_CN,
     ),
     var subjectOrganizationName: Option = Option(
-        "KeyStoreTableHeadRend.SubjectOColumn.tooltip",
+        "KeyStoreTableModel.SubjectOColumn.tooltip",
         "KeyStoreTableModel.SubjectOColumn",
         TypeClass.STRING,
         optionType = OptionType.SUBJECT_O,
