@@ -3,7 +3,7 @@
     <name>KS-Explorer</name>
     <vendor email="support@anbora.co" url="https://labs.anbora.co">Anbora-labs</vendor>
 
-    <product-descriptor code="PKSEXPLORER" release-date="20260512" release-version="20261"/>
+    <product-descriptor code="PKSEXPLORER" release-date="20260904" release-version="20262"/>
 
     <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
          on how to target different products -->
