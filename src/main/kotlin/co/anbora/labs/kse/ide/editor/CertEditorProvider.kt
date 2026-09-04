@@ -2,8 +2,6 @@ package co.anbora.labs.kse.ide.editor
 
 import co.anbora.labs.kse.ide.gui.view.DViewCertificate
 import co.anbora.labs.kse.ide.gui.view.DViewError
-import co.anbora.labs.kse.license.CheckLicense
-import com.intellij.openapi.fileEditor.AsyncFileEditorProvider
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
